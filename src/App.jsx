@@ -1,22 +1,23 @@
-import { useState } from 'react';
-import './App.css';
-
+import "./App.css";
+import Main from "./components/Main";
+import Footer from "./components/Footer";
+import Button from "./components/Button";
 import Header from './components/Header';
-import Main from './components/Main';
 
 function App() {
-	const [count, setCount] = useState(0);
-
-	return (
-		<>
-			<div>
-				<Header />
-			</div>
-			<div>
-				<Main />
-			</div>
-		</>
-	);
+  return (
+    <>
+      <Header>
+        <div>
+          <Button text={"검색"} />
+        </div>
+      </Header>
+      <div>
+      <Main />
+      </div>
+      <Footer />
+    </>
+  );
 }
 
 export default App;
