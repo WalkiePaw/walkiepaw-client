@@ -11,4 +11,3 @@
 - 라우팅 처리: React Router
 - UI 컴포넌트 라이브러리: TailwindCSS
 - 폼 처리: Formik, React Hook Form
-- 상태 관리 라이브러리: Redux
