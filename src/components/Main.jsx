@@ -1,12 +1,13 @@
 // src/components/Main
 
 import React from 'react';
+import './Main.css';
 
 const Main = () => {
 	return (
-		<container>
-			<h1 className='top'>상단</h1>
-		</container>
+		<div className='root'>
+			<h1 className='text'>상단</h1>
+		</div>
 	);
 };
 
