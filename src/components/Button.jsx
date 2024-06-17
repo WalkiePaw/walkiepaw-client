@@ -6,8 +6,8 @@ const Button = ({ text, color, children }) => {
   );
 };
 
-// Button.defaultProps = {
-//   color: "black",
-// };
+Button.defaultProps = {
+  color: "black",
+};
 
 export default Button;
