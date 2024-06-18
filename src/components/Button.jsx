@@ -1,3 +1,6 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
 const Button = ({ text, color, children }) => {
   return (
   <button style={{ color: color }}>
@@ -5,6 +8,13 @@ const Button = ({ text, color, children }) => {
   </button>
   );
 };
+
+Button.propTypes = {
+  text: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+};
+
 
 // Button.defaultProps = {
 //   color: "black",

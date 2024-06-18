@@ -1,6 +1,7 @@
 // src/components/Header
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import logo from '../assets/logo.png';// 로고 이미지 파일 경로
 
 const Header = ({ children }) => {
@@ -8,11 +9,11 @@ const Header = ({ children }) => {
 		<header>
 			<div>
 				<div>
-				<	img src={ logo } alt="Logo" />
+				<img src={ logo } alt="Logo" />
 				</div>
 
 				<nav>
-		 			<ul>
+					<ul>
 						<li>
 							산책
 						</li>
@@ -25,10 +26,14 @@ const Header = ({ children }) => {
 					</ul>
 				</nav>
 
-				{children} {}
+				{children}
 			</div>
 		</header>
 	);
 };
+
+Header.propTypes = {
+	children: PropTypes.node.isRequired, // children prop에 대한 타입 검사 추가
+  };
 
 export default Header;
