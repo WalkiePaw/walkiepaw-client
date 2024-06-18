@@ -1,5 +1,3 @@
-// src/components/Header
-
 import React from 'react';
 
 const Header = ({ children }) => {
