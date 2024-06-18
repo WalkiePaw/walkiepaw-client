@@ -1,25 +1,29 @@
-import './App.css';
-import Main from './components/Main';
-import Footer from './components/Footer';
-import Button from './components/Button';
-import Header from './components/Header';
+import { Route, Routes } from 'react-router-dom';
+import BoardList from './page/BoardList';
+import Home from './page/Home/Home';
 
-function App() {
+export default function App() {
 	return (
 		<>
-			<Header>
+			{/* <Header>
 				<div>
 					<Button text={'검색'} />
 				</div>
 			</Header>
 			<div>
-				<Main>
-          
-        </Main>
+				<Main></Main>
 			</div>
-			<Footer />
+			<Footer /> */}
+			<Routes>
+				<Route
+					path='/'
+					element={<Home />}
+				></Route>
+				<Route
+					path='/board-list'
+					element={<BoardList />}
+				></Route>
+			</Routes>
 		</>
 	);
 }
-
-export default App;
