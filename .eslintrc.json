@@ -1,0 +1,27 @@
+{
+    "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended",
+      "plugin:react-hooks/recommended",
+      "'react-app'",
+      "plugin:testing-library/react",
+      "plugin:jest-dom/recommended"
+    ],
+    "plugins": ["react", "react-hooks", "testing-library", "jest-dom"],
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "env": {
+      "browser": true,
+      "es2020": true
+    },
+    "rules": {
+      "react/react-in-jsx-scope": "off"
+    }
+  }
+
+

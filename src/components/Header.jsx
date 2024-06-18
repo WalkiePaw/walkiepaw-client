@@ -1,12 +1,32 @@
 // src/components/Header
 
 import React from 'react';
+import logo from '../assets/logo.png';// 로고 이미지 파일 경로
 
 const Header = ({ children }) => {
 	return (
 		<header>
-			<h2>이것은 헤더 입니다.</h2>
-			{children} {}
+			<div>
+				<div>
+				<	img src={ logo } alt="Logo" />
+				</div>
+
+				<nav>
+		 			<ul>
+						<li>
+							산책
+						</li>
+						<li>
+							알바
+						</li>
+						<li>
+							채팅
+						</li>
+					</ul>
+				</nav>
+
+				{children} {}
+			</div>
 		</header>
 	);
 };
