@@ -16,8 +16,8 @@ Button.propTypes = {
 };
 
 
-// Button.defaultProps = {
-//   color: "black",
-// };
+Button.defaultProps = {
+  color: "gray",
+};
 
 export default Button;
