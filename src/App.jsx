@@ -30,13 +30,13 @@ function App() {
           <Link to={"/MyPage"}>MyPage</Link>
           <Link to={"/CustomerService"}>CustomerService</Link>
         </div>
-      <Footer />
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/MyPage" element={<MyPage />} />
         <Route path="/CustomerService" element={<CustomerService />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
+      <Footer />  
     </>
   );
 }
