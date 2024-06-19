@@ -1,4 +1,5 @@
 import "./App.css";
+import styled from 'styled-components';
 import { Routes, Route, Link, useNavigate } from "react-router-dom"
 
 import Main from "./components/Main";
@@ -36,7 +37,7 @@ function App() {
         <Route path="/CustomerService" element={<CustomerService />} />
         <Route path="*" element={<Notfound />} />
       </Routes>
-      <Footer />  
+      <Footer />
     </>
   );
 }
