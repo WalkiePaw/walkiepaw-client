@@ -1,4 +1,3 @@
-// src/components/Header.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
@@ -7,40 +6,14 @@ import logo from '../assets/logo.png';
 const Header = ({ children }) => {
   return (
     <header className="fixed top-0 left-0 w-full py-4 z-50 bg-white shadow">
-      <div className="container mx-auto flex items-center justify-between px-4">
-        <div className="flex items-center space-x-4 w-full">
-          <img src={logo} alt="Logo" className="h-12 max-w-full object-contain" />
+	<div className="container mx-auto flex items-center justify-between px-4">
+	<div className="flex items-center justify-between w-full">
+		<NavLink to="/" className="flex-shrink-0">
+            <img src={logo} alt="Logo" className="h-12 max-w-full object-contain" />
+          </NavLink>
 
           <nav className="flex-grow">
-            <ul className="flex justify-center space-x-6">
-              <li>
-                <NavLink
-                  to="/"
-                  className="text-gray-700 hover:text-blue-500 transition duration-300"
-                  activeClassName="text-blue-500"
-                >
-                  산책
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/work"
-                  className="text-gray-700 hover:text-blue-500 transition duration-300"
-                  activeClassName="text-blue-500"
-                >
-                  알바
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/chat"
-                  className="text-gray-700 hover:text-blue-500 transition duration-300"
-                  activeClassName="text-blue-500"
-                >
-                  채팅
-                </NavLink>
-              </li>
-            </ul>
+            <Menus />
           </nav>
 
           {children}
@@ -56,6 +29,43 @@ const Header = ({ children }) => {
         </div>
       </div>
     </header>
+  );
+};
+
+const Menus = () => {
+  return (
+    <ul className="flex justify-center space-x-6">
+      <li>
+        <NavLink
+          to="/hire"
+          className={({ isActive }) =>
+            isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500 transition duration-300"
+          }
+        >
+          산책
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/work"
+          className={({ isActive }) =>
+            isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500 transition duration-300"
+          }
+        >
+          알바
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/chat"
+          className={({ isActive }) =>
+            isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500 transition duration-300"
+          }
+        >
+          채팅
+        </NavLink>
+      </li>
+    </ul>
   );
 };
 
