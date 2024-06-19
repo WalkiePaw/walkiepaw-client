@@ -22,20 +22,11 @@ function App() {
 
   return (
     <>
-      <Header>
-      <div>
-        <Link to={"/"}>Main</Link>
-      </div>
-        <div>
-          <Button text={"검색"} />
-        </div>
-      </Header>
         <div style={{ display: 'flex', gap: '10px' }}>
           <Link to={"/MyPage"}>MyPage</Link>
           <Link to={"/CustomerService"}>CustomerService</Link>
         </div>
       <Routes>
-        <Route path="/" element={<Main />} />
         <Route path="/MyPage" element={<MyPage />} />
         <Route path="/CustomerService" element={<CustomerService />} />
         <Route path="*" element={<Notfound />} />
@@ -57,7 +48,6 @@ function App() {
 					></Route>
 				</Route>
       </Routes>
-      <Footer />
     </>
   );
 }
