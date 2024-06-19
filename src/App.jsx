@@ -1,8 +1,10 @@
+import BoardList from './page/BoardList';
+import Home from './page/Home/Home';
+import Layout from './Layout';
 import "./App.css";
 import styled from 'styled-components';
 import { Routes, Route, Link, useNavigate } from "react-router-dom"
 
-import Main from "./components/Main";
 import Footer from "./components/Footer";
 import Button from "./pages/Button";
 import Header from './components/Header';
@@ -11,6 +13,7 @@ import MyPage from './pages/MyPage';
 import CustomerService from "./pages/CustomerService";
 
 function App() {
+	
   const nav = useNavigate();
 
   const onClickButton = () => {
@@ -36,6 +39,23 @@ function App() {
         <Route path="/MyPage" element={<MyPage />} />
         <Route path="/CustomerService" element={<CustomerService />} />
         <Route path="*" element={<Notfound />} />
+        <Route
+					path='/'
+					element={<Layout />}
+				>
+					<Route
+						index
+						element={<Home />}
+					></Route>
+					<Route
+						path='board-list'
+						element={<BoardList />}
+					></Route>
+					<Route
+						path='board-list1'
+						element={<BoardList />}
+					></Route>
+				</Route>
       </Routes>
       <Footer />
     </>
