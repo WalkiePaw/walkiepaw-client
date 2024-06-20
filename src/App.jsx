@@ -5,12 +5,14 @@ import "./App.css";
 import styled from 'styled-components';
 import { Routes, Route, Link, useNavigate } from "react-router-dom"
 
-import Footer from "./components/Footer";
-import Button from "./pages/Button";
-import Header from './components/Header';
 import Notfound from './components/Notfound'
 import MyPage from './pages/MyPage';
+import MyHistory from './pages/MyHistory';
+import MySettings from "./pages/MySettings"
+import MyTown from './pages/MyTown';
+import MembershipWithdrawal from "./pages/MembershipWithdrawal";
 import CustomerService from "./pages/CustomerService";
+import MyInformation from './pages/MyInformation';
 
 function App() {
 	
@@ -22,30 +24,19 @@ function App() {
 
   return (
     <>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Link to={"/MyPage"}>MyPage</Link>
-          <Link to={"/CustomerService"}>CustomerService</Link>
-        </div>
       <Routes>
-        <Route path="/MyPage" element={<MyPage />} />
-        <Route path="/CustomerService" element={<CustomerService />} />
-        <Route path="*" element={<Notfound />} />
-        <Route
-					path='/'
-					element={<Layout />}
-				>
-					<Route
-						index
-						element={<Home />}
-					></Route>
-					<Route
-						path='board-list'
-						element={<BoardList />}
-					></Route>
-					<Route
-						path='board-list1'
-						element={<BoardList />}
-					></Route>
+        <Route path='/' element={<Layout />}>
+          <Route path="*" element={<Notfound />} />
+          <Route path="/MyPage" element={<MyPage />} />
+          <Route path="/MyHistory" element={<MyHistory />} />
+          <Route path="/MyTown" element={<MyTown />} />
+          <Route path="/MyInformation" element={<MyInformation />} />
+          <Route path="/CustomerService" element={<CustomerService />} />
+          <Route path="/MySettings" element={<MySettings />} />
+          <Route path="/MembershipWithdrawal" element={<MembershipWithdrawal />} />
+          <Route index element={<Home />} />
+          <Route path='board-list'element={<BoardList />} />
+          <Route path='board-list1' element={<BoardList />} />
 				</Route>
       </Routes>
     </>
