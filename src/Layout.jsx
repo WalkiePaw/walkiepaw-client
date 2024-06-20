@@ -8,9 +8,6 @@ export default function Layout() {
     <div>
       <Header>
         <div>
-          <Link to={"/"}>Home</Link>
-        </div>
-        <div>
           <Button text={"검색"} />
         </div>
       </Header>
