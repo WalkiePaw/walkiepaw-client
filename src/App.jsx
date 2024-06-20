@@ -4,13 +4,14 @@ import Layout from './Layout';
 import "./App.css";
 import styled from 'styled-components';
 import { Routes, Route, Link, useNavigate } from "react-router-dom"
-
 import Footer from "./components/Footer";
 import Button from "./pages/Button";
 import Header from './components/Header';
 import Notfound from './components/Notfound'
 import MyPage from './pages/MyPage';
 import CustomerService from "./pages/CustomerService";
+import Login from './pages/Login';
+
 
 function App() {
 	
@@ -27,9 +28,6 @@ function App() {
           <Link to={"/CustomerService"}>CustomerService</Link>
         </div>
       <Routes>
-        <Route path="/MyPage" element={<MyPage />} />
-        <Route path="/CustomerService" element={<CustomerService />} />
-        <Route path="*" element={<Notfound />} />
         <Route
 					path='/'
 					element={<Layout />}
@@ -46,7 +44,12 @@ function App() {
 						path='board-list1'
 						element={<BoardList />}
 					></Route>
+            <Route path="login" element={<Login />} />
+            <Route path="MyPage" element={<MyPage />} />
+            <Route path="CustomerService" element={<CustomerService />} />
+            <Route path="*" element={<Notfound />} />
 				</Route>
+
       </Routes>
     </>
   );
