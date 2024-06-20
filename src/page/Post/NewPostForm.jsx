@@ -1,3 +1,5 @@
+// src/components/NewPostForm.jsx
+
 import React, { useState } from 'react';
 import './NewPostForm.css';
 import KakaoMap from '../../moduels/Kakao';
