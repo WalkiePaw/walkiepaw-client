@@ -1,0 +1,139 @@
+.CardStyled {
+  width: 240px;
+  height: 360px;
+  margin: auto;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 0 20px #e8c5a5;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #fff;
+  padding: 20px;
+  position: relative;
+}
+
+.CardStyled:hover {
+  cursor: pointer;
+}
+
+@media (max-width: 639px) {
+  .CardStyled {
+    width: 100%;
+    height: 175px;
+    display: flex;
+    margin: 0 auto;
+    padding: 10px;
+  }
+}
+
+.CardImageBox {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 18px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+@media (max-width: 639px) {
+  .CardImageBox {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+.CardImage {
+  width: 90%;
+  height: 90%;
+  object-fit: cover;
+  border-radius: 18px;
+  transition: transform 0.5s ease;
+}
+
+.CardImage:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+  transform-origin: center center;
+}
+
+@media (max-width: 639px) {
+  .CardImage {
+    padding: 10px;
+    flex: 1;
+  }
+}
+
+.Locals {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 639px) {
+  .Locals {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.MemberId,
+.Local {
+  margin: 5px auto;
+  display: block;
+  width: 45%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+}
+
+@media (max-width: 639px) {
+  .MemberId,
+  .Local {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+}
+
+.Title {
+  margin: 10px auto;
+  display: block;
+  width: 90%;
+  height: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 639px) {
+  .Title {
+    width: 100%;
+    height: auto;
+    margin: 15px auto;
+    font-size: 1rem;
+  }
+}
+
+.Icons {
+  position: absolute;
+  bottom: 10px; /* Adjust as needed */
+  left: 10px; /* Adjust as needed */
+  display: flex;
+  align-items: center;
+}
+
+.Icon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.Icon span {
+  margin-left: 5px;
+}

@@ -1,4 +1,4 @@
-import BoardList from './page/BoardList';
+import BoardList from './page/BoardList/BoardList';
 import Home from './page/Home/Home';
 import Layout from './Layout';
 import "./App.css";
@@ -13,13 +13,12 @@ import MyReview from './pages/MyReview';
 import MembershipWithdrawal from "./pages/MembershipWithdrawal";
 import CustomerService from "./pages/CustomerService";
 import MyInformation from './pages/MyInformation';
+import NewPostForm from './page/\bPost/NewPostForm';
 
 function App() {
-	
   const nav = useNavigate();
-
   const onClickButton = () => {
-    nav("/new");
+    nav('/new');
   };
 
   return (
@@ -37,6 +36,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path='board-list'element={<BoardList />} />
           <Route path='board-list1' element={<BoardList />} />
+          <Route path="new-post" element={<NewPostForm />}></Route>
 				</Route>
       </Routes>
     </>
