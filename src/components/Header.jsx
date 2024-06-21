@@ -108,11 +108,24 @@ const Header = ({ children }) => {
   // useAuth();
 
   return (
+<<<<<<< HEAD
     <HeaderContainer>
       <div className="container">
         <NavLink to="/" className="flex-shrink-0">
           <img src={logo} alt="Logo" />
         </NavLink>
+=======
+    <header className="relative top-0 left-0 w-full py-4 z-50 bg-white shadow">
+      <div className="container mx-auto flex items-center justify-between px-4">
+        <div className="flex items-center justify-between w-full">
+          <NavLink to="/" className="flex-shrink-0">
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-12 max-w-full object-contain"
+            />
+          </NavLink>
+>>>>>>> 0bfa83d6651e36db3e8b41a95a33d0575ccdcee9
 
         <nav>
           <Menus>
@@ -149,7 +162,54 @@ const Header = ({ children }) => {
           )}
         </div>
       </div>
+<<<<<<< HEAD
     </HeaderContainer>
+=======
+    </header>
+  );
+};
+
+const Menus = () => {
+  return (
+    <ul className="flex justify-center space-x-6">
+      <li>
+        <NavLink
+          to="/hire"
+          className={({ isActive }) =>
+            isActive
+              ? 'text-blue-500'
+              : 'text-gray-700 hover:text-blue-500 transition duration-300'
+          }
+        >
+          산책
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/work"
+          className={({ isActive }) =>
+            isActive
+              ? 'text-blue-500'
+              : 'text-gray-700 hover:text-blue-500 transition duration-300'
+          }
+        >
+          알바
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/chat"
+          className={({ isActive }) =>
+            isActive
+              ? 'text-blue-500'
+              : 'text-gray-700 hover:text-blue-500 transition duration-300'
+          }
+        >
+          채팅
+        </NavLink>
+      </li>
+    </ul>
+>>>>>>> 0bfa83d6651e36db3e8b41a95a33d0575ccdcee9
   );
 };
 

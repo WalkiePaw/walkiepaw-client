@@ -34,3 +34,9 @@
 	width: auto; /* 비율을 유지 */
 	padding-left: 40px;
 }
+
+.button1,
+.button2 {
+	border: 1px solid gray;
+	background-color: silver;
+}
