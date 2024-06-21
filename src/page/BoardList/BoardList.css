@@ -17,32 +17,27 @@
 
 .board-list {
   width: calc(
-    100% - 500px
+    100% - 200px
   ); /* 양옆의 여백을 줄이기 위해 전체 너비에서 500px을 뺌 */
   margin: 0 auto; /* 중앙 정렬 */
   height: auto; /* 자동 높이 조정 */
   display: grid; /* 그리드 디스플레이 */
-  grid-template-columns: repeat(5, 1fr); /* 4열 그리드 */
-  gap: 24px; /* 그리드 아이템 사이 여백 20px */
+  grid-template-columns: repeat(4, 1fr); /* 4열 그리드 */
+  gap: 48px; /* 그리드 아이템 사이 여백 20px */
   margin-bottom: 40px; /* 아래쪽 여백 40px */
   position: relative; /* 절대 위치 설정을 위한 상대 위치 설정 */
 
-  @media (max-width: 1100px) {
-    grid-template-columns: repeat(4, 1fr); /* 3열 그리드로 변경 */
+  @media (max-width: 1172px) {
+    grid-template-columns: repeat(3, 1fr); /* 3열 그리드로 변경 */
     justify-content: center;
     height: auto; /* 자동 높이 조정 */
   }
-  @media (max-width: 960px) {
-    grid-template-columns: repeat(3, 1fr); /* 2열 그리드로 변경 */
+  @media (max-width: 850px) {
+    grid-template-columns: repeat(2, 1fr); /* 2열 그리드로 변경 */
     justify-content: center;
     height: auto; /* 자동 높이 조정 */
   }
-  @media (max-width: 780px) {
-    grid-template-columns: repeat(2, 1fr); /* 1열 그리드로 변경 */
-    justify-content: center; /* 중앙 정렬 */
-    height: auto; /* 자동 높이 조정 */
-  }
-  @media (max-width: 640px) {
+  @media (max-width: 639px) {
     grid-template-columns: repeat(1, 1fr); /* 1열 그리드로 변경 */
     width: 100%; /* 가로폭 100% */
     height: auto; /* 자동 높이 조정 */

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import CardList from '../../components/CardList/CardList';
 import './BoardList.css';
 import { Link } from 'react-router-dom';
-import PostView from '../PostView/PostView'; // 경로 수정
+import PostView from '../PostView/PostView';
 
 const BoardList = () => {
   const [cardDataList, setCardDataList] = useState([
@@ -136,14 +136,14 @@ const BoardList = () => {
           .slice()
           .reverse()
           .map((cardData) => (
-            <div key={cardData.id} onClick={() => handlePostClick(cardData)}>
-              <CardList
-                title={cardData.title}
-                local={cardData.local}
-                image={cardData.image}
-                memberId={cardData.memberId}
-              />
-            </div>
+            <CardList
+              key={cardData.id}
+              title={cardData.title}
+              local={cardData.local}
+              image={cardData.image}
+              memberId={cardData.memberId}
+              onCardClick={() => handlePostClick(cardData)}
+            />
           ))}
         <div className="button-container">
           <Link to="/new-post">

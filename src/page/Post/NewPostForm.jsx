@@ -1,5 +1,3 @@
-// src/components/NewPostForm.jsx
-
 import React, { useState } from 'react';
 import './NewPostForm.css';
 import KakaoMap from '../../moduels/Kakao';
@@ -65,12 +63,14 @@ const NewPostForm = () => {
         <label>가격:</label>
         <div className="price-buttons">
           <button
+            type="button"
             className={priceType === '일급' ? 'selected' : ''}
             onClick={() => setPriceType('일급')}
           >
             일급
           </button>
           <button
+            type="button"
             className={priceType === '시급' ? 'selected' : ''}
             onClick={() => setPriceType('시급')}
           >
@@ -111,16 +111,8 @@ const NewPostForm = () => {
         />
         <label htmlFor="location">만나는 장소:</label>
         <div className="location-container">
-          <input
-            type="text"
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="장소를 선택하세요"
-            required
-            onClick={() => setMapVisible(true)} // 클릭 시 지도 보이기
-          />
-          {mapVisible && <KakaoMap setLocation={setLocation} />}
+          <input type="text" id="location" value={location} readOnly />
+          <KakaoMap setLocation={setLocation} />
         </div>
         <button type="submit" className="submit-button">
           작성 완료
