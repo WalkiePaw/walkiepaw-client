@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const { kakao } = window;
-
 const KakaoMap = ({ setLocation }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
@@ -10,65 +8,64 @@ const KakaoMap = ({ setLocation }) => {
   const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
-    const container = mapRef.current;
-    const options = {
-      center: new kakao.maps.LatLng(37.566826, 126.9786567),
-      level: 3,
-    };
-
-    const mapInstance = new kakao.maps.Map(container, options);
-    const infowindowInstance = new kakao.maps.InfoWindow({ zIndex: 1 });
-
-    setMap(mapInstance);
-    setInfowindow(infowindowInstance);
+    if (window.kakao) {
+      const container = mapRef.current;
+      const options = {
+        center: new window.kakao.maps.LatLng(37.566826, 126.9786567),
+        level: 3,
+      };
+      const mapInstance = new window.kakao.maps.Map(container, options);
+      const infowindowInstance = new window.kakao.maps.InfoWindow({
+        zIndex: 1,
+      });
+      setMap(mapInstance);
+      setInfowindow(infowindowInstance);
+    }
   }, []);
 
   const searchPlaces = (keyword) => {
-    const ps = new kakao.maps.services.Places();
-
-    if (!keyword.trim()) {
-      alert('키워드를 입력해주세요!');
-      return;
-    }
-
-    ps.keywordSearch(keyword, (data, status) => {
-      if (status === kakao.maps.services.Status.OK) {
-        displayPlaces(data);
-      } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-        alert('검색 결과가 존재하지 않습니다.');
-      } else if (status === kakao.maps.services.Status.ERROR) {
-        alert('검색 결과 중 오류가 발생했습니다.');
+    if (window.kakao) {
+      const ps = new window.kakao.maps.services.Places();
+      if (!keyword.trim()) {
+        alert('키워드를 입력해주세요!');
+        return;
       }
-    });
+      ps.keywordSearch(keyword, (data, status) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+          displayPlaces(data);
+        } else if (status === window.kakao.maps.services.Status.ZERO_RESULT) {
+          alert('검색 결과가 존재하지 않습니다.');
+        } else if (status === window.kakao.maps.services.Status.ERROR) {
+          alert('검색 결과 중 오류가 발생했습니다.');
+        }
+      });
+    }
   };
 
   const displayPlaces = (places) => {
-    const bounds = new kakao.maps.LatLngBounds();
-    const newMarkers = [];
-
-    removeAllMarkers();
-    setPlacesList(places);
-
-    places.forEach((place) => {
-      const placePosition = new kakao.maps.LatLng(place.y, place.x);
-      const marker = new kakao.maps.Marker({
-        position: placePosition,
-        map,
+    if (map && window.kakao) {
+      const bounds = new window.kakao.maps.LatLngBounds();
+      const newMarkers = [];
+      removeAllMarkers();
+      setPlacesList(places);
+      places.forEach((place) => {
+        const placePosition = new window.kakao.maps.LatLng(place.y, place.x);
+        const marker = new window.kakao.maps.Marker({
+          position: placePosition,
+          map,
+        });
+        newMarkers.push(marker);
+        bounds.extend(placePosition);
+        window.kakao.maps.event.addListener(marker, 'click', () => {
+          infowindow.setContent(
+            '<div style="padding:5px;">' + place.place_name + '</div>'
+          );
+          infowindow.open(map, marker);
+        });
       });
-
-      newMarkers.push(marker);
-      bounds.extend(placePosition);
-
-      kakao.maps.event.addListener(marker, 'click', () => {
-        infowindow.setContent(
-          '<div style="padding:5px;">' + place.place_name + '</div>'
-        );
-        infowindow.open(map, marker);
-      });
-    });
-
-    map.setBounds(bounds);
-    setMarkers(newMarkers);
+      map.setBounds(bounds);
+      setMarkers(newMarkers);
+    }
   };
 
   const removeAllMarkers = () => {

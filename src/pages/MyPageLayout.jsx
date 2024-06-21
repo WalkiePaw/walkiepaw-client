@@ -1,105 +1,136 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import { getProfileImage } from "./../util/profile-img";
-// fontawesome: 이모지 적용
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGripLines } from '@fortawesome/free-solid-svg-icons';
-
-const MyPageLayout = ({ children }) => (
-
-  <div className="flex h-screen">
-    <style>
-      {`
-        .active {
-          color: orange;  
-        }
-      `}
-    </style>
-    <aside className="w-1/4 p-4 bg-gray-100">
-      <div className="text-center mb-4">
-        <img
-          src={getProfileImage(1)}
-          alt="Profile"
-          className="w-24 h-24 rounded-full mx-auto bg-gray-300"
-        />
-        <div className="mt-2 font-bold">홍길동</div>
+import React from 'react';
+import PropTypes from 'prop-types';
+import { NavLink, Link } from 'react-router-dom';
+import styled from 'styled-components';
+import logo from '../assets/logo.png';
+import default_user from '../assets/default_user.png';
+const HeaderContainer = styled.header`
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem 0;
+  z-index: 50;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+  img {
+    height: 3rem;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  nav {
+    flex-grow: 1;
+  }
+  .buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  button {
+    padding: 0.5rem 1rem;
+    color: #4a4a4a;
+    border-radius: 0.375rem;
+    transition: background-color 0.3s;
+    &:hover {
+      background-color: #e8c5a5;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  }
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .buttons {
+      margin-top: 1rem;
+    }
+    nav ul {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+`;
+const Menus = styled.ul`
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  li {
+    a {
+      transition: color 0.3s;
+      &.active {
+        color: #007bff;
+      }
+      &:hover {
+        color: #007bff;
+      }
+    }
+  }
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+`;
+const UserIcon = styled.span`
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+`;
+const Header = ({ children }) => {
+  const { isLoggedIn, logout } = 0;
+  // useAuth();
+  return (
+    <HeaderContainer>
+      <div className="container">
+        <NavLink to="/" className="flex-shrink-0">
+          <img src={logo} alt="Logo" />
+        </NavLink>
+        <nav>
+          <Menus>
+            <li>
+              <NavLink to="/hire" activeClassName="active">
+                산책
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/work" activeClassName="active">
+                알바
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/chat" activeClassName="active">
+                채팅
+              </NavLink>
+            </li>
+          </Menus>
+        </nav>
+        {children}
+        <div className="buttons">
+          {isLoggedIn ? (
+            <>
+              <img src={default_user} alt="user" />
+              <button onClick={logout}>로그아웃</button>
+            </>
+          ) : (
+            <button>
+              <Link to="/login">로그인</Link>
+            </button>
+          )}
+        </div>
       </div>
-      <nav>
-        <h3 className="font-bold mt-4">나의 활동</h3>
-        <ul className="mt-2">
-          <li className="my-2">
-            <NavLink
-              to="/MySettings"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
-            >
-              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />
-              내 동네 설정
-            </NavLink>
-          </li>
-          <li className="my-2">
-            <NavLink
-              to="/MyHistory"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
-            >
-              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />
-              내 작성글
-            </NavLink>
-          </li>
-          <li className="my-2">
-            <NavLink
-              to="/MyReview"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
-            >
-              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />              
-              내 거래 내역
-            </NavLink>
-          </li>
-        </ul>
-        <h3 className="font-bold mt-4">나의 정보</h3>
-        <ul className="mt-2">
-          <li className="my-2">
-            <NavLink
-              to="/MyInformation"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
-            >
-              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />
-              회원 정보 수정
-            </NavLink>
-          </li>
-          <li className="my-2">
-            <NavLink
-              to="/MembershipWithdrawal"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
-            >
-              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />
-              회원 탈퇴
-            </NavLink>
-          </li>
-        </ul>
-        <h3 className="font-bold mt-4">고객센터</h3>
-        <ul className="mt-2">
-          <li className="my-2">
-            <NavLink
-              to="/CustomerService"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
-            >
-              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />
-              1:1 문의
-            </NavLink>
-          </li>
-        </ul>
-      </nav>
-    </aside>
-    <main className="flex-1 p-4 bg-white">
-      {children}
-    </main>
-  </div>
-);
-
-export default MyPageLayout;
+    </HeaderContainer>
+  );
+};
+Header.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+export default Header;
