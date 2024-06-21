@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import KakaoMap from '../../modules/Kakao';
 import './NewPostForm.css';
-import KakaoMap from '../../moduels/Kakao';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
@@ -11,7 +11,6 @@ const NewPostForm = () => {
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
   const [images, setImages] = useState([]);
-  const [mapVisible, setMapVisible] = useState(false);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -42,16 +41,18 @@ const NewPostForm = () => {
           onChange={handleImageUpload}
           style={{ display: 'none' }}
         />
-        <div className="image-list">
+        <div className="image-preview-container">
           {images.map((image, index) => (
-            <div key={index} className="image-item">
-              <img src={image} alt={`첨부 이미지 ${index + 1}`} />
-            </div>
+            <img
+              key={index}
+              src={image}
+              alt={`Uploaded Preview ${index}`}
+              className="image-preview"
+            />
           ))}
         </div>
       </div>
-      <h2>글 작성</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="new-post-form">
         <label htmlFor="title">제목:</label>
         <input
           type="text"
@@ -60,23 +61,15 @@ const NewPostForm = () => {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-        <label>가격:</label>
-        <div className="price-buttons">
-          <button
-            type="button"
-            className={priceType === '일급' ? 'selected' : ''}
-            onClick={() => setPriceType('일급')}
-          >
-            일급
-          </button>
-          <button
-            type="button"
-            className={priceType === '시급' ? 'selected' : ''}
-            onClick={() => setPriceType('시급')}
-          >
-            시급
-          </button>
-        </div>
+        <label htmlFor="priceType">가격 종류:</label>
+        <select
+          id="priceType"
+          value={priceType}
+          onChange={(e) => setPriceType(e.target.value)}
+        >
+          <option value="일급">일급</option>
+          <option value="시급">시급</option>
+        </select>
         <label>
           <input
             type="checkbox"
@@ -112,7 +105,7 @@ const NewPostForm = () => {
         <label htmlFor="location">만나는 장소:</label>
         <div className="location-container">
           <input type="text" id="location" value={location} readOnly />
-          <KakaoMap setLocation={setLocation} />
+          <KakaoMap />
         </div>
         <button type="submit" className="submit-button">
           작성 완료
