@@ -5,7 +5,7 @@ import logo from '../assets/logo.png';
 
 const Header = ({ children }) => {
   return (
-    <header className="fixed top-0 left-0 w-full py-4 z-50 bg-white shadow">
+    <header className="relative top-0 left-0 w-full py-4 z-50 bg-white shadow">
 	<div className="container mx-auto flex items-center justify-between px-4">
 	<div className="flex items-center justify-between w-full">
 		<NavLink to="/" className="flex-shrink-0">
