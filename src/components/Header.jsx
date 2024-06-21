@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { NavLink, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import logo from '../assets/logo.png';
+import default_user from '../assets/default_user.png'
 
 const HeaderContainer = styled.header`
   position: relative;
@@ -97,7 +98,15 @@ const Menus = styled.ul`
   }
 `;
 
+const UserIcon = styled.span`
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+`;
+
 const Header = ({ children }) => {
+  const { isLoggedIn, logout } =  0;
+  // useAuth();
+
   return (
     <HeaderContainer>
       <div className="container">
@@ -128,12 +137,16 @@ const Header = ({ children }) => {
         {children}
 
         <div className="buttons">
-          <button>
-            <Link to="/signup">회원가입</Link>
-          </button>
-          <button>
-            <Link to="/login">로그인</Link>
-          </button>
+          {isLoggedIn ? (
+            <>
+              <img src={default_user} alt="user" />
+              <button onClick={logout}>로그아웃</button>
+            </>
+          ) : (
+            <button>
+              <Link to="/login">로그인</Link>
+            </button>
+          )}
         </div>
       </div>
     </HeaderContainer>

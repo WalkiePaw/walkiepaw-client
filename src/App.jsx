@@ -11,6 +11,7 @@ import Notfound from './components/Notfound'
 import MyPage from './pages/MyPage';
 import CustomerService from "./pages/CustomerService";
 import Login from './pages/Login';
+import SignUpForm from './pages/SignUpForm';
 
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
 						element={<BoardList />}
 					></Route>
             <Route path="login" element={<Login />} />
+            <Route path="signupform" element={<SignUpForm />} />
             <Route path="MyPage" element={<MyPage />} />
             <Route path="CustomerService" element={<CustomerService />} />
             <Route path="*" element={<Notfound />} />
