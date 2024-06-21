@@ -6,7 +6,7 @@
 - 백엔드 서버로의 요청은 `/api` 주소로 오고, 리버스 프록시 처리합니다.
 
 ## 생성 방법
-- [Vite](https://ko.vitejs.dev/) 사용
+- [Vite](https://ko.vitejs.dev/) 사용 
 
 ## 주요 라이브러리 및 도구
 - 라우팅 처리: React Router
