@@ -5,11 +5,15 @@ import logo from '../assets/logo.png';
 
 const Header = ({ children }) => {
   return (
-    <header className="fixed top-0 left-0 w-full py-4 z-50 bg-white shadow">
-	<div className="container mx-auto flex items-center justify-between px-4">
-	<div className="flex items-center justify-between w-full">
-		<NavLink to="/" className="flex-shrink-0">
-            <img src={logo} alt="Logo" className="h-12 max-w-full object-contain" />
+    <header className="relative top-0 left-0 w-full py-4 z-50 bg-white shadow">
+      <div className="container mx-auto flex items-center justify-between px-4">
+        <div className="flex items-center justify-between w-full">
+          <NavLink to="/" className="flex-shrink-0">
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-12 max-w-full object-contain"
+            />
           </NavLink>
 
           <nav className="flex-grow">
@@ -39,7 +43,9 @@ const Menus = () => {
         <NavLink
           to="/hire"
           className={({ isActive }) =>
-            isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500 transition duration-300"
+            isActive
+              ? 'text-blue-500'
+              : 'text-gray-700 hover:text-blue-500 transition duration-300'
           }
         >
           산책
@@ -49,7 +55,9 @@ const Menus = () => {
         <NavLink
           to="/work"
           className={({ isActive }) =>
-            isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500 transition duration-300"
+            isActive
+              ? 'text-blue-500'
+              : 'text-gray-700 hover:text-blue-500 transition duration-300'
           }
         >
           알바
@@ -59,7 +67,9 @@ const Menus = () => {
         <NavLink
           to="/chat"
           className={({ isActive }) =>
-            isActive ? "text-blue-500" : "text-gray-700 hover:text-blue-500 transition duration-300"
+            isActive
+              ? 'text-blue-500'
+              : 'text-gray-700 hover:text-blue-500 transition duration-300'
           }
         >
           채팅
