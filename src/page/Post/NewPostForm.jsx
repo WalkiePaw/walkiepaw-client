@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './NewPostForm.css';
-import KakaoMap from '../../moduels/Kakao';
+import KakaoMap from '../../modules/Kakao';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
@@ -30,95 +30,95 @@ const NewPostForm = () => {
   };
 
   return (
-    <div className="new-post-container">
-      <div className="image-upload">
-        <label htmlFor="image-upload" className="image-upload-button">
-          첨부 이미지
-        </label>
-        <input
-          type="file"
-          id="image-upload"
-          accept="image/*"
-          onChange={handleImageUpload}
-          style={{ display: 'none' }}
-        />
-        <div className="image-list">
-          {images.map((image, index) => (
-            <div key={index} className="image-item">
-              <img src={image} alt={`첨부 이미지 ${index + 1}`} />
-            </div>
-          ))}
-        </div>
-      </div>
-      <h2>글 작성</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="title">제목:</label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-        <label>가격:</label>
-        <div className="price-buttons">
-          <button
-            type="button"
-            className={priceType === '일급' ? 'selected' : ''}
-            onClick={() => setPriceType('일급')}
-          >
-            일급
-          </button>
-          <button
-            type="button"
-            className={priceType === '시급' ? 'selected' : ''}
-            onClick={() => setPriceType('시급')}
-          >
-            시급
-          </button>
-        </div>
-        <label>
+      <div className="new-post-container">
+        <div className="image-upload">
+          <label htmlFor="image-upload" className="image-upload-button">
+            첨부 이미지
+          </label>
           <input
-            type="checkbox"
-            checked={priceProposal}
-            onChange={(e) => setPriceProposal(e.target.checked)}
+              type="file"
+              id="image-upload"
+              accept="image/*"
+              onChange={handleImageUpload}
+              style={{ display: 'none' }}
           />
-          가격 제안 받기
-        </label>
-        <label htmlFor="date">날짜 및 시간:</label>
-        <input
-          type="date"
-          id="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-          placeholder="시간"
-          required
-        />
-        <label htmlFor="content">내용:</label>
-        <textarea
-          id="content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          rows="4"
-          cols="50"
-          required
-        />
-        <label htmlFor="location">만나는 장소:</label>
-        <div className="location-container">
-          <input type="text" id="location" value={location} readOnly />
-          <KakaoMap setLocation={setLocation} />
+          <div className="image-list">
+            {images.map((image, index) => (
+                <div key={index} className="image-item">
+                  <img src={image} alt={`첨부 이미지 ${index + 1}`} />
+                </div>
+            ))}
+          </div>
         </div>
-        <button type="submit" className="submit-button">
-          작성 완료
-        </button>
-      </form>
-    </div>
+        <h2>글 작성</h2>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="title">제목:</label>
+          <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+          />
+          <label>가격:</label>
+          <div className="price-buttons">
+            <button
+                type="button"
+                className={priceType === '일급' ? 'selected' : ''}
+                onClick={() => setPriceType('일급')}
+            >
+              일급
+            </button>
+            <button
+                type="button"
+                className={priceType === '시급' ? 'selected' : ''}
+                onClick={() => setPriceType('시급')}
+            >
+              시급
+            </button>
+          </div>
+          <label>
+            <input
+                type="checkbox"
+                checked={priceProposal}
+                onChange={(e) => setPriceProposal(e.target.checked)}
+            />
+            가격 제안 받기
+          </label>
+          <label htmlFor="date">날짜 및 시간:</label>
+          <input
+              type="date"
+              id="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+          />
+          <input
+              type="text"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              placeholder="시간"
+              required
+          />
+          <label htmlFor="content">내용:</label>
+          <textarea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows="4"
+              cols="50"
+              required
+          />
+          <label htmlFor="location">만나는 장소:</label>
+          <div className="location-container">
+            <input type="text" id="location" value={location} readOnly />
+            <KakaoMap setLocation={setLocation} />
+          </div>
+          <button type="submit" className="submit-button">
+            작성 완료
+          </button>
+        </form>
+      </div>
   );
 };
 

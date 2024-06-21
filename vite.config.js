@@ -11,6 +11,11 @@ export default defineConfig({
       exclude: [],
     }),
   ],
+  resolve: {
+    alias: {
+      '@': '/src', // 필요에 따라 프로젝트 내 경로로 변경
+    },
+  },
   server: {
     proxy: {
       '/api': {

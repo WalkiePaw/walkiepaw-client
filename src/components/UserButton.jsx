@@ -8,7 +8,7 @@ const StyledButton = styled.button`
   background-color: #43312A;
   cursor: pointer;
   margin-bottom: 16px; /* Adds space between inputs */
-  width: 80%;
+  width: 75%;
   box-sizing: border-box;
   color: white;
 

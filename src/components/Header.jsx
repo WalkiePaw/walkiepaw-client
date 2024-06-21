@@ -134,7 +134,6 @@ const Header = ({ children }) => {
             </Menus>
           </nav>
 
-          {children}
 
           <div className="buttons">
             {isLoggedIn ? (

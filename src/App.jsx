@@ -14,7 +14,7 @@ import CustomerService from "./pages/CustomerService";
 import MyInformation from './pages/MyInformation';
 import NewPostForm from './page/Post/NewPostForm';
 import Login from './pages/Login';
-import SignUpForm from './pages/SignUpForm';
+import SignUpForm from './pages/OAuth/SignUpForm.jsx';
 
 
 function App() {
