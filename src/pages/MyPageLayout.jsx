@@ -1,18 +1,15 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { getProfileImage } from "./../util/profile-img";
+// fontawesome: 이모지 적용
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGripLines } from '@fortawesome/free-solid-svg-icons';
 
 const MyPageLayout = ({ children }) => (
 
   <div className="flex h-screen">
     <style>
       {`
-        .text-orange-600 {
-          color: orange;
-        }
-        .text-orange-600:hover, .text-orange-600.active {
-          color: orange;
-        }
         .active {
           color: orange;  
         }
@@ -33,28 +30,31 @@ const MyPageLayout = ({ children }) => (
           <li className="my-2">
             <NavLink
               to="/MySettings"
-              className="text-black hover:text-orange-600"
+              className="text-black hover:text-orange-300"
               activeClassName="text-orange-600"
             >
+              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />
               내 동네 설정
             </NavLink>
           </li>
           <li className="my-2">
             <NavLink
-              to="/MyTown"
-              className="text-black hover:text-orange-600"
+              to="/MyHistory"
+              className="text-black hover:text-orange-300"
               activeClassName="text-orange-600"
             >
-              동네 인증하기
+              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />
+              내 작성글
             </NavLink>
           </li>
           <li className="my-2">
             <NavLink
-              to="/MyHistory"
-              className="text-black hover:text-orange-600"
+              to="/MyReview"
+              className="text-black hover:text-orange-300"
               activeClassName="text-orange-600"
             >
-              모아보기
+              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />              
+              내 거래 내역
             </NavLink>
           </li>
         </ul>
@@ -63,18 +63,20 @@ const MyPageLayout = ({ children }) => (
           <li className="my-2">
             <NavLink
               to="/MyInformation"
-              className="text-black hover:text-orange-600"
+              className="text-black hover:text-orange-300"
               activeClassName="text-orange-600"
             >
+              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />
               회원 정보 수정
             </NavLink>
           </li>
           <li className="my-2">
             <NavLink
               to="/MembershipWithdrawal"
-              className="text-black hover:text-orange-600"
+              className="text-black hover:text-orange-300"
               activeClassName="text-orange-600"
             >
+              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />
               회원 탈퇴
             </NavLink>
           </li>
@@ -84,9 +86,10 @@ const MyPageLayout = ({ children }) => (
           <li className="my-2">
             <NavLink
               to="/CustomerService"
-              className="text-black hover:text-orange-600"
+              className="text-black hover:text-orange-300"
               activeClassName="text-orange-600"
             >
+              <FontAwesomeIcon icon={faGripLines} style={{ marginRight: '0.5rem' }} />
               1:1 문의
             </NavLink>
           </li>

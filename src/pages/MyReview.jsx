@@ -1,17 +1,17 @@
-// 내 작성글 보기
-// src/pages/MyHistory.jsx
+// 내 거래 내역 보기
+// src/pages/MyReview.jsx
 
 import { useParams } from "react-router-dom";
 import MyPageLayout from "./MyPageLayout";
 import { useState } from "react";
 
-const MyHistory = () => {
+const MyReview = () => {
   const [activeTab, setActiveTab] = useState("walk"); // 기본 선택 탭 설정
 
   // 게시글 데이터 예시
   const [posts, setPosts] = useState([
-    { id: 1, title: "산책", content: "산책 게시글 내용", date: "2024-06-21 10:00" },
-    { id: 2, title: "알바", content: "알바 게시글 내용", date: "2024-06-20 15:30" },
+    { id: 1, title: "산책", member: "상대 회원 닉네임", review: "작성 완료", date: "2024-06-21 10:00" },
+    { id: 2, title: "알바", member: "상대 회원 닉네임", review: "리뷰 남기기", date: "2024-06-20 15:30" },
   ]);
 
   const handleTabClick = (tab) => {
@@ -19,19 +19,19 @@ const MyHistory = () => {
     // 각 탭에 따른 게시글 설정
     if (tab === "walk") {
       setPosts([
-        { id: 1, title: "산책", content: "산책 게시글 내용", date: "2024-06-21 10:00" },
+        { id: 1, title: "산책", member: "상대 회원 닉네임", review: "작성 완료", date: "2024-06-21 10:00" },
       ]);
     } else if (tab === "partTimeJob") {
       setPosts([
-        { id: 2, title: "알바", content: "알바 게시글 내용", date: "2024-06-20 15:30" },
+        { id: 2, title: "알바", member: "상대 회원 닉네임", review: "리뷰 남기기", date: "2024-06-20 15:30" },
       ]);
     }
   };
-  
+
   return (
     <MyPageLayout>
       <div className="flex flex-col">
-        <h1 className="text-2xl font-bold mb-4 mr-4">작성글 내역</h1>
+        <h1 className="text-2xl font-bold mb-4 mr-4">내 거래 내역</h1>
           <div className="flex">
             <button
               className={`px-4 py-2 rounded-md mr-4 ${
@@ -58,7 +58,10 @@ const MyHistory = () => {
                   제목
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  내용
+                  거래한 회원
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  리뷰 작성
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   작성일/시간
@@ -69,7 +72,8 @@ const MyHistory = () => {
               {posts.map((post) => (
                 <tr key={post.id}>
                   <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{post.content}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{post.member}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{post.review}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{post.date}</td>
                 </tr>
               ))}
@@ -79,5 +83,6 @@ const MyHistory = () => {
       </div>
     </MyPageLayout>
   );
-};
-export default MyHistory;
+}
+
+export default MyReview;

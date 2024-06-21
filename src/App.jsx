@@ -9,7 +9,7 @@ import Notfound from './components/Notfound'
 import MyPage from './pages/MyPage';
 import MyHistory from './pages/MyHistory';
 import MySettings from "./pages/MySettings"
-import MyTown from './pages/MyTown';
+import MyReview from './pages/MyReview';
 import MembershipWithdrawal from "./pages/MembershipWithdrawal";
 import CustomerService from "./pages/CustomerService";
 import MyInformation from './pages/MyInformation';
@@ -29,7 +29,7 @@ function App() {
           <Route path="*" element={<Notfound />} />
           <Route path="/MyPage" element={<MyPage />} />
           <Route path="/MyHistory" element={<MyHistory />} />
-          <Route path="/MyTown" element={<MyTown />} />
+          <Route path="MyReview" element={<MyReview />} />
           <Route path="/MyInformation" element={<MyInformation />} />
           <Route path="/CustomerService" element={<CustomerService />} />
           <Route path="/MySettings" element={<MySettings />} />

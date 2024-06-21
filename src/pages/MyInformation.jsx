@@ -7,8 +7,8 @@ import MyPageLayout from "./MyPageLayout";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-// 회원정보 저장 후 띄울 모달창
 const MyInformation = () => {
+  // 회원정보 저장 후 띄울 모달창
   const MySwal = withReactContent(Swal);
 
   const handleSubmit = (e) => {
@@ -22,7 +22,7 @@ const MyInformation = () => {
 
   return (
     <MyPageLayout>
-      <div>
+      <div className="max-h-screen overflow-y-auto p-4">
         <h1 className="text-2xl font-bold mb-4">내 정보 수정</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -43,11 +43,24 @@ const MyInformation = () => {
             </div>
           </div>
           <div className="mb-4">
+            <label className="block mb-1">닉네임</label>
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                name="nickname"
+                className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              />
+              <button className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
+                중복확인
+              </button>
+            </div>
+          </div>
+          <div className="mb-4">
             <label className="block mb-1">아이디</label>
             <div className="flex space-x-2">
               <input
                 type="text"
-                name="username"
+                name="userid"
                 className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
               <button className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
@@ -84,6 +97,19 @@ const MyInformation = () => {
             />
           </div>
           <div className="mb-4">
+            <label className="block mb-1">주소</label>
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                name="address"
+                className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              />
+              <button className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
+                검색
+              </button>
+            </div>
+          </div>
+          <div className="mb-4">
             <label className="block mb-1">생년월일</label>
             <input
               type="date"
@@ -102,12 +128,14 @@ const MyInformation = () => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md hover:bg-yellow-700"
+              className="px-4 py-2 bg-[#43312A] text-white rounded-md hover:bg-yellow-700"
             >
               저장
             </button>
           </div>
         </form>
+        {/* 페이지 하단에 여백주기 */}
+        <div className="mt-8 pb-8"></div> 
       </div>
     </MyPageLayout>
   );
