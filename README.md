@@ -12,4 +12,4 @@
 - 라우팅 처리: React Router
 - UI 컴포넌트 라이브러리: TailwindCSS, Styled-component 
 - 리액트 컴포넌트 테스팅 라이브러리: react-testing-library
-- 폼 처리: Formik, React Hook Form
+- 폼 처리: Formik, React Hook Form  
