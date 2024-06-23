@@ -81,6 +81,7 @@
 }
 
 .new-post-container .image-upload-button {
+  width: 80px;
   padding: 10px;
   background-color: #007bff;
   color: #fff;
@@ -98,6 +99,7 @@
 .image-preview-container {
   display: flex;
   margin-left: 10px;
+  flex-wrap: wrap; /* 요소들이 넘치면 줄 바꿈하여 배치 */
 }
 
 .image-preview {

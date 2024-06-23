@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import KakaoMap from '../../modules/Kakao';
 import './NewPostForm.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
   const [priceType, setPriceType] = useState('시급');
   const [priceProposal, setPriceProposal] = useState(false);
-  const [price, setPrice] = useState('');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
@@ -15,14 +16,19 @@ const NewPostForm = () => {
   const [images, setImages] = useState([]);
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImages([...images, reader.result]);
-      };
-      reader.readAsDataURL(file);
-    }
+    const files = Array.from(e.target.files);
+    const newImages = files.map((file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(newImages).then((results) => {
+      setImages([...images, ...results]);
+    });
   };
 
   const handleSubmit = (event) => {
@@ -34,16 +40,21 @@ const NewPostForm = () => {
     setLocation(address);
   };
 
+  const handlePriceTypeClick = (type) => {
+    setPriceType(type);
+  };
+
   return (
     <div className="new-post-container">
       <div className="image-upload">
         <label htmlFor="image-upload" className="image-upload-button">
-          사진 이미지
+          <FontAwesomeIcon icon={faCamera} style={{ height: '100%' }} />
         </label>
         <input
           type="file"
           id="image-upload"
           accept="image/*"
+          multiple
           onChange={handleImageUpload}
           style={{ display: 'none' }}
         />
@@ -68,21 +79,31 @@ const NewPostForm = () => {
           placeholder="제목을 입력하세요."
           required
         />
-        <label htmlFor="priceType">가격 종류:</label>
-        <button type="button" className="btn-price-hour">
-          시급
-        </button>
-        <button type="button" className="btn-price-day">
-          일급
-        </button>
-        <label>
-          <input
-            type="checkbox"
-            checked={priceProposal}
-            onChange={(e) => setPriceProposal(e.target.checked)}
-          />
-          가격 제안 받기
-        </label>
+        <label htmlFor="priceType">가격:</label>
+        <div className="price-buttons">
+          <button
+            type="button"
+            className={`btn-price ${priceType === '시급' ? 'selected' : ''}`}
+            onClick={() => handlePriceTypeClick('시급')}
+          >
+            시급
+          </button>
+          <button
+            type="button"
+            className={`btn-price ${priceType === '일급' ? 'selected' : ''}`}
+            onClick={() => handlePriceTypeClick('일급')}
+          >
+            일급
+          </button>
+          <label>
+            <input
+              type="checkbox"
+              checked={priceProposal}
+              onChange={(e) => setPriceProposal(e.target.checked)}
+            />
+            가격 제안 받기
+          </label>
+        </div>
         <label htmlFor="price">금액:</label>
         <input
           type="price"
@@ -124,8 +145,9 @@ const NewPostForm = () => {
         />
         <label htmlFor="location">만나는 장소:</label>
         <div className="location-container">
-          <input type="text" id="location" value={location} readOnly />
           <KakaoMap onSelectPlace={handlePlaceSelect} />
+          <input type="text" id="location" value={location} readOnly />
+          <input type="text" placeholder="상세주소를 입력하세요." />
         </div>
         <button type="submit" className="submit-button">
           작성 완료
