@@ -4,10 +4,12 @@ import './NewPostForm.css';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
-  const [priceType, setPriceType] = useState('일급');
+  const [priceType, setPriceType] = useState('시급');
   const [priceProposal, setPriceProposal] = useState(false);
+  const [price, setPrice] = useState('');
   const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
   const [images, setImages] = useState([]);
@@ -36,7 +38,7 @@ const NewPostForm = () => {
     <div className="new-post-container">
       <div className="image-upload">
         <label htmlFor="image-upload" className="image-upload-button">
-          첨부 이미지
+          사진 이미지
         </label>
         <input
           type="file"
@@ -63,17 +65,16 @@ const NewPostForm = () => {
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          placeholder="제목을 입력하세요."
           required
         />
         <label htmlFor="priceType">가격 종류:</label>
-        <select
-          id="priceType"
-          value={priceType}
-          onChange={(e) => setPriceType(e.target.value)}
-        >
-          <option value="일급">일급</option>
-          <option value="시급">시급</option>
-        </select>
+        <button type="button" className="btn-price-hour">
+          시급
+        </button>
+        <button type="button" className="btn-price-day">
+          일급
+        </button>
         <label>
           <input
             type="checkbox"
@@ -82,6 +83,12 @@ const NewPostForm = () => {
           />
           가격 제안 받기
         </label>
+        <label htmlFor="price">금액:</label>
+        <input
+          type="price"
+          className="price"
+          placeholder="금액을 입력하세요."
+        ></input>
         <label htmlFor="date">날짜 및 시간:</label>
         <input
           type="date"
@@ -90,13 +97,22 @@ const NewPostForm = () => {
           onChange={(e) => setDate(e.target.value)}
           required
         />
-        <input
-          type="text"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-          placeholder="시간"
-          required
-        />
+        <div className="time-container">
+          <input
+            type="time"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            required
+          />
+          <span>~</span>
+          <input
+            type="time"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            required
+          />
+        </div>
+
         <label htmlFor="content">내용:</label>
         <textarea
           id="content"
