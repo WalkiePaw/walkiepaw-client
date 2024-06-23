@@ -28,6 +28,10 @@ const NewPostForm = () => {
     // 작성 완료 버튼 처리 로직 추가
   };
 
+  const handlePlaceSelect = (address) => {
+    setLocation(address);
+  };
+
   return (
     <div className="new-post-container">
       <div className="image-upload">
@@ -105,7 +109,7 @@ const NewPostForm = () => {
         <label htmlFor="location">만나는 장소:</label>
         <div className="location-container">
           <input type="text" id="location" value={location} readOnly />
-          <KakaoMap />
+          <KakaoMap onSelectPlace={handlePlaceSelect} />
         </div>
         <button type="submit" className="submit-button">
           작성 완료

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import './Kakao.css'; // Add this line to import the CSS file
 
 const KakaoMap = ({ onSelectPlace }) => {
   const mapRef = useRef(null);
@@ -44,7 +45,7 @@ const KakaoMap = ({ onSelectPlace }) => {
     }
 
     const ps = new window.kakao.maps.services.Places();
-    ps.keywordSearch(keyword, placesSearchCB);
+    ps.keywordSearch(keyword, placesSearchCB, { size: 5 });
   };
 
   const placesSearchCB = (data, status, pagination) => {
@@ -79,6 +80,10 @@ const KakaoMap = ({ onSelectPlace }) => {
 
       window.kakao.maps.event.addListener(marker, 'mouseout', () => {
         infowindow.close();
+      });
+
+      window.kakao.maps.event.addListener(marker, 'click', () => {
+        onSelectPlace(place.road_address_name || place.address_name);
       });
 
       itemEl.onmouseover = () => {
@@ -131,7 +136,7 @@ const KakaoMap = ({ onSelectPlace }) => {
 
   const getListItem = (index, place) => {
     const el = document.createElement('li');
-    el.className = 'item';
+    el.className = 'item'; // Add this class for styling
     el.innerHTML = `
       <span class="markerbg marker_${index + 1}"></span>
       <div class="info">
@@ -220,14 +225,9 @@ const KakaoMap = ({ onSelectPlace }) => {
       </div>
       <ul
         id="placesList"
-        style={{
-          listStyleType: 'none',
-          padding: '10px',
-          maxHeight: '300px',
-          overflowY: 'auto',
-        }}
+        className="places-list" // Add this class for styling
       ></ul>
-      <div id="pagination"></div>
+      <div id="pagination" className="pagination"></div>
     </div>
   );
 };
