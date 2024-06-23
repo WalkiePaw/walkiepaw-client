@@ -96,15 +96,44 @@
   background-color: #0056b3;
 }
 
+.image-slider {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+  margin-left: 44px;
+}
+
 .image-preview-container {
   display: flex;
-  margin-left: 10px;
-  flex-wrap: wrap; /* 요소들이 넘치면 줄 바꿈하여 배치 */
+  flex-wrap: nowrap;
+  overflow: hidden;
+  width: 100%;
 }
 
 .image-preview {
-  width: 100px;
+  border: 1px solid;
+  width: 30%;
   height: 100px;
   object-fit: cover;
-  margin-right: 10px;
+  margin: 0 5px;
+}
+.image-slider button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: #007bff;
+  padding: 10px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.image-slider .prev-button {
+  left: 0;
+}
+
+.image-slider .next-button {
+  right: 0;
 }

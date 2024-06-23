@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import KakaoMap from '../../modules/Kakao';
 import './NewPostForm.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCamera,
+  faChevronLeft,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
@@ -14,6 +18,7 @@ const NewPostForm = () => {
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
   const [images, setImages] = useState([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -29,6 +34,18 @@ const NewPostForm = () => {
     Promise.all(newImages).then((results) => {
       setImages([...images, ...results]);
     });
+  };
+
+  const handleNextSlide = () => {
+    setCurrentSlide((prevSlide) =>
+      prevSlide === Math.floor((images.length - 1) / 4) ? 0 : prevSlide + 1
+    );
+  };
+
+  const handlePrevSlide = () => {
+    setCurrentSlide((prevSlide) =>
+      prevSlide === 0 ? Math.floor((images.length - 1) / 4) : prevSlide - 1
+    );
   };
 
   const handleSubmit = (event) => {
@@ -58,16 +75,28 @@ const NewPostForm = () => {
           onChange={handleImageUpload}
           style={{ display: 'none' }}
         />
-        <div className="image-preview-container">
-          {images.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`Uploaded Preview ${index}`}
-              className="image-preview"
-            />
-          ))}
-        </div>
+        {images.length > 0 && (
+          <div className="image-slider">
+            <button className="prev-button" onClick={handlePrevSlide}>
+              <FontAwesomeIcon icon={faChevronLeft} />
+            </button>
+            <div className="image-preview-container">
+              {images
+                .slice(currentSlide * 4, currentSlide * 4 + 4)
+                .map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Uploaded Preview ${index}`}
+                    className="image-preview"
+                  />
+                ))}
+            </div>
+            <button className="next-button" onClick={handleNextSlide}>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+          </div>
+        )}
       </div>
       <form onSubmit={handleSubmit} className="new-post-form">
         <label htmlFor="title">제목:</label>
