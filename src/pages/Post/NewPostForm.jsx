@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './NewPostForm.css';
-import KakaoMap from '../../moduels/Kakao';
+import KakaoMap from '../../modules/Kakao';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');

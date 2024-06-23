@@ -1,7 +1,6 @@
 // 내 정보 수정
 // src/pages/MyInformation.jsx
 
-import { useParams } from "react-router-dom";
 import MyPageLayout from "./MyPageLayout";
 // 팝업창, 모달: sweetalert 적용
 import Swal from 'sweetalert2';
@@ -50,7 +49,7 @@ const MyInformation = () => {
                 name="nickname"
                 className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
-              <button className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
+              <button type="button" className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
                 중복확인
               </button>
             </div>
@@ -63,16 +62,16 @@ const MyInformation = () => {
                 name="userid"
                 className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
-              <button className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
+              <button type="button" className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
                 중복확인
               </button>
             </div>
           </div>
           <div className="mb-4">
             <label className="block mb-1">비밀번호</label>
-            <button className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
-                비밀번호 변경
-              </button>
+            <button type="button" className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
+              비밀번호 변경
+            </button>
           </div>
           <div className="mb-4">
             <label className="block mb-1">이메일 주소</label>
@@ -83,7 +82,7 @@ const MyInformation = () => {
                 placeholder="xxxx@xxxx.com"
                 className="w-2/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
-              <button className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
+              <button type="button" className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
                 인증
               </button>
             </div>
@@ -104,7 +103,7 @@ const MyInformation = () => {
                 name="address"
                 className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
-              <button className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
+              <button type="button" className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none">
                 검색
               </button>
             </div>

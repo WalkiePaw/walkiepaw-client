@@ -1,5 +1,5 @@
-import BoardList from './page/BoardList/BoardList';
-import Home from './page/Home/Home';
+import BoardList from './pages/BoardList/BoardList';
+import Home from './pages/Home/Home';
 import Layout from './Layout';
 import "./App.css";
 import styled from 'styled-components';
@@ -12,7 +12,7 @@ import MyReview from './pages/MyReview';
 import MembershipWithdrawal from "./pages/MembershipWithdrawal";
 import CustomerService from "./pages/CustomerService";
 import MyInformation from './pages/MyInformation';
-import NewPostForm from './page/Post/NewPostForm';
+import NewPostForm from './pages/Post/NewPostForm';
 import Login from './pages/Login';
 import SignUpForm from './pages/SignUpForm';
 
