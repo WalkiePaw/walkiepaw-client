@@ -3,11 +3,7 @@ import styled from 'styled-components';
 import UserButton from "../../components/UserButton.jsx";
 import AuthTemplate from "../../components/OAuth/AuthTemplate";
 import AddressModal from "../../components/OAuth/AddressModal";
-import React, { useState,  useEffect } from "react";
-
-/**
- * 회원가입 폼을 담당하는 컴포넌트
- */
+import React, { useState, useEffect } from "react";
 
 const Label = styled.label`
   margin-bottom: 0.1rem;
@@ -21,8 +17,8 @@ const Form = styled.form`
   flex-direction: column;
   gap: 1rem;
   padding: 0 1rem;
-  max-width: 500px; // 폼의 최대 너비 설정
-  margin: 0 auto; // 폼을 중앙에 배치
+  max-width: 500px;
+  margin: 0 auto;
 `;
 
 const InputGroup = styled.div`
@@ -53,7 +49,7 @@ const Button = styled.button`
   background-color: #E8C5A5;
   border: none;
   border-radius: 5px;
-  white-space: nowrap; // 버튼의 텍스트가 줄바꿈되지 않도록 설정
+  white-space: nowrap;
   cursor: pointer;
   font-size: 1rem;
   color: white;
@@ -77,28 +73,32 @@ const ErrorMessage = styled.span`
 const SignUpForm = () => {
   const { register, handleSubmit, formState: { errors }, watch, setValue, trigger, clearErrors } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [address, setAddress] = useState("");
 
   const onSubmit = async (data) => {
     console.log(data);
-    // 여기서 서버로 데이터를 전송하거나 다른 로직을 실행할 수 있습니다.
   };
 
   const handleSignUp = async () => {
-    const result = await trigger(); // 모든 필드의 유효성 검사 실행
+    const result = await trigger();
     if (result) {
       handleSubmit(onSubmit)();
     } else {
-      // 유효성 검사 실패 시 에러 메시지를 표시하기 위해 모든 필드를 다시 검증
       Object.keys(register).forEach(fieldName => {
         trigger(fieldName);
       });
     }
   };
 
+  const handleAddressSearch = () => {
+    setIsModalOpen(true);
+  };
 
-  const handleAddressComplete = (address) => {
-    setValue('address', address);
+  const handleAddressComplete = (newAddress) => {
+    setValue('address', newAddress);
+    setAddress(newAddress);
     clearErrors('address');
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -110,7 +110,6 @@ const SignUpForm = () => {
 
     return () => subscription.unsubscribe();
   }, [watch, trigger]);
-
 
   return (
       <AuthTemplate>
@@ -145,7 +144,6 @@ const SignUpForm = () => {
               })}
           />
           {errors.passwordConfirm && <ErrorMessage>{errors.passwordConfirm.message}</ErrorMessage>}
-
 
           <Label htmlFor="name">이름</Label>
           <Input
@@ -186,13 +184,18 @@ const SignUpForm = () => {
           <InputGroup>
             <Input
                 type="text"
-                placeholder="주소"
+                placeholder="주소를 검색해주세요"
+                readOnly={true}
+                value={address}
                 {...register("address", { required: "주소는 필수 입력 사항입니다." })}
             />
-            <Button type="button" onClick={() => setIsModalOpen(true)}>주소검색</Button>
+            <Button type="button" onClick={handleAddressSearch}>
+              {address ? "주소 재검색" : "주소 검색"}
+            </Button>
           </InputGroup>
           {errors.address && <ErrorMessage>{errors.address.message}</ErrorMessage>}
 
+          <Label htmlFor="introduction">소개</Label>
           <TextArea
               placeholder="자기소개"
               rows="4"
