@@ -1,3 +1,4 @@
+// src/component/CardList/CardList
 import React, { useState } from 'react';
 import './CardList.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

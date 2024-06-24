@@ -1,5 +1,6 @@
+// src/pages/Post/NewPostForm
 import React, { useState } from 'react';
-import KakaoMap from '../../modules/Kakao';
+import KakaoMap from '../../../modules/Kakao';
 import './NewPostForm.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -7,18 +8,21 @@ import {
   faChevronLeft,
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
   const [priceType, setPriceType] = useState('시급');
   const [priceProposal, setPriceProposal] = useState(false);
-  const [date, setDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const [price, setPrice] = useState('');
+  const [dateTimeStart, setDateTimeStart] = useState('');
+  const [dateTimeEnd, setDateTimeEnd] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
   const [images, setImages] = useState([]);
+  const [detailedLocation, setDetailedLocation] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -50,7 +54,29 @@ const NewPostForm = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // 작성 완료 버튼 처리 로직 추가
+
+    const newPost = {
+      // id: Data.now(), // 유니크한 ID 생성 (임시로 Date.now() 사용)
+      title,
+      priceType,
+      priceProposal,
+      price,
+      dateTimeStart,
+      dateTimeEnd,
+      content,
+      location,
+      detailedLocation,
+      images,
+      memberId: 'MJ', // 임시 값, 실제 구현 시 로그인 사용자의 ID 또는 유니크한 식별자로 대체해야 함
+    };
+
+    const storedPosts = JSON.parse(localStorage.getItem('posts')) || [];
+    storedPosts.push(newPost);
+    localStorage.setItem('posts', JSON.stringify(storedPosts));
+
+    alert('게시글이 저장되었습니다.');
+
+    navigate('/board-list');
   };
 
   const handlePlaceSelect = (address) => {
@@ -139,26 +165,21 @@ const NewPostForm = () => {
           className="price"
           placeholder="금액을 입력하세요."
         ></input>
-        <label htmlFor="date">날짜 및 시간:</label>
-        <input
-          type="date"
-          id="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          required
-        />
-        <div className="time-container">
+        <label htmlFor="dateTimeStart">시작 날짜 및 시간:</label>
+        <div className="datetime-container">
           <input
-            type="time"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
+            type="datetime-local"
+            id="dateTimeStart"
+            value={dateTimeStart}
+            onChange={(e) => setDateTimeStart(e.target.value)}
             required
           />
           <span>~</span>
           <input
-            type="time"
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
+            type="datetime-local"
+            id="dateTimeEnd"
+            value={dateTimeEnd}
+            onChange={(e) => setDateTimeEnd(e.target.value)}
             required
           />
         </div>
