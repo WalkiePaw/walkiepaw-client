@@ -1,7 +1,6 @@
 // src/pages/MyTown.jsx
 
 import { useState } from "react";
-import MyPageLayout from "./MyPageLayout";
 
 const MyTown = () => {
   const [selectedRegion, setSelectedRegion] = useState(""); 
@@ -55,7 +54,6 @@ const MyTown = () => {
   };
 
   return (
-    <MyPageLayout>
       <div>
         <h1 className="font-bold text-2xl mb-4">지역 선택</h1>
 
@@ -121,7 +119,6 @@ const MyTown = () => {
           </p>
         )}
       </div>
-    </MyPageLayout>
   );
 }
 
