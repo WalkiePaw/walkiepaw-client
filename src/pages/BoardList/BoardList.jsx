@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import CardList from '../../components/CardList/CardList';
 import './BoardList.css';
 import { Link, useNavigate } from 'react-router-dom';
-import PostView from '../PostView/PostView';
 import axios from 'axios';
+import MyTown from '../MyTown/MyTown';
 
 const BoardList = () => {
   const [posts, setPosts] = useState([
@@ -64,6 +64,7 @@ const BoardList = () => {
         </h1>
         <img src="img/dog3.jpg" className="listTop-img" alt="반려견 산책" />
       </div>
+      <MyTown />
       <div className="board-list">
         {posts.length > 0 ? (
           posts
