@@ -159,28 +159,25 @@ const ModifyPostForm = () => {
           onChange={(e) => setPost({ ...post, price: e.target.value })}
           placeholder="금액을 입력하세요."
         ></input>
-        <label htmlFor="date">날짜 및 시간:</label>
-        <input
-          type="date"
-          id="date"
-          value={post.date}
-          onChange={(e) => setPost({ ...post, date: e.target.value })}
-          required
-        />
-        <div className="time-container">
-          <input
-            type="time"
-            value={post.startTime}
-            onChange={(e) => setPost({ ...post, startTime: e.target.value })}
-            required
-          />
-          <span>~</span>
-          <input
-            type="time"
-            value={post.endTime}
-            onChange={(e) => setPost({ ...post, endTime: e.target.value })}
-            required
-          />
+        <div className="datetime-container">
+          <label htmlFor="startDate">날짜 및 시간:</label>
+          <div className="datetime-inputs">
+            <input
+              type="datetime-local"
+              id="startDate"
+              value={post.startDate}
+              onChange={(e) => setPost({ ...post, startDate: e.target.value })}
+              required
+            />
+            <span> ~ </span>
+            <input
+              type="datetime-local"
+              id="endDate"
+              value={post.endDate}
+              onChange={(e) => setPost({ ...post, endDate: e.target.value })}
+              required
+            />
+          </div>
         </div>
 
         <label htmlFor="content">내용:</label>

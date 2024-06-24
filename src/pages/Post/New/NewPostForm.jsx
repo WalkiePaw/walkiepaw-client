@@ -165,7 +165,7 @@ const NewPostForm = () => {
           className="price"
           placeholder="금액을 입력하세요."
         ></input>
-        <label htmlFor="dateTimeStart">시작 날짜 및 시간:</label>
+        <label htmlFor="dateTimeStart">날짜 및 시간:</label>
         <div className="datetime-container">
           <input
             type="datetime-local"
