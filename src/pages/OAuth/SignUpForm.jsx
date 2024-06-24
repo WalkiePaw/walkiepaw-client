@@ -199,16 +199,12 @@ const SignUpForm = () => {
           <TextArea
               placeholder="자기소개"
               rows="4"
-              {...register("introduction", { required: "자기소개는 필수 입력 사항입니다." })}
           />
-          {errors.introduction && <ErrorMessage>{errors.introduction.message}</ErrorMessage>}
 
           <Label htmlFor="profilePicture">프로필 사진</Label>
           <Input
               type="file"
-              {...register("profilePicture", { required: "프로필 사진은 필수 입력 사항입니다." })}
           />
-          {errors.profilePicture && <ErrorMessage>{errors.profilePicture.message}</ErrorMessage>}
 
         </Form>
         <ButtonContainer>
