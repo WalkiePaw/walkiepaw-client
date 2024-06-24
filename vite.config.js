@@ -25,4 +25,8 @@ export default defineConfig({
       },
     },
   },
+  assetsInclude: ['**/*.ttf'],
+  css: {
+    postcss: './postcss.config.js',
+  },
 });

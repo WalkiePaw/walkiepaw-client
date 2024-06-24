@@ -14,6 +14,7 @@ const HeaderContainer = styled.header`
   z-index: 50;
   background-color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: 'TTLaundryGothicB';
 
   .container {
     display: flex;
