@@ -129,7 +129,13 @@ const SignUpForm = () => {
           <Input
               type="password"
               placeholder="비밀번호"
-              {...register("password", { required: "비밀번호는 필수 입력 사항입니다." })}
+              {...register("password", {
+                required: "비밀번호는 필수 입력 사항입니다.",
+                minLength: {
+                  value: 8,
+                  message: "비밀번호는 8자 이상이어야 합니다."
+                }
+              })}
           />
           {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
 
@@ -164,11 +170,11 @@ const SignUpForm = () => {
           </InputGroup>
           {errors.nickname && <ErrorMessage>{errors.nickname.message}</ErrorMessage>}
 
-          <Label htmlFor="phone">전화번호</Label>
+          <Label htmlFor="tel">전화번호</Label>
           <Input
               type="tel"
               placeholder="전화번호는 숫자로만 입력해주세요('-'제외)"
-              {...register("phone", { required: "전화번호는 필수 입력 사항입니다." })}
+              {...register("tel", { required: "전화번호는 필수 입력 사항입니다." })}
           />
           {errors.phone && <ErrorMessage>{errors.phone.message}</ErrorMessage>}
 

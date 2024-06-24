@@ -1,4 +1,3 @@
-// src/components/AddressModal.jsx
 import React from 'react';
 import { Modal } from 'antd';
 import DaumPostcode from 'react-daum-postcode';
@@ -12,7 +11,7 @@ const AddressModal = ({ visible, onClose, onComplete }) => {
   return (
       <Modal
           title="주소 검색"
-          visible={visible}
+          open={visible}  // 'visible' 대신 'open' 사용
           onCancel={onClose}
           footer={null}
           centered
