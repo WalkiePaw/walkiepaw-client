@@ -14,6 +14,7 @@ const HeaderContainer = styled.header`
   z-index: 50;
   background-color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: 'TTLaundryGothicB';
 
   .container {
     display: flex;
@@ -114,42 +115,41 @@ const Header = ({ children }) => {
           <img src={logo} alt="Logo" />
         </NavLink>
 
-        <nav>
-          <Menus>
-            <li>
-              <NavLink to="/hire" activeClassName="active">
-                산책
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/work" activeClassName="active">
-                알바
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/chat" activeClassName="active">
-                채팅
-              </NavLink>
-            </li>
-          </Menus>
-        </nav>
+          <nav>
+            <Menus>
+              <li>
+                <NavLink to="/hire" activeClassName="active">
+                  산책
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/work" activeClassName="active">
+                  알바
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/chatpage" activeClassName="active">
+                  채팅
+                </NavLink>
+              </li>
+            </Menus>
+          </nav>
 
-        {children}
 
-        <div className="buttons">
-          {isLoggedIn ? (
-            <>
-              <img src={default_user} alt="user" />
-              <button onClick={logout}>로그아웃</button>
-            </>
-          ) : (
-            <button>
-              <Link to="/login">로그인</Link>
-            </button>
-          )}
+          <div className="buttons">
+            {isLoggedIn ? (
+                <>
+                  <img src={default_user} alt="user" />
+                  <button onClick={logout}>로그아웃</button>
+                </>
+            ) : (
+                <button>
+                  <Link to="/login">로그인</Link>
+                </button>
+            )}
+          </div>
         </div>
-      </div>
-    </HeaderContainer>
+      </HeaderContainer>
   );
 };
 

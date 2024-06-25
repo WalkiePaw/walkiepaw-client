@@ -14,7 +14,6 @@ import MembershipWithdrawal from './pages/MyPage/MembershipWithdrawal';
 import MyInformation from './pages/MyPage/MyInformation';
 import NewPostForm from './pages/Post/New/NewPostForm';
 import Login from './pages/Login';
-import SignUpForm from './pages/SignUpForm';
 import Dashboard from '/src/pages/Dashboard/Dashboard';
 import PostList from '/src/pages/Dashboard/PostList';
 import Review from '/src/pages/Dashboard/Review';
@@ -25,6 +24,9 @@ import ModifyPostForm from './pages/Post/Modify/ModifyPostForm';
 
 import CustomerService from './pages/MyPage/CustomerService';
 import PostView from './pages/PostView/PostView';
+import SignUpForm from './pages/OAuth/SignUpForm.jsx';
+import ChatPage from "./pages/chatroom/ChatPage.jsx";
+
 
 function App() {
   const nav = useNavigate();
@@ -55,6 +57,7 @@ function App() {
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
           <Route path="login" element={<Login />} />
           <Route path="signupform" element={<SignUpForm />} />
+          <Route path="chatpage" element={<ChatPage />} />
           <Route path="post/:postId" element={<PostView />} />
 
           <Route path="/dashboard" element={<Dashboard />}>

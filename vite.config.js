@@ -11,6 +11,14 @@ export default defineConfig({
       exclude: [],
     }),
   ],
+  resolve: {
+    alias: {
+      '@': '/src', // 필요에 따라 프로젝트 내 경로로 변경
+    },
+  },
+  optimizeDeps: {
+    include: ['@sendbird/uikit-react']
+  },
   server: {
     proxy: {
       '/api': {
@@ -19,5 +27,9 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
+  },
+  assetsInclude: ['**/*.ttf'],
+  css: {
+    postcss: './postcss.config.js',
   },
 });
