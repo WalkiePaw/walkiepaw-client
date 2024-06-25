@@ -5,38 +5,50 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import MyTown from '../MyTown/MyTown';
 
+const testData = [
+  {
+    id: 1,
+    title: '골댕이 산책 시켜주실 분 구해요.',
+    local: '역삼동',
+    image: 'img/dog1.jpg',
+    memberId: '산책왕',
+  },
+  {
+    id: 2,
+    title: '제목2',
+    local: '지역2',
+    image: 'https://example.com/image2.jpg',
+    memberId: '아이디2',
+  },
+  {
+    id: 3,
+    title: '제목3',
+    local: '지역3',
+    image: 'https://example.com/image2.jpg',
+    memberId: '아이디3',
+  },
+];
+
+function testApiData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(testData);
+    }, 1000);
+  });
+}
+
 const BoardList = () => {
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: '골댕이 산책 시켜주실 분 구해요.',
-      local: '역삼동',
-      image: 'img/dog1.jpg',
-      memberId: '산책왕',
-    },
-    {
-      id: 2,
-      title: '제목2',
-      local: '지역2',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디2',
-    },
-    {
-      id: 3,
-      title: '제목3',
-      local: '지역3',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디3',
-    },
-  ]);
+  const [posts, setPosts] = useState();
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('/api/posts'); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
-        setPosts(response.data);
+        const response = await testApiData(); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        // const response = await axios.get('/api/posts'); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        console.log(response);
+        setPosts(response ?? []);
       } catch (error) {
         console.error('Failed to fetch posts', error);
       }
@@ -66,21 +78,18 @@ const BoardList = () => {
       </div>
       <MyTown />
       <div className="board-list">
-        {posts.length > 0 ? (
-          posts
-            .slice()
-            .reverse()
-            .map((post) => (
-              <div key={post.id} onClick={() => handlePostClick(post)}>
-                <CardList
-                  title={post.title}
-                  local={post.local}
-                  image={post.image}
-                  memberId={post.memberId}
-                  onCardClick={() => handlePostClick(post)}
-                />
-              </div>
-            ))
+        {posts?.length > 0 ? (
+          posts.reverse().map((post) => (
+            <div key={post.id} onClick={() => handlePostClick(post)}>
+              <CardList
+                title={post.title}
+                local={post.local}
+                image={post.image}
+                memberId={post.memberId}
+                onCardClick={() => handlePostClick(post)}
+              />
+            </div>
+          ))
         ) : (
           <div className="no-posts">게시글이 없습니다.</div>
         )}

@@ -6,13 +6,13 @@ import { faGripLines } from '@fortawesome/free-solid-svg-icons';
 
 const MyPageSidebar = () => (
   <aside className="w-1/4 p-4 bg-gray-100">
-    <div className="text-center mb-4">
+    <div className="text-center mb-3">
       <img
         src={getProfileImage(1)}
         alt="Profile"
         className="w-24 h-24 rounded-full mx-auto bg-gray-300"
       />
-      <div className="mt-2 mb-4 font-bold">홍길동</div>
+      <div className="mt-2 mb-3 font-bold">홍길동</div>
       <div className="p-4 bg-white rounded-lg shadow mb-6">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
