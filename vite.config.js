@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import eslintPlugin from 'vite-plugin-eslint';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 
 export default defineConfig({
   plugins: [
@@ -17,7 +19,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['@sendbird/uikit-react']
+    include: ['@sendbird/uikit-react'],
   },
   server: {
     proxy: {
@@ -30,6 +32,8 @@ export default defineConfig({
   },
   assetsInclude: ['**/*.ttf'],
   css: {
-    postcss: './postcss.config.js',
+    postcss: {
+      plugins: [tailwindcss(), autoprefixer()],
+    },
   },
 });
