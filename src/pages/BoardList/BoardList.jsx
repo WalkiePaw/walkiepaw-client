@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CardList from '../../components/CardList/CardList';
 import './BoardList.css';
-import { Link } from 'react-router-dom';
-import PostView from '../PostView/PostView'; // 경로 수정
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import MyTown from '../MyTown/MyTown';
 
 const BoardList = () => {
-  const [cardDataList, setCardDataList] = useState([
+  const [posts, setPosts] = useState([
     {
       id: 1,
       title: '골댕이 산책 시켜주실 분 구해요.',
@@ -27,93 +28,25 @@ const BoardList = () => {
       image: 'https://example.com/image2.jpg',
       memberId: '아이디3',
     },
-    {
-      id: 4,
-      title: '제목4',
-      local: '지역4',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디4',
-    },
-    {
-      id: 5,
-      title: '제목5',
-      local: '지역5',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디5',
-    },
-    {
-      id: 6,
-      title: '제목6',
-      local: '지역6',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디6',
-    },
-    {
-      id: 7,
-      title: '제목7',
-      local: '지역7',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디7',
-    },
-    {
-      id: 8,
-      title: '제목8',
-      local: '지역8',
-      image: 'https://example.com/image1.jpg',
-      memberId: '아이디8',
-    },
-    {
-      id: 9,
-      title: '제목9',
-      local: '지역9',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디9',
-    },
-    {
-      id: 10,
-      title: '제목10',
-      local: '지역10',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디10',
-    },
-    {
-      id: 11,
-      title: '제목11',
-      local: '지역11',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디11',
-    },
-    {
-      id: 12,
-      title: '제목12',
-      local: '지역12',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디12',
-    },
-    {
-      id: 13,
-      title: '제목13',
-      local: '지역13',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디13',
-    },
-    {
-      id: 14,
-      title: '제목14',
-      local: '지역14',
-      image: 'https://example.com/image2.jpg',
-      memberId: '아이디14',
-    },
   ]);
 
-  const [selectedPost, setSelectedPost] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get('/api/posts'); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        setPosts(response.data);
+      } catch (error) {
+        console.error('Failed to fetch posts', error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   const handlePostClick = (post) => {
-    setSelectedPost(post);
-  };
-
-  const handleClosePostView = () => {
-    setSelectedPost(null);
+    navigate(`/post/${post.id}`, { state: { post } });
   };
 
   const scrollToTop = () => {
@@ -131,21 +64,27 @@ const BoardList = () => {
         </h1>
         <img src="img/dog3.jpg" className="listTop-img" alt="반려견 산책" />
       </div>
+      <MyTown />
       <div className="board-list">
-        {cardDataList
-          .slice()
-          .reverse()
-          .map((cardData) => (
-            <div key={cardData.id} onClick={() => handlePostClick(cardData)}>
-              <CardList
-                title={cardData.title}
-                local={cardData.local}
-                image={cardData.image}
-                memberId={cardData.memberId}
-              />
-            </div>
-          ))}
-        <div className="button-container">
+        {posts.length > 0 ? (
+          posts
+            .slice()
+            .reverse()
+            .map((post) => (
+              <div key={post.id} onClick={() => handlePostClick(post)}>
+                <CardList
+                  title={post.title}
+                  local={post.local}
+                  image={post.image}
+                  memberId={post.memberId}
+                  onCardClick={() => handlePostClick(post)}
+                />
+              </div>
+            ))
+        ) : (
+          <div className="no-posts">게시글이 없습니다.</div>
+        )}
+        <div className="bl-button-container">
           <Link to="/new-post">
             <button className="post-button">글 작성</button>
           </Link>
@@ -154,9 +93,6 @@ const BoardList = () => {
           </button>
         </div>
       </div>
-      {selectedPost && (
-        <PostView post={selectedPost} onClose={handleClosePostView} />
-      )}
     </>
   );
 };

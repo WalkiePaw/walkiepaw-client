@@ -10,11 +10,13 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@chatscope/chat-ui-kit-react": "^2.0.3",
 		"@fortawesome/fontawesome-svg-core": "^6.5.2",
 		"@fortawesome/free-regular-svg-icons": "^6.5.2",
 		"@fortawesome/free-solid-svg-icons": "^6.5.2",
 		"@fortawesome/react-fontawesome": "^0.2.2",
 		"@hookform/resolvers": "^3.6.0",
+		"@sendbird/uikit-react": "^3.14.11",
 		"antd": "^5.18.3",
 		"axios": "^1.7.2",
 		"prop-types": "^15.8.1",
