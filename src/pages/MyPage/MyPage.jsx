@@ -2,17 +2,16 @@
 
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import MyHistory from "../pages/MyHistory";
-import MyInformation from "../pages/MyInformation";
-import MembershipWithdrawal from "../pages/MembershipWithdrawal";
-import CustomerService from "../pages/CustomerService";
-import MySettings from "../pages/MySettings";
+import MyHistory from "./MyHistory";
+import MyInformation from "./MyInformation";
+import MembershipWithdrawal from "./MembershipWithdrawal";
+import CustomerService from "./CustomerService";
+import MySettings from "./MySettings";
 import MyPageLayout from "./MyPageLayout";
 import MyReview from "./MyReview";
 
 const MyPage = () => {
   return (
-    <MyPageLayout>
       <Routes>
         <Route path="/MySettings" element={<MySettings />} />
         <Route path="/MyHistory" element={<MyHistory />} />
@@ -21,7 +20,6 @@ const MyPage = () => {
         <Route path="/MembershipWithdrawal" element={<MembershipWithdrawal />} />
         <Route path="/CustomerService" element={<CustomerService />} />
       </Routes>
-    </MyPageLayout>
   );
 };
 
