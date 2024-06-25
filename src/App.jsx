@@ -12,7 +12,7 @@ import MyReview from './pages/MyPage/MyReview';
 import MembershipWithdrawal from './pages/MyPage/MembershipWithdrawal';
 import CustomerService from './pages/MyPage/CustomerService';
 import MyInformation from './pages/MyPage/MyInformation';
-import NewPostForm from './pages/Post/NewPostForm';
+import NewPostForm from './pages/Post/New/NewPostForm';
 import Login from './pages/Login';
 import Dashboard from '/src/pages/Dashboard/Dashboard';
 import PostList from '/src/pages/Dashboard/PostList';

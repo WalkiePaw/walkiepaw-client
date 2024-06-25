@@ -6,7 +6,7 @@ const MyTown = () => {
   const [location, setLocation] = useState("");
   return (
     <div>
-      <h1 className="font-bold text-2xl mb-4">지역 선택</h1>
+      <h1 className="font-bold text-2xl mb-3">지역 선택</h1>
       <div className="location-container">
         <MyPageKakaoMap setLocation={setLocation} />
       </div>

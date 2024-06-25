@@ -68,9 +68,9 @@ const MyInformation = () => {
 
   return (
       <div className="max-h-screen overflow-y-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">내 정보 수정</h1>
+        <h1 className="text-2xl font-bold mb-">내 정보 수정</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4">
+          <div className="mb-3">
             <label className="block mb-1">이름</label>
             <div className="flex space-x-4">
               <input
@@ -84,7 +84,7 @@ const MyInformation = () => {
             </div>
             {errors.name && <p className="text-red-500">{errors.name.message}</p>}
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <label className="block mb-1">닉네임</label>
             <div className="flex space-x-2">
               <input
@@ -105,7 +105,7 @@ const MyInformation = () => {
             </div>
             {errors.nickname && <p className="text-red-500">{errors.nickname.message}</p>}
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <label className="block mb-1">비밀번호</label>
             <button 
               type="button" 
@@ -113,7 +113,7 @@ const MyInformation = () => {
               비밀번호 변경
             </button>
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <label className="block mb-1">이메일 주소</label>
             <div className="flex space-x-2">
               <input
@@ -129,7 +129,7 @@ const MyInformation = () => {
               </button>
             </div>
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <label className="block mb-1">전화번호</label>
             <input
               type="tel"
@@ -137,11 +137,11 @@ const MyInformation = () => {
               {...register('tel')}
               onChange={handleInputChange}
               placeholder="전화번호는 숫자로만 입력해주세요('-'제외)"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              className="w-2/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
             {errors.tel && <p className="text-red-500">{errors.tel.message}</p>}
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <label className="block mb-1">주소</label>
             <div className="flex space-x-2">
               <input
@@ -149,7 +149,7 @@ const MyInformation = () => {
                 name="address"
                 {...register('address')}
                 onChange={handleInputChange}
-                className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                className="w-2/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
               <button 
                 type="button" 
@@ -160,7 +160,7 @@ const MyInformation = () => {
             </div>
             {errors.address && <p className="text-red-500">{errors.address.message}</p>}
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <label className="block mb-1">생년월일</label>
             <input
               type="date"
@@ -170,7 +170,7 @@ const MyInformation = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <label className="block mb-1">사진</label>
             <input
               type="file"
@@ -178,7 +178,7 @@ const MyInformation = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <label className="block mb-1">소개</label>
             <div className="flex space-x-4">
               <input

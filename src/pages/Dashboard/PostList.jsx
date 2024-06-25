@@ -52,8 +52,8 @@ const [activeTab, setActiveTab] = useState("walk"); // 기본 선택 탭 설정
 
   return (
     <div className="flex flex-col">
-      <h1 className="text-2xl font-bold mb-4 mr-4">작성글 내역</h1>
-      <div className="flex mb-4">
+      <h1 className="text-2xl font-bold mb-3 mr-4">작성글 내역</h1>
+      <div className="flex mb-3 dlomb-4">
         <button
           className={`px-8 py-2 rounded-md mr-4 ${
             activeTab === "walk"

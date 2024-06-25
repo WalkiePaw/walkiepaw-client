@@ -10,7 +10,7 @@ const Sidebar = () => {
   return (
     <div className="w-80 h-screen bg-gray-200 p-4">
       <div className="text-center mb-8">
-        <div className="text-center mb-4">
+        <div className="text-center mb-3">
           <img
             src={getProfileImage(1)}
             alt="Profile"
@@ -19,7 +19,7 @@ const Sidebar = () => {
           <div className="mt-2 font-bold">홍길동</div>
         </div>
       </div>
-      <div className="p-4 bg-white rounded-lg shadow mb-4">
+      <div className="p-4 bg-white rounded-lg shadow mb-5">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-gray-500">산책</div>

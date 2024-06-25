@@ -31,7 +31,7 @@ const CustomerService = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">고객센터</h1>
+      <h1 className="text-2xl font-bold mb-3">고객센터</h1>
       <div className="flex items-center mb-2">
         <FontAwesomeIcon icon={faCircleInfo} className="text-orange-500 mr-2" />
         <h2 className="font-bold">온라인 보안 팁</h2>
@@ -42,7 +42,7 @@ const CustomerService = () => {
       </p>
       <h2 className="text-2xl font-bold mb-6">도움이 필요하신가요?</h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
+        <div className="mb-3">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="title"
@@ -59,7 +59,7 @@ const CustomerService = () => {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-3">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="content"

@@ -35,11 +35,11 @@ const MembershipWithdrawal = () => {
   return (
     <div>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <h1 className="text-2xl font-bold mb-4">
+        <h1 className="text-2xl font-bold mb-3">
           본인 확인을 위해 비밀번호를 다시 입력해주세요 .
           <FontAwesomeIcon icon={faFaceSadTear} className="text-danger mr-2" />
         </h1>
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="block mb-1">비밀번호</label>
           <div className="flex space-x-4">
             <input
@@ -50,7 +50,7 @@ const MembershipWithdrawal = () => {
             />
           </div>
         </div>
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="block mb-1">비밀번호 재입력</label>
           <div className="flex space-x-4">
             <input
@@ -61,7 +61,7 @@ const MembershipWithdrawal = () => {
             />
           </div>
         </div>
-        <div className="mb-4">
+        <div className="mb-3">
           <button
             type="submit"
             className="px-4 py-2 bg-[#43312A] text-white rounded-md focus:outline-none"
