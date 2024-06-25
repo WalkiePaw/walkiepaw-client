@@ -23,6 +23,7 @@ import React from 'react';
 import ModifyPostForm from './pages/Post/Modify/ModifyPostForm';
 import PostView from './pages/PostView/PostView';
 import SignUpForm from './pages/OAuth/SignUpForm.jsx';
+import ChatPage from "./pages/chatroom/ChatPage.jsx";
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
           <Route path="login" element={<Login />} />
           <Route path="signupform" element={<SignUpForm />} />
+          <Route path="chatpage" element={<ChatPage />} />
           <Route path="post/:postId" element={<PostView />} />
 
           <Route path="/dashboard" element={<Dashboard />}>

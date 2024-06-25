@@ -16,6 +16,9 @@ export default defineConfig({
       '@': '/src', // 필요에 따라 프로젝트 내 경로로 변경
     },
   },
+  optimizeDeps: {
+    include: ['@sendbird/uikit-react']
+  },
   server: {
     proxy: {
       '/api': {

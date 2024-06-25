@@ -44,7 +44,7 @@ const TextArea = styled.textarea`
 `;
 
 const Button = styled.button`
-  padding: 0.8rem;
+  padding: 1rem;
   margin-left: 0.5rem;
   background-color: #E8C5A5;
   border: none;
@@ -212,14 +212,15 @@ const SignUpForm = () => {
               type="file"
           />
 
+          <ButtonContainer>
+            <UserButton
+                text="회원가입"
+                className="w-3/4 py-3 rounded-lg transition-colors duration-300 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white mb-4 font-semibold shadow-md"
+                onClick={handleSignUp}
+            />
+          </ButtonContainer>
         </Form>
-        <ButtonContainer>
-          <UserButton
-              text="회원가입"
-              className="w-3/4 py-3 rounded-lg transition-colors duration-300 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white mb-4 font-semibold shadow-md"
-              onClick={handleSignUp}
-          />
-        </ButtonContainer>
+
         <AddressModal
             visible={isModalOpen}
             onClose={() => setIsModalOpen(false)}
