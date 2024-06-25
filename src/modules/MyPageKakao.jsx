@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './Kakao.css'; // Add this line to import the CSS file
+import './MyPageKakao.css'; // Add this line to import the CSS file
 
-const KakaoMap = ({ onSelectPlace }) => {
+const MyPageKakaoMap = ({ onSelectPlace }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [infowindow, setInfowindow] = useState(null);
@@ -225,11 +225,11 @@ const KakaoMap = ({ onSelectPlace }) => {
       </div>
       <ul
         id="placesList"
-        className="places-list" // Add this class for styling
+        className="places-list" 
       ></ul>
-      <div id="pagination" className="pagination"></div>
+      <div id="pagination" className="pagination mt-4"></div>
     </div>
   );
 };
 
-export default KakaoMap;
+export default MyPageKakaoMap;

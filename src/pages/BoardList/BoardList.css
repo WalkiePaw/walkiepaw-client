@@ -44,7 +44,7 @@
   }
 }
 
-.button-container {
+.bl-button-container {
   position: fixed; /* 고정 위치 설정 */
   bottom: 120px; /* 아래쪽에서 20px 떨어짐 */
   right: 20px; /* 오른쪽에서 20px 떨어짐 */
