@@ -1,8 +1,8 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import { getProfileImage } from "./../../util/profile-img";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGripLines } from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { getProfileImage } from './../../util/profile-img';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGripLines } from '@fortawesome/free-solid-svg-icons';
 
 const MyPageSidebar = () => (
   <aside className="w-1/4 p-4 bg-gray-100">
@@ -41,7 +41,7 @@ const MyPageSidebar = () => (
           >
             <FontAwesomeIcon
               icon={faGripLines}
-              style={{ marginRight: "0.5rem" }}
+              style={{ marginRight: '0.5rem' }}
             />
             내 동네 설정
           </NavLink>
@@ -54,7 +54,7 @@ const MyPageSidebar = () => (
           >
             <FontAwesomeIcon
               icon={faGripLines}
-              style={{ marginRight: "0.5rem" }}
+              style={{ marginRight: '0.5rem' }}
             />
             내 작성글
           </NavLink>
@@ -67,7 +67,7 @@ const MyPageSidebar = () => (
           >
             <FontAwesomeIcon
               icon={faGripLines}
-              style={{ marginRight: "0.5rem" }}
+              style={{ marginRight: '0.5rem' }}
             />
             내 거래 내역
           </NavLink>
@@ -80,7 +80,7 @@ const MyPageSidebar = () => (
           >
             <FontAwesomeIcon
               icon={faGripLines}
-              style={{ marginRight: "0.5rem" }}
+              style={{ marginRight: '0.5rem' }}
             />
             내 관심 목록
           </NavLink>
@@ -96,7 +96,7 @@ const MyPageSidebar = () => (
           >
             <FontAwesomeIcon
               icon={faGripLines}
-              style={{ marginRight: "0.5rem" }}
+              style={{ marginRight: '0.5rem' }}
             />
             회원 정보 수정
           </NavLink>
@@ -109,7 +109,7 @@ const MyPageSidebar = () => (
           >
             <FontAwesomeIcon
               icon={faGripLines}
-              style={{ marginRight: "0.5rem" }}
+              style={{ marginRight: '0.5rem' }}
             />
             회원 탈퇴
           </NavLink>
@@ -125,7 +125,7 @@ const MyPageSidebar = () => (
           >
             <FontAwesomeIcon
               icon={faGripLines}
-              style={{ marginRight: "0.5rem" }}
+              style={{ marginRight: '0.5rem' }}
             />
             1:1 문의
           </NavLink>

@@ -10,9 +10,9 @@ import MyHistory from './pages/MyPage/MyHistory';
 import MySettings from './pages/MyPage/MySettings';
 import MyReview from './pages/MyPage/MyReview';
 import MembershipWithdrawal from './pages/MyPage/MembershipWithdrawal';
-import CustomerService from './pages/MyPage/CustomerService';
+
 import MyInformation from './pages/MyPage/MyInformation';
-import NewPostForm from './pages/Post/NewPostForm';
+import NewPostForm from './pages/Post/New/NewPostForm';
 import Login from './pages/Login';
 import SignUpForm from './pages/SignUpForm';
 import Dashboard from '/src/pages/Dashboard/Dashboard';
@@ -22,6 +22,8 @@ import Introduction from '/src/pages/Dashboard/Introduction';
 import Preferences from './pages/MyPage/Preferences';
 import React from 'react';
 import ModifyPostForm from './pages/Post/Modify/ModifyPostForm';
+
+import CustomerService from './pages/MyPage/CustomerService';
 import PostView from './pages/PostView/PostView';
 
 function App() {
