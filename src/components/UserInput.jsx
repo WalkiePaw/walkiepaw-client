@@ -6,7 +6,7 @@ const StyledInput = styled.input`
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-bottom: 20px; /* Adds space between inputs */
-  width: 80%;
+  width: 75%;
   box-sizing: border-box;
 `;
 
