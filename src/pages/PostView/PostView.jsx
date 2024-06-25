@@ -74,15 +74,15 @@ const PostView = () => {
           - {post.title}
         </div>
         <div className="post-content-description">{post.content}</div>
-        <div className="post-actions">
+        <div className="report-box">
           <button
-            className="action-button"
+            className="report-button"
             onClick={() => setShowReportModal(true)}
           >
             이 게시글 신고하기
           </button>
-          <button className="action-button">메세지 보내기</button>
         </div>
+
         <div className="post-management">
           <button className="edit-button" onClick={handleEdit}>
             수정하기
@@ -90,6 +90,9 @@ const PostView = () => {
           <button className="delete-button" onClick={handleDelete}>
             삭제하기
           </button>
+        </div>
+        <div className="massge-box">
+          <button className="massge-button">채팅 하기</button>
         </div>
       </div>
       {showReportModal && (
