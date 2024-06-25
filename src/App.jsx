@@ -20,6 +20,7 @@ import Dashboard from "/src/pages/Dashboard/Dashboard";
 import PostList from "/src/pages/Dashboard/PostList";
 import Review from "/src/pages/Dashboard/Review";
 import Introduction from "/src/pages/Dashboard/Introduction";
+import Preferences from "./pages/MyPage/Preferences";
 
 function App() {
   const nav = useNavigate();
@@ -36,6 +37,7 @@ function App() {
             <Route index element={<MyPage />} />
             <Route path="history" element={<MyHistory />} />
             <Route path="review" element={<MyReview />} />
+            <Route path="preferences" element={<Preferences/>} />
             <Route path="information" element={<MyInformation />} />
             <Route path="customer-service" element={<CustomerService />} />
             <Route path="settings" element={<MySettings />} />

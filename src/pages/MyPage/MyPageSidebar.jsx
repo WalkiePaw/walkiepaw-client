@@ -12,7 +12,23 @@ const MyPageSidebar = () => (
         alt="Profile"
         className="w-24 h-24 rounded-full mx-auto bg-gray-300"
       />
-      <div className="mt-2 font-bold">홍길동</div>
+      <div className="mt-2 mb-4 font-bold">홍길동</div>
+      <div className="p-4 bg-white rounded-lg shadow mb-6">
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div>
+            <div className="text-gray-500">산책</div>
+            <div className="text-lg font-bold">8회</div>
+          </div>
+          <div>
+            <div className="text-gray-500">알바</div>
+            <div className="text-lg font-bold">28회</div>
+          </div>
+          <div>
+            <div className="text-gray-500">리뷰 평균</div>
+            <div className="text-lg font-bold text-yellow-500">★ 5.0점</div>
+          </div>
+        </div>
+      </div>
     </div>
     <nav>
       <h3 className="font-bold mt-4">나의 활동</h3>
@@ -54,6 +70,19 @@ const MyPageSidebar = () => (
               style={{ marginRight: "0.5rem" }}
             />
             내 거래 내역
+          </NavLink>
+        </li>
+        <li className="my-2">
+          <NavLink
+            to="/mypage/preferences"
+            className="text-black hover:text-orange-300"
+            activeClassName="text-orange-600"
+          >
+            <FontAwesomeIcon
+              icon={faGripLines}
+              style={{ marginRight: "0.5rem" }}
+            />
+            내 관심 목록
           </NavLink>
         </li>
       </ul>

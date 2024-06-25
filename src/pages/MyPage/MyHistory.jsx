@@ -75,7 +75,7 @@ const MyHistory = () => {
       <h1 className="text-2xl font-bold mb-4 mr-4">작성글 내역</h1>
       <div className="flex mb-4">
         <button
-          className={`px-4 py-2 rounded-md mr-4 ${
+          className={`px-8 py-2 rounded-md mr-4 ${
             activeTab === "walk"
               ? "bg-[#43312A] text-white"
               : "bg-[#E8C5A5] text-gray-800"
@@ -85,7 +85,7 @@ const MyHistory = () => {
           산책
         </button>
         <button
-          className={`px-4 py-2 rounded-md ${
+          className={`px-8 py-2 rounded-md ${
             activeTab === "partTimeJob"
               ? "bg-[#43312A] text-white"
               : "bg-[#E8C5A5] text-gray-800"
@@ -147,4 +147,5 @@ const MyHistory = () => {
     </div>
   );
 };
+
 export default MyHistory;

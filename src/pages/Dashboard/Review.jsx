@@ -52,10 +52,10 @@ const Review = () => {
 
   return (
     <div className="flex flex-col">
-      <h1 className="text-2xl font-bold mb-4 mr-4">리뷰 내역</h1>
+      <h1 className="text-2xl font-bold mb-4 mr-4">받은 리뷰 내역</h1>
       <div className="flex mb-4">
         <button
-          className={`px-4 py-2 rounded-md mr-4 ${
+          className={`px-8 py-2 rounded-md mr-4 ${
             activeTab === "walk"
               ? "bg-[#43312A] text-white"
               : "bg-[#E8C5A5] text-gray-800"
@@ -65,7 +65,7 @@ const Review = () => {
           산책
         </button>
         <button
-          className={`px-4 py-2 rounded-md ${
+          className={`px-8 py-2 rounded-md ${
             activeTab === "partTimeJob"
               ? "bg-[#43312A] text-white"
               : "bg-[#E8C5A5] text-gray-800"
@@ -79,6 +79,7 @@ const Review = () => {
         {reviews.map((post) => (
           <div key={post.id} className="p-4 bg-white rounded-lg shadow-md border border-gray-300">
             <div className="flex items-center mb-2">
+            <span className="font-medium">평점:</span>
               {Array(post.score).fill().map((_, i) => (
                 <img src={pawpaw} alt="star" key={i} className="inline-block w-8 h-8" />
               ))}
