@@ -49,7 +49,7 @@ const MyTown = () => {
     setSelectedNeighborhood(neighborhood);
   };
   return (
-    <div>
+    <div className="flex">
       <h1 className="font-bold text-2xl mb-4">지역 선택</h1>
       <div className="mb-4">
         <label className="block mb-1">시/도</label>
@@ -100,12 +100,6 @@ const MyTown = () => {
           </select>
         </div>
       )}
-      {/* {selectedRegion && selectedDistrict && selectedNeighborhood && (
-        <p className="mb-4">
-          선택된 지역: {selectedRegion} {selectedDistrict}{' '}
-          {selectedNeighborhood}
-        </p>
-      )} */}
     </div>
   );
 };

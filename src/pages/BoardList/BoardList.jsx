@@ -6,12 +6,14 @@ import axios from 'axios';
 import MyTown from '../MyTown/MyTown';
 
 const testData = [
+  // 한번만 출력되고 더이상 변하지 않는 데이터들은 이렇게 따로 실행되는 함수 밖에 만든다.
   {
     id: 1,
     title: '골댕이 산책 시켜주실 분 구해요.',
     local: '역삼동',
     image: 'img/dog1.jpg',
     memberId: '산책왕',
+    status: '구인중',
   },
   {
     id: 2,
@@ -19,6 +21,7 @@ const testData = [
     local: '지역2',
     image: 'https://example.com/image2.jpg',
     memberId: '아이디2',
+    status: '구인 대기중',
   },
   {
     id: 3,
@@ -26,6 +29,7 @@ const testData = [
     local: '지역3',
     image: 'https://example.com/image2.jpg',
     memberId: '아이디3',
+    status: '구인 완료',
   },
 ];
 
@@ -46,8 +50,9 @@ const BoardList = () => {
     const fetchPosts = async () => {
       try {
         const response = await testApiData(); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
-        // const response = await axios.get('/api/posts'); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        // const response = await axios.get('/api/v1/posts'); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         console.log(response);
+
         setPosts(response ?? []);
       } catch (error) {
         console.error('Failed to fetch posts', error);
@@ -86,6 +91,7 @@ const BoardList = () => {
                 local={post.local}
                 image={post.image}
                 memberId={post.memberId}
+                status={post.status} // 추가된 상태 정보
                 onCardClick={() => handlePostClick(post)}
               />
             </div>

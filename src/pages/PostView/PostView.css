@@ -95,7 +95,7 @@
 .post-management {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin: 24px;
 }
 .edit-button,
 .delete-button {

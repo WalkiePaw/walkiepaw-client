@@ -9,6 +9,9 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const SERVER_URL = 'https://192.168.0.45:8080/api/v1/posts'; //백엔드 서버 api
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
@@ -18,7 +21,7 @@ const NewPostForm = () => {
   const [dateTimeStart, setDateTimeStart] = useState('');
   const [dateTimeEnd, setDateTimeEnd] = useState('');
   const [content, setContent] = useState('');
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState(''); // 지도의 위치와 주소
   const [images, setImages] = useState([]);
   const [detailedLocation, setDetailedLocation] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -52,7 +55,7 @@ const NewPostForm = () => {
     );
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const newPost = {
@@ -67,16 +70,22 @@ const NewPostForm = () => {
       location,
       detailedLocation,
       images,
-      memberId: 'MJ', // 임시 값, 실제 구현 시 로그인 사용자의 ID 또는 유니크한 식별자로 대체해야 함
+      memberId: '산책왕', // 임시 값, 실제 구현 시 로그인 사용자의 ID 또는 유니크한 식별자로 대체해야 함
     };
 
-    const storedPosts = JSON.parse(localStorage.getItem('posts')) || [];
-    storedPosts.push(newPost);
-    localStorage.setItem('posts', JSON.stringify(storedPosts));
+    try {
+      const response = await axios.post(SERVER_URL, newPost);
 
-    alert('게시글이 저장되었습니다.');
+      if (response?.status !== 200) {
+        throw new Error('게시글 저장 실패!');
+      }
 
-    navigate('/board-list');
+      alert('게시글 저장 완료!');
+      navigate('/board-list');
+    } catch (error) {
+      console.error('Error', error);
+      alert('게시글 저장에 실패했습니다.');
+    }
   };
 
   const handlePlaceSelect = (address) => {
@@ -134,7 +143,6 @@ const NewPostForm = () => {
           placeholder="제목을 입력하세요."
           required
         />
-        <label htmlFor="priceType">가격:</label>
         <div className="price-buttons">
           <button
             type="button"
@@ -174,7 +182,7 @@ const NewPostForm = () => {
             onChange={(e) => setDateTimeStart(e.target.value)}
             required
           />
-          <span>~</span>
+          <span style={{ margin: '0 40px' }}>~</span>
           <input
             type="datetime-local"
             id="dateTimeEnd"
@@ -197,9 +205,14 @@ const NewPostForm = () => {
         <div className="location-container">
           <KakaoMap onSelectPlace={handlePlaceSelect} />
           <input type="text" id="location" value={location} readOnly />
-          <input type="text" placeholder="상세주소를 입력하세요." />
+          <input
+            type="text"
+            placeholder="상세주소를 입력하세요."
+            value={detailedLocation}
+            onChange={(e) => setDetailedLocation(e.target.value)}
+          />
         </div>
-        <button type="submit" className="submit-button">
+        <button type="submit" className="post-submit-button">
           작성 완료
         </button>
       </form>

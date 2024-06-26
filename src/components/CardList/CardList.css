@@ -100,9 +100,9 @@
 .Title {
   margin: 10px auto;
   display: block;
-  width: 90%;
-  height: 40px;
-  white-space: nowrap;
+  width: 100%;
+  height: auto;
+  white-space: pre-wrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -136,4 +136,20 @@
 
 .Icon span {
   margin-left: 5px;
+}
+
+.post-status {
+  font-weight: bold;
+}
+
+.post-status.구인중 {
+  color: green;
+}
+
+.post-status.구인-대기중 {
+  color: orange;
+}
+
+.post-status.구인-완료 {
+  color: red;
 }

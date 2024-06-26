@@ -39,7 +39,7 @@
 .modify-post-container .price-buttons {
   display: flex;
   justify-content: center;
-  margin-top: 5px;
+  margin: 12px;
 }
 
 .modify-post-container .price-buttons button {
@@ -67,7 +67,7 @@
   gap: 10px; /* 버튼 사이의 간격을 조정합니다. */
 }
 
-.modify-post-container .submit-button,
+.modify-post-container .md-submit-button,
 .modify-post-container .cancel-button {
   width: 25%; /* 각 버튼이 폼의 절반 너비를 가지도록 설정 */
   padding: 10px;
@@ -76,12 +76,12 @@
   cursor: pointer;
 }
 
-.modify-post-container .submit-button {
+.modify-post-container .md-submit-button {
   background-color: #007bff;
   color: #fff;
 }
 
-.modify-post-container .submit-button:hover {
+.modify-post-container .md-submit-button:hover {
   background-color: #0056b3;
 }
 

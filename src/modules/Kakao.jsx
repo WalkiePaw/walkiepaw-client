@@ -23,20 +23,10 @@ const KakaoMap = ({ onSelectPlace }) => {
         setInfowindow(infowindowInstance);
       }
     };
-
-    if (window.kakao && window.kakao.maps) {
-      initializeMap();
-    } else {
-      const script = document.createElement('script');
-      script.src =
-        'https://dapi.kakao.com/v2/maps/sdk.js?appkey=bcc85e56b4e6da53a218658cd336c213&libraries=services';
-      script.async = true;
-      script.onload = initializeMap;
-      document.head.appendChild(script);
-    }
+    initializeMap();
   }, []);
 
-  const searchPlaces = () => {
+  const handleSearchClick = () => {
     const keyword = document.getElementById('keyword').value.trim();
 
     if (!keyword) {
@@ -218,7 +208,11 @@ const KakaoMap = ({ onSelectPlace }) => {
             placeholder="검색할 장소를 입력하세요"
             style={{ marginRight: '10px', padding: '5px' }}
           />
-          <button onClick={searchPlaces} style={{ padding: '5px 10px' }}>
+          <button
+            type="button"
+            onClick={handleSearchClick}
+            style={{ padding: '5px 10px' }}
+          >
             검색
           </button>
         </div>
