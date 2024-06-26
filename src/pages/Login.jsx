@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserInput from '../components/UserInput';
 import UserButton from '../components/UserButton';
+import KakaoLogin from '../components/OAuth/KakaoLogin';
 import pawpaw from '../assets/pawpaw.png';
-import kakao_login_medium_narrow from '../assets/kakao_login_medium_narrow.png';
 import naver_login from '../assets/naver_login.png';
 import google_login from '../assets/google_login.png';
 
@@ -12,6 +12,8 @@ const Login = () => {
     email: '',
     password: '',
   });
+
+
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -57,17 +59,6 @@ const Login = () => {
       userInfo.email.includes('.') &&
       userInfo.password.length >= 8;
 
-  const handleKakaoLogin = () => {
-    window.Kakao.Auth.login({
-      success: function (authObj) {
-        console.log(authObj);
-        // 로그인 성공 시 처리할 로직 추가
-      },
-      fail: function (err) {
-        console.error(err);
-      },
-    });
-  };
 
   const handleNaverLogin = () => {
     console.log('Naver login clicked');
@@ -132,20 +123,14 @@ const Login = () => {
             <button
                 type="button"
                 className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300"
-                onClick={() => navigate('/signupform')}
+                onClick={() => navigate('/signup')}
             >
               회원가입
             </button>
           </div>
 
           <div className="flex justify-between w-3/4 mb-4">
-            <button onClick={handleKakaoLogin}>
-              <img
-                  src={kakao_login_medium_narrow}
-                  alt="kakao"
-                  style={{ width: 'auto', height: 'auto' }}
-              />
-            </button>
+            <KakaoLogin />
             <button onClick={handleNaverLogin} style={{ width: '183px', height: '45px' }}>
               <img src={naver_login} alt="naver" style={{ width: '100%', height: '100%' }} />
             </button>
