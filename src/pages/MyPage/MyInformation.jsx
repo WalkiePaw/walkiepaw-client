@@ -21,7 +21,7 @@ const schema = yup.object().shape({
   email: yup.string().email("올바른 이메일 주소를 입력해주세요.").required("이메일은 필수 입력 사항입니다."),
   phoneNumber: yup
     .string()
-    .matches(/^\d+$/, "전화번호는 숫자로만 입력해주세요.")
+    // .matches(/^\d+$/, "전화번호는 숫자로만 입력해주세요.")
     .required("전화번호는 필수 입력 사항입니다."),
   address: yup.string().required("주소는 필수 입력 사항입니다."),
   birth: yup.date().required("생년월일은 필수 입력 사항입니다."),
@@ -40,14 +40,16 @@ const MyInformation = () => {
   });
 
   const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [profile, setProfile] = useState("");
+  const [birth, setBirth] = useState("");
 
   // 회원 정보 불러오기
   useEffect(() => {
-    const memberId = 2; // 임의로 지정한 ID, 실제로는 로그인 정보에서 가져와야 함
+    const memberId = 1; // 임의로 지정한 ID, 실제로는 로그인 정보에서 가져와야 함
 
     axios.get(`http://localhost:8080/api/v1/members/${memberId}`)
       .then(response => {
@@ -61,6 +63,7 @@ const MyInformation = () => {
         setValue('profile', memberData.profile);
         console.log(memberData.name);
         // 기타 필요한 필드 설정
+        console.log(memberData.nickname);
       })
       .catch(error => {
         console.error('There was an error fetching the member data!', error);
@@ -69,17 +72,19 @@ const MyInformation = () => {
 
     // 업데이트된 정보를 서버로 보내는 함수
     const saveInformation = () => {
-      const memberId = localStorage.getItem('userId');
+      const memberId = localStorage.getItem('memberId');
       const updatedData = {
         name: name,
+        nickname: nickname,
         email: email,
         phoneNumber: phoneNumber,
         address: address,
         profile: profile,
+        birth: birth,
         // 기타 필요한 정보들도 동일하게 추가
       };
   
-      axios.put(`http://localhost:8080/api/v1/members/${memberId}`, updatedData)
+      axios.patch(`http://localhost:8080/api/v1/members/${memberId}`, updatedData)
         .then(response => {
           console.log('User information updated successfully:', response.data);
           // 저장 후 필요한 작업 추가
@@ -133,7 +138,7 @@ const MyInformation = () => {
     const onSubmit = async (data) => {
       try {
         const memberId = 1; // 임의로 지정한 ID
-        await axios.put(`http://localhost:8080/api/v1/members/${memberId}`, data);
+        await axios.patch(`http://localhost:8080/api/v1/members/${memberId}`, data);
         MySwal.fire({
           title: "회원 정보를 저장했습니다",
           icon: "success",
@@ -148,8 +153,6 @@ const MyInformation = () => {
     };
 
     // 닉네임 중복 검사
-    const [nickname, setNickname] = useState("");
-
     const handleCheckDuplicate = () => {
       if (nickname === "existingNickname") {
         MySwal.fire({
@@ -216,7 +219,7 @@ const MyInformation = () => {
             <label className="block mb-1">닉네임</label>
             <div className="flex space-x-2">
               <input
-                type="text"
+                type="nickname"
                 name="nickname"
                 placeholder="닉네임"
                 {...register("nickname")}

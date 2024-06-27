@@ -1,12 +1,12 @@
-// src/pages/Dashboard/Sidebar.jsx
+// src/pages/Dashboard/DashboardSidebar.jsx
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { getProfileImage } from "./../../util/profile-img";
+import { getProfileImage } from "../../util/profile-img";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faStar, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Sidebar = () => {
+const DashboardSidebar = () => {
   return (
     <div className="w-80 h-screen bg-gray-100 p-4">
       <div className="text-center mb-8">
@@ -68,4 +68,4 @@ const Sidebar = () => {
   );
 }
 
-export default Sidebar;
+export default DashboardSidebar;

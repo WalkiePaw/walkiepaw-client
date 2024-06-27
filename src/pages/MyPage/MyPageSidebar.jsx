@@ -13,7 +13,7 @@ const MyPageSidebar = () => {
   const [memberData, setMemberData] = useState(null);
 
   useEffect(() => {
-    const memberId = 2; 
+    const memberId = 1; 
     // const memberId = localStorage.getItem('userId'); // 로그인한 사용자의 ID를 가져옴
 
     if (memberId) {

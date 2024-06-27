@@ -1,5 +1,5 @@
 // 내 거래 내역 보기
-// src/pages/MyReview.jsx
+// src/pages/MyTransaction.jsx
 
 import { useState } from "react";
 
