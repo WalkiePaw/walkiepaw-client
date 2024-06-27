@@ -8,15 +8,15 @@ import { faHome, faStar, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   return (
-    <div className="w-80 h-screen bg-gray-200 p-4">
+    <div className="w-80 h-screen bg-gray-100 p-4">
       <div className="text-center mb-8">
-        <div className="text-center mb-3">
+        <div className="text-center mt-5mb-3">
           <img
             src={getProfileImage(1)}
             alt="Profile"
             className="w-24 h-24 rounded-full mx-auto bg-gray-300"
           />
-          <div className="mt-2 font-bold">홍길동</div>
+          <div className="mt-3 mb-5 text-xl font-bold">홍길동</div>
         </div>
       </div>
       <div className="p-4 bg-white rounded-lg shadow mb-5">

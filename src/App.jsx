@@ -1,35 +1,34 @@
-import BoardList from './pages/BoardList/BoardList';
-import Home from './pages/Home/Home';
-import Layout from './Layout';
-import './App.css';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import Notfound from './components/Notfound';
-import MyPage from './pages/MyPage/MyPage';
-import MyPageLayout from './pages/MyPage/MyPageLayout';
-import MyHistory from './pages/MyPage/MyHistory';
-import MySettings from './pages/MyPage/MySettings';
-import MyReview from './pages/MyPage/MyReview';
-import MembershipWithdrawal from './pages/MyPage/MembershipWithdrawal';
-import CustomerService from './pages/MyPage/CustomerService';
-import MyInformation from './pages/MyPage/MyInformation';
-import NewPostForm from './pages/Post/New/NewPostForm';
-import Login from './pages/Login';
-import Dashboard from '/src/pages/Dashboard/Dashboard';
-import PostList from '/src/pages/Dashboard/PostList';
-import Review from '/src/pages/Dashboard/Review';
-import Introduction from '/src/pages/Dashboard/Introduction';
-import Preferences from './pages/MyPage/Preferences';
-import React from 'react';
-import ModifyPostForm from './pages/Post/Modify/ModifyPostForm';
-import PostView from './pages/PostView/PostView';
-import SignUpForm from './pages/OAuth/SignUpForm.jsx';
+import BoardList from "./pages/BoardList/BoardList";
+import Home from "./pages/Home/Home";
+import Layout from "./Layout";
+import "./App.css";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import Notfound from "./components/Notfound";
+import MyPage from "./pages/MyPage/MyPage";
+import MyPageLayout from "./pages/MyPage/MyPageLayout";
+import MyHistory from "./pages/MyPage/MyHistory";
+import MySettings from "./pages/MyPage/MySettings";
+import MyTransaction from "./pages/MyPage/MyTransaction.jsx";
+import MembershipWithdrawal from "./pages/MyPage/MembershipWithdrawal";
+import CustomerService from "./pages/MyPage/CustomerService";
+import MyInformation from "./pages/MyPage/MyInformation";
+import NewPostForm from "./pages/Post/New/NewPostForm";
+import Login from "./pages/Login";
+import Dashboard from "/src/pages/Dashboard/Dashboard";
+import PostList from "/src/pages/Dashboard/PostList";
+import Review from "./components/Review.jsx";
+import Introduction from "/src/pages/Dashboard/Introduction";
+import Preferences from "./pages/MyPage/Preferences";
+import React from "react";
+import ModifyPostForm from "./pages/Post/Modify/ModifyPostForm";
+import PostView from "./pages/PostView/PostView";
+import SignUpForm from "./pages/OAuth/SignUpForm.jsx";
 import ChatPage from "./pages/chatroom/ChatPage.jsx";
-
 
 function App() {
   const nav = useNavigate();
   const onClickButton = () => {
-    nav('/new');
+    nav("/new");
   };
   return (
     <>
@@ -40,11 +39,12 @@ function App() {
           <Route path="/mypage" element={<MyPageLayout />}>
             <Route index element={<MyPage />} />
             <Route path="history" element={<MyHistory />} />
-            <Route path="review" element={<MyReview />} />
+            <Route path="transaction" element={<MyTransaction />} />
             <Route path="preferences" element={<Preferences />} />
             <Route path="information" element={<MyInformation />} />
             <Route path="customer-service" element={<CustomerService />} />
             <Route path="settings" element={<MySettings />} />
+            <Route path="review" element={<Review />} />
             <Route path="withdrawal" element={<MembershipWithdrawal />} />
           </Route>
 

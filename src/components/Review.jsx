@@ -1,7 +1,7 @@
-// 리뷰 목록
+// 받은 리뷰 목록
 import React from 'react';
 import { useState } from "react";
-import pawpaw from './../../assets/pawpaw.png'; 
+import pawpaw from './../assets/pawpaw.png'; 
 
 const Review = () => {
   const [activeTab, setActiveTab] = useState("walk"); // 기본 선택 탭 설정: 산책, 알바

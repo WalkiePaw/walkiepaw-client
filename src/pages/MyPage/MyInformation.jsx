@@ -1,8 +1,6 @@
 // 내 정보 수정
-// src/pages/MyInformation.jsx
-
+import React, { useState, useEffect } from 'react';
 // 팝업창, 모달: sweetalert 적용
-import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { useForm } from 'react-hook-form';
@@ -11,6 +9,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 // ImageUpload 컴포넌트 임포트
 import ImageUpload from '../../components/ImageUpload';  
+// axios 임포트
+import axios from 'axios';
 
 const MySwal = withReactContent(Swal);
 
@@ -18,7 +18,8 @@ const MySwal = withReactContent(Swal);
 const schema = yup.object().shape({
   name: yup.string().required("이름은 필수 입력 사항입니다."),
   nickname: yup.string().required("닉네임은 필수 입력 사항입니다."),
-  tel: yup
+  email: yup.string().email("올바른 이메일 주소를 입력해주세요.").required("이메일은 필수 입력 사항입니다."),
+  phoneNumber: yup
     .string()
     .matches(/^\d+$/, "전화번호는 숫자로만 입력해주세요.")
     .required("전화번호는 필수 입력 사항입니다."),
@@ -26,29 +27,124 @@ const schema = yup.object().shape({
   birth: yup.date().required("생년월일은 필수 입력 사항입니다."),
   password: yup
     .string()
-    .min(8, "비밀번호는 최소 8자 이상이어야 합니다.")
-    .required("비밀번호는 필수 입력 사항입니다."),
-  passwordConfirmation: yup
+    .min(8, "비밀번호는 최소 8자 이상이어야 합니다."),
+  passwordConfirm: yup
     .string()
-    .oneOf([yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
-    .required("비밀번호 확인은 필수입니다."),
+    .oneOf([yup.ref('password'), null], '비밀번호가 일치하지 않습니다.'),
 });
 
 const MyInformation = () => {
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm({
-      resolver: yupResolver(schema),
-    });
+  // 유효성 검사
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [profile, setProfile] = useState("");
+
+  // 회원 정보 불러오기
+  useEffect(() => {
+    const memberId = 2; // 임의로 지정한 ID, 실제로는 로그인 정보에서 가져와야 함
+
+    axios.get(`http://localhost:8080/api/v1/members/${memberId}`)
+      .then(response => {
+        const memberData = response.data;
+        setValue('name', memberData.name);
+        setValue('nickname', memberData.nickname);
+        setValue('phoneNumber', memberData.phoneNumber);
+        setValue('address', memberData.address);
+        setValue('birth', memberData.birth);
+        setValue('email', memberData.email);
+        setValue('profile', memberData.profile);
+        console.log(memberData.name);
+        // 기타 필요한 필드 설정
+      })
+      .catch(error => {
+        console.error('There was an error fetching the member data!', error);
+      });
+  }, [setValue]);
+
+    // 업데이트된 정보를 서버로 보내는 함수
+    const saveInformation = () => {
+      const memberId = localStorage.getItem('userId');
+      const updatedData = {
+        name: name,
+        email: email,
+        phoneNumber: phoneNumber,
+        address: address,
+        profile: profile,
+        // 기타 필요한 정보들도 동일하게 추가
+      };
+  
+      axios.put(`http://localhost:8080/api/v1/members/${memberId}`, updatedData)
+        .then(response => {
+          console.log('User information updated successfully:', response.data);
+          // 저장 후 필요한 작업 추가
+        })
+        .catch(error => {
+          console.error('Error updating user information:', error);
+        });
+    };
+
+    // 비밀번호 변경 팝업
+    const handleChangePassword = async () => {
+      const { value: formValues } = await MySwal.fire({
+        title: '새 비밀번호 입력',
+        html:
+          '<input id="swal-input1" class="swal2-input" placeholder="비밀번호 입력" type="password">' +
+          '<input id="swal-input2" class="swal2-input" placeholder="비밀번호 재확인" type="password">',
+        focusConfirm: false,
+        preConfirm: () => {
+          return [
+            document.getElementById('swal-input1').value,
+            document.getElementById('swal-input2').value
+          ];
+        }
+      });
+
+      if (formValues) {
+        const [password, passwordConfirm] = formValues;
+  
+        const result = await schema.validate({ password, passwordConfirm }).catch(err => err);
+  
+        if (result.errors) {
+          MySwal.fire({
+            icon: 'error',
+            title: '오류',
+            text: result.errors.join('\n'),
+          });
+        } else {
+          MySwal.fire({
+            icon: 'success',
+            title: '성공',
+            text: '비밀번호가 성공적으로 변경되었습니다!',
+          });
+          // 비밀번호 변경 로직 추가
+        }
+      }
+    };
   
     // 회원 정보 저장(제출)
     const [isFormValid, setIsFormValid] = useState(false);
 
-    const onSubmit = (data) => {
-      console.log(data); // 여기서 데이터를 처리하거나 API 호출 등을 수행
-      MySwal.fire({
-        title: "회원 정보를 저장했습니다",
-        icon: "success",
-        confirmButtonText: "확인",
-      });
+    const onSubmit = async (data) => {
+      try {
+        const memberId = 1; // 임의로 지정한 ID
+        await axios.put(`http://localhost:8080/api/v1/members/${memberId}`, data);
+        MySwal.fire({
+          title: "회원 정보를 저장했습니다",
+          icon: "success",
+          confirmButtonText: "확인",
+        });
+        console.log('회원 정보가 성공적으로 업데이트되었습니다.');
+        // 성공 메시지 또는 리다이렉션 등 추가적인 로직
+      } catch (error) {
+        console.error('회원 정보 업데이트 중 오류가 발생했습니다:', error);
+        // 실패 시 처리 로직
+      }
     };
 
     // 닉네임 중복 검사
@@ -98,7 +194,7 @@ const MyInformation = () => {
 
     return (
       <div className="max-h-screen overflow-y-auto p-4">
-        <h1 className="text-2xl font-bold mb-5">내 정보 수정</h1>
+        <h1 className="text-3xl font-bold mb-5">회원 정보 수정</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-3">
             <label className="block mb-1">이름</label>
@@ -151,21 +247,11 @@ const MyInformation = () => {
               {errors.password && (
                 <p className="text-red-500">{errors.password.message}</p>
               )}
-              <input
-                type="password"
-                placeholder="비밀번호 재입력"
-                {...register("passwordConfirmation")}
-                className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              />
-              {errors.passwordConfirmation && (
-                <p className="text-red-500">
-                  {errors.passwordConfirmation.message}
-                </p>
-              )}
             </div>
             <button
               type="button"
               className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none"
+              onClick={handleChangePassword}
             >
               비밀번호 변경
             </button>
@@ -176,9 +262,11 @@ const MyInformation = () => {
               <input
                 type="email"
                 name="email"
+                {...register("email")}
                 placeholder="xxxx@xxxx.com"
                 className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
+              {errors.email && <p className="text-red-500">{errors.email.message}</p>}
               <button
                 type="button"
                 className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none"
@@ -190,14 +278,14 @@ const MyInformation = () => {
           <div className="mb-3">
             <label className="block mb-1">전화번호</label>
             <input
-              type="tel"
+              type="phoneNumber"
               name="phone"
-              {...register("tel")}
+              {...register("phoneNumber")}
               onChange={handleInputChange}
               placeholder="전화번호는 숫자로만 입력해주세요('-'제외)"
               className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
-            {errors.tel && <p className="text-red-500">{errors.tel.message}</p>}
+            {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
           </div>
           <div className="mb-3">
             <label className="block mb-1">주소</label>
@@ -205,6 +293,7 @@ const MyInformation = () => {
               <input
                 type="text"
                 name="address"
+                placeholder="도로명 주소를 검색하세요."
                 {...register("address")}
                 onChange={handleInputChange}
                 className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
@@ -236,22 +325,24 @@ const MyInformation = () => {
             <div className="flex space-x-4">
               <textarea
                 name="profile"
+                type="profile"
                 placeholder="소개를 작성해주세요."
+                {...register("profile")}
                 className="w-2/3 h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 resize-none"
               ></textarea>
             </div>
           </div>
           <div className="flex justify-end">
             <button
-              type="submit"
-              className={`px-4 py-2 bg-[#43312A] text-white rounded-md hover:bg-yellow-700 ${
-                Object.keys(errors).length !== 0 &&
-                "opacity-50 cursor-not-allowed"
-              }`}
-              disabled={Object.keys(errors).length !== 0}
-            >
-              저장
-            </button>
+          type="submit"
+          className={`px-4 py-2 bg-[#43312A] text-white rounded-md hover:bg-yellow-700 ${
+            Object.keys(errors).length !== 0 &&
+            "opacity-50 cursor-not-allowed"
+          }`}
+          disabled={Object.keys(errors).length !== 0}
+        >
+          저장
+        </button>
           </div>
         </form>
         {/* 페이지 하단에 여백주기 */}

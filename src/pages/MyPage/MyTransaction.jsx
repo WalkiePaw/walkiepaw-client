@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 
-const MyReview = () => {
+const MyTransaction = () => {
   const [activeTab, setActiveTab] = useState("walk"); // 기본 선택 탭 설정
 
   // 게시글 데이터 예시
@@ -28,7 +28,7 @@ const MyReview = () => {
 
   return (
       <div className="flex flex-col">
-        <h1 className="text-2xl font-bold mb-3 mr-4">내 거래 내역</h1>
+        <h1 className="text-3xl font-bold mb-5 mr-4">내 거래 내역</h1>
         <div className="flex mb-3 dlomb-4">
         <button
           className={`px-8 py-2 rounded-md mr-4 ${
@@ -85,7 +85,7 @@ const MyReview = () => {
   );
 }
 
-export default MyReview;
+export default MyTransaction;
 
 
 // 추가될 부분: 리뷰 상태에 따라 리뷰 남기기 버튼 필요
