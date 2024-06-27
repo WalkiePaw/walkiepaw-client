@@ -44,6 +44,23 @@
   }
 }
 
+.board-list.no-posts-container {
+  display: flex; /* 플렉스 디스플레이 */
+  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: center; /* 수평 중앙 정렬 */
+  height: 200px; /* 높이 설정 (필요에 따라 조정 가능) */
+}
+
+.no-posts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  font-size: 1.5rem;
+  color: gray;
+}
+
 .bl-button-container {
   position: fixed; /* 고정 위치 설정 */
   bottom: 120px; /* 아래쪽에서 20px 떨어짐 */

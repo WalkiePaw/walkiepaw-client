@@ -1,4 +1,3 @@
-// src/pages/Post/NewPostForm
 import React, { useState } from 'react';
 import KakaoMap from '../../../modules/Kakao';
 import './NewPostForm.css';
@@ -10,16 +9,16 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
-const SERVER_URL = 'https://192.168.0.45:8080/api/v1/posts'; //백엔드 서버 api
+// 유효성 검사: yup 적용
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
   const [priceType, setPriceType] = useState('시급');
-  const [priceProposal, setPriceProposal] = useState(false);
   const [price, setPrice] = useState('');
-  const [dateTimeStart, setDateTimeStart] = useState('');
-  const [dateTimeEnd, setDateTimeEnd] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState(''); // 지도의 위치와 주소
   const [images, setImages] = useState([]);
@@ -58,30 +57,41 @@ const NewPostForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // const memberId = parseInt(localStorage.getItem('memberId')); // 로그인한 사용자의 ID를 가져옵니다.
+    const memberId = 1;
+
     const newPost = {
-      // id: Data.now(), // 유니크한 ID 생성 (임시로 Date.now() 사용)
       title,
-      priceType,
-      priceProposal,
-      price,
-      dateTimeStart,
-      dateTimeEnd,
+      priceType: priceType === '시급' ? 'HOURLY' : 'DAILY',
+      price: parseInt(price), // 금액을 정수로 변환
+      startTime: new Date(startTime).toISOString(), // ISO 형식으로 변환
+      endTime: new Date(endTime).toISOString(), // ISO 형식으로 변환
       content,
-      location,
-      detailedLocation,
-      images,
-      memberId: '산책왕', // 임시 값, 실제 구현 시 로그인 사용자의 ID 또는 유니크한 식별자로 대체해야 함
+      // location,
+      // detailedLocation,
+      // images,
+      memberId,
     };
 
     try {
-      const response = await axios.post(SERVER_URL, newPost);
+      const response = await axios.post(
+        'http://localhost:8080/api/v1/boards',
+        newPost,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-      if (response?.status !== 200) {
+      console.log('서버 응답:', response);
+
+      if (response?.status === 201) {
+        alert('게시글 저장 완료!');
+        navigate('/board-list');
+      } else {
         throw new Error('게시글 저장 실패!');
       }
-
-      alert('게시글 저장 완료!');
-      navigate('/board-list');
     } catch (error) {
       console.error('Error', error);
       alert('게시글 저장에 실패했습니다.');
@@ -158,36 +168,31 @@ const NewPostForm = () => {
           >
             일급
           </button>
-          <label>
-            <input
-              type="checkbox"
-              checked={priceProposal}
-              onChange={(e) => setPriceProposal(e.target.checked)}
-            />
-            가격 제안 받기
-          </label>
         </div>
         <label htmlFor="price">금액:</label>
         <input
-          type="price"
+          type="number"
           className="price"
           placeholder="금액을 입력하세요."
-        ></input>
-        <label htmlFor="dateTimeStart">날짜 및 시간:</label>
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          required
+        />
+        <label htmlFor="startTime">날짜 및 시간:</label>
         <div className="datetime-container">
           <input
             type="datetime-local"
-            id="dateTimeStart"
-            value={dateTimeStart}
-            onChange={(e) => setDateTimeStart(e.target.value)}
+            id="startTime"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
             required
           />
           <span style={{ margin: '0 40px' }}>~</span>
           <input
             type="datetime-local"
-            id="dateTimeEnd"
-            value={dateTimeEnd}
-            onChange={(e) => setDateTimeEnd(e.target.value)}
+            id="endTime"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
             required
           />
         </div>

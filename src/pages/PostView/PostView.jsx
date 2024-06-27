@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import './PostView.css';
-import ReportModal from '../../components/ReportModal/ReportModal';
 import KakaoWithoutSearch from '../../modules/KakaoWithoutSearch';
+import pawpaw from './../../assets/pawpaw.png';
+import PostReportModal from '../../components/ReportModal/PostReportModal';
 
 const SERVER_URL = 'https://192.168.0.45:8080/api/v1/posts';
 
@@ -13,10 +14,13 @@ const PostView = () => {
   const post = location.state?.post;
   const [showReportModal, setShowReportModal] = useState(false);
   const [status, setStatus] = useState(post?.status || '구인중');
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  const currentUserId = '산책왕'; // 로그인한 유저의 ID와 해당 게시글을 작성한 유저의 ID를 비교
+  const memberNickName = location.memberNickName; // BoardList에서 로그인한 유저의 id를 받아 옴
 
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
+
+  const images = post.images || []; // 게시글에 이미지가 없으면 빈 배열로 초기화
 
   const handlerReport = (reason) => {
     console.log('신고 이유: ', reason);
@@ -40,13 +44,39 @@ const PostView = () => {
     }
   };
 
+  const handleNextSlide = () => {
+    setCurrentSlide((prevSlide) =>
+      prevSlide === post.images.length - 1 ? 0 : prevSlide + 1
+    );
+  };
+
+  const handlePrevSlide = () => {
+    setCurrentSlide((prevSlide) =>
+      prevSlide === post.images.length - 1 ? 0 : prevSlide - 1
+    );
+  };
+
   return (
     <div className="post-view">
       <div className="post-content">
-        <div className="image-slider">
-          <img src={post.image} alt="Post" className="post-image" />
-        </div>
-        {post.memberId === currentUserId && (
+        {images.length > 0 && (
+          <div className="image-slider">
+            <div className="slider-container">
+              <button className="prev-button" onClick={handlePrevSlide}>
+                &#10094;
+              </button>
+              <img
+                src={post.images[currentSlide]}
+                alt="Post"
+                className="post-image"
+              />
+              <button className="next-button" onClick={handleNextSlide}>
+                &#10095;
+              </button>
+            </div>
+          </div>
+        )}
+        {memberNickName === post.memberId && (
           <div className="post-status">
             <select value={status} onChange={handleStatusChange}>
               <option value="구인중">구인중</option>
@@ -63,12 +93,12 @@ const PostView = () => {
               className="author-image"
             />
             <div className="author-details">
-              <span className="author-name">{post.memberId}</span>
+              <span className="author-name">{post.memberNickName}</span>
               <span className="post-location">{post.local}</span>
             </div>
           </div>
           <div className="rating">
-            <span className="star">★</span> 5.0
+            <img src={pawpaw} alt="Rating" className="Rating-images" /> 5.0
           </div>
         </div>
         <div className="post-title">
@@ -92,7 +122,7 @@ const PostView = () => {
           </button>
         </div>
 
-        {post.memberId === currentUserId && (
+        {memberNickName === post.memberId && (
           <div className="post-management">
             <button className="edit-button" onClick={handleEdit}>
               수정하기
@@ -107,9 +137,11 @@ const PostView = () => {
         </div>
       </div>
       {showReportModal && (
-        <ReportModal
+        <PostReportModal
           onClose={() => setShowReportModal(false)}
           onSubmit={handlerReport}
+          boardId={postId}
+          memberId={memberNickName}
         />
       )}
     </div>

@@ -43,17 +43,24 @@ function testApiData() {
 
 const BoardList = () => {
   const [posts, setPosts] = useState();
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
 
   const navigate = useNavigate();
+
+  const memberNickName = 'kim'; // 로그인 유저의 임시 id 나중에 바꿔야 함
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await testApiData(); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
-        // const response = await axios.get('/api/v1/posts'); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        // const response = await testApiData(); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        const response = await axios.get('http://localhost:8080/api/v1/boards'); // '/api/posts' 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         console.log(response);
-
-        setPosts(response ?? []);
+        const data = response.data ?? [];
+        setPosts(data);
+        setFilteredPosts(data); // 초기 상태에서는 모든 게시글을 보여줍니다.
       } catch (error) {
         console.error('Failed to fetch posts', error);
       }
@@ -62,8 +69,34 @@ const BoardList = () => {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    const filterPosts = () => {
+      let newFilteredPosts = posts;
+
+      if (selectedRegion) {
+        newFilteredPosts = newFilteredPosts.filter(
+          (post) => post.region === selectedRegion
+        );
+      }
+      if (selectedDistrict) {
+        newFilteredPosts = newFilteredPosts.filter(
+          (post) => post.district === selectedDistrict
+        );
+      }
+      if (selectedNeighborhood) {
+        newFilteredPosts = newFilteredPosts.filter(
+          (post) => post.neighborhood === selectedNeighborhood
+        );
+      }
+
+      setFilteredPosts(newFilteredPosts);
+    };
+
+    filterPosts();
+  }, [selectedRegion, selectedDistrict, selectedNeighborhood, posts]);
+
   const handlePostClick = (post) => {
-    navigate(`/post/${post.id}`, { state: { post } });
+    navigate(`/post/${post.id}`, { state: { post, memberNickName } });
   };
 
   const scrollToTop = () => {
@@ -81,17 +114,25 @@ const BoardList = () => {
         </h1>
         <img src="img/dog3.jpg" className="listTop-img" alt="반려견 산책" />
       </div>
-      <MyTown />
-      <div className="board-list">
-        {posts?.length > 0 ? (
-          posts.reverse().map((post) => (
+      <MyTown
+        onRegionChange={setSelectedRegion}
+        onDistrictChange={setSelectedDistrict}
+        onNeighborhoodChange={setSelectedNeighborhood}
+      />
+      <div
+        className={`board-list ${
+          filteredPosts?.length === 0 ? 'no-posts-container' : ''
+        }`}
+      >
+        {filteredPosts?.length > 0 ? (
+          filteredPosts.map((post) => (
             <div key={post.id} onClick={() => handlePostClick(post)}>
               <CardList
                 title={post.title}
-                local={post.local}
+                local={post.neighborhood}
                 image={post.image}
-                memberId={post.memberId}
-                status={post.status} // 추가된 상태 정보
+                memberNickName={`작성자: ${post.memberNickName}`}
+                status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
                 onCardClick={() => handlePostClick(post)}
               />
             </div>

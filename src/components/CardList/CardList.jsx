@@ -5,7 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 
-const CardList = ({ title, local, image, memberId, status, onCardClick }) => {
+const CardList = ({
+  title,
+  local,
+  image,
+  memberNickName,
+  status,
+  onCardClick,
+}) => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
@@ -23,19 +30,19 @@ const CardList = ({ title, local, image, memberId, status, onCardClick }) => {
   return (
     <div className="CardStyled" onClick={onCardClick}>
       <div className="Locals">
-        <div className="MemberId">{memberId}</div>
+        <div className="MemberNickName">{memberNickName}</div>
         <div className="Local">{local}</div>
       </div>
       <div className="Title">
         <span
-          className={`post-status ${status.toLowerCase().replace(' ', '-')}`}
+          className={`post-status ${status?.toLowerCase()?.replace(' ', '-')}`}
         >
           {status}
         </span>
         {` - ${title}`}
       </div>
       <div className="CardImageBox">
-        <img className="CardImage" src={image} alt="image" />
+        <img className="CardImage" src={image} alt="card" />
       </div>
       <div className="Icons">
         <div className="Icon" onClick={handleLike}>

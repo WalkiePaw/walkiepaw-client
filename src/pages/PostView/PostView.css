@@ -54,8 +54,11 @@
 }
 
 .rating {
-  font-size: 14px;
-  color: #ffcc00;
+  width: 44px;
+  justify-content: end;
+  display: flex;
+  align-items: center;
+  color: #764b0a;
 }
 
 .post-title {
@@ -125,4 +128,17 @@
 
 .massge-box {
   text-align: center;
+}
+
+.report-box {
+  font-size: large;
+  margin: 24px 0;
+  border-top: 2px solid #0000003d;
+  border-bottom: 2px solid #0000003d;
+}
+
+.report-button {
+  text-align: left;
+  width: 100%;
+  padding: 12px 0;
 }

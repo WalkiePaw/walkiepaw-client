@@ -1,11 +1,11 @@
-// src/pages/MyTown.jsx
 import { useState } from 'react';
 import './MyTown.css';
 
-const MyTown = () => {
+const MyTown = ({ onRegionChange, onDistrictChange, onNeighborhoodChange }) => {
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
+
   const regions = {
     서울: {
       강남구: ['역삼동', '개포동', '청담동'],
@@ -33,21 +33,28 @@ const MyTown = () => {
     },
     // Add more regions, districts, and neighborhoods as needed
   };
+
   const handleRegionChange = (e) => {
     const region = e.target.value;
     setSelectedRegion(region);
     setSelectedDistrict(''); // 구 리셋하기
     setSelectedNeighborhood(''); // 동 리셋하기
+    onRegionChange(region);
   };
+
   const handleDistrictChange = (e) => {
     const district = e.target.value;
     setSelectedDistrict(district);
     setSelectedNeighborhood(''); // 동 리셋하기
+    onDistrictChange(district);
   };
+
   const handleNeighborhoodChange = (e) => {
     const neighborhood = e.target.value;
     setSelectedNeighborhood(neighborhood);
+    onNeighborhoodChange(neighborhood);
   };
+
   return (
     <div className="flex">
       <h1 className="font-bold text-2xl mb-4">지역 선택</h1>
@@ -103,4 +110,5 @@ const MyTown = () => {
     </div>
   );
 };
+
 export default MyTown;

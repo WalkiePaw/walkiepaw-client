@@ -1,11 +1,12 @@
 // src/components/ReportModal/ReportModal.jsx
 import React, { useState } from 'react';
-import './ReportModal.css';
+import './PostReportModal.css';
+import axios from 'axios';
 
-const ReportModal = ({ onClose, onSubmit }) => {
-  const [showReasons, setShowReasons] = useState(false);
-  const [selectedReason, setSelectedReason] = useState('');
-  const [otherReason, setOtherReason] = useState('');
+const ReportModal = ({ onClose, boardId, memberId, onSubmit }) => {
+  const [showReasons, setShowReasons] = useState(false); // 신고 이유 선택 여부를 관리
+  const [selectedReason, setSelectedReason] = useState(''); // 선택된 신고 이유를 저장
+  const [otherReason, setOtherReason] = useState(''); // 기타 이유를 입력하는 경우 사용
 
   const reasons = [
     '스팸홍보/도배글입니다.',
@@ -16,14 +17,55 @@ const ReportModal = ({ onClose, onSubmit }) => {
     '기타',
   ];
 
+  const reasonMap = {
+    '스팸홍보/도배글입니다.': 'SPAM',
+    '음란물입니다.': 'PORNOGRAPHY',
+    '불법정보를 포함하고 있습니다.': 'ILLEGAL_CONTENT',
+    '청소년에게 유해한 내용입니다.': 'NOXIOUS',
+    '불쾌한 표현이 있습니다.': 'HARASSMENT',
+    기타: 'ETC',
+  };
+
+  // 신고 이유를 선택 했을 때 호출되는 함수
   const handleReasonSelect = (reason) => {
     setSelectedReason(reason);
     setShowReasons(false);
   };
 
-  const handleSubmit = () => {
-    onSubmit(selectedReason === '기타' ? otherReason : selectedReason);
-    onClose();
+  // 신고 버튼을 눌렀을 때 호출되는 함수
+  const handleSubmit = async () => {
+    let reportContent = null;
+
+    if (selectedReason === '기타') {
+      reportContent = otherReason;
+    }
+
+    console.log('boardId:', boardId);
+    console.log('memberId:', memberId);
+    console.log('selectedReason:', selectedReason);
+    console.log('reportContent:', reportContent);
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8080/api/v1/boardReports',
+        {
+          boardId: boardId,
+          reason: reasonMap[selectedReason], // 신고 이유
+          content: reportContent, // 기타 유형일 경우 content에 입력값 전달
+          memberId: memberId, // 신고한 유저 Id
+        }
+      );
+
+      if (response.status === 201) {
+        alert('신고가 정상적으로 접수되었습니다.');
+      }
+    } catch (error) {
+      console.error('신고 요청 실패', error);
+      alert('신고 요청에 실패했습니다.');
+    }
+
+    onSubmit(reasonMap[selectedReason]); // 부모 컴포넌트에 신고 이유를 전달
+    onClose(); // 신고 모달 닫기
   };
 
   return (
@@ -69,7 +111,7 @@ const ReportModal = ({ onClose, onSubmit }) => {
             onClick={handleSubmit}
             disabled={!selectedReason}
           >
-            보내기
+            신고하기
           </button>
         </div>
       </div>
