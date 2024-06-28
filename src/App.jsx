@@ -12,8 +12,11 @@ import MyReview from './pages/MyPage/MyReview';
 import MembershipWithdrawal from './pages/MyPage/MembershipWithdrawal';
 import CustomerService from './pages/MyPage/CustomerService';
 import MyInformation from './pages/MyPage/MyInformation';
-import NewPostForm from './pages/Post/NewPostForm';
+import NewPostForm from './pages/Post/New/NewPostForm';
 import Login from './pages/Login';
+import KakaoLoginCallback from './components/OAuth/KakaoLoginCallback.jsx';
+import NaverLoginCallback from './components/OAuth/NaverLoginCallback.jsx';
+import GoogleLoginCallback from './components/OAuth/GoogleLoginCallback.jsx';
 import Dashboard from '/src/pages/Dashboard/Dashboard';
 import PostList from '/src/pages/Dashboard/PostList';
 import Review from '/src/pages/Dashboard/Review';
@@ -22,7 +25,7 @@ import Preferences from './pages/MyPage/Preferences';
 import React from 'react';
 import ModifyPostForm from './pages/Post/Modify/ModifyPostForm';
 import PostView from './pages/PostView/PostView';
-import SignUpForm from './pages/OAuth/SignUpForm.jsx';
+import SignUp from './pages/OAuth/SignUp.jsx';
 import ChatPage from "./pages/chatroom/ChatPage.jsx";
 
 
@@ -54,7 +57,10 @@ function App() {
           <Route path="new-post" element={<NewPostForm />}></Route>
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
           <Route path="login" element={<Login />} />
-          <Route path="signupform" element={<SignUpForm />} />
+          <Route path="/login/kakao" element={<KakaoLoginCallback />} />
+          <Route path="/login/naver" element={<NaverLoginCallback />} />
+          <Route path="/login/google" element={<GoogleLoginCallback />} />
+          <Route path="signup" element={<SignUp />} />
           <Route path="chatpage" element={<ChatPage />} />
           <Route path="post/:postId" element={<PostView />} />
 

@@ -28,7 +28,7 @@ const CardList = ({ title, local, image, memberId, onCardClick }) => {
       </div>
       <div className="Title">{title}</div>
       <div className="CardImageBox">
-        <img className="CardImage" src={image} alt="image" />
+        <img className="CardImage" src={image} alt="card" />
       </div>
       <div className="Icons">
         <div className="Icon" onClick={handleLike}>
