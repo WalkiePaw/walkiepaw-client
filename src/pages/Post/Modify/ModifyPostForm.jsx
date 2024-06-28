@@ -1,4 +1,3 @@
-// 우리가 필요한 도구들을 가져와요.
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './ModifyPostForm.css';
@@ -9,86 +8,105 @@ import {
   faChevronLeft,
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
-// 게시글을 수정하는 특별한 공간을 만들어요.
 const ModifyPostForm = () => {
-  const location = useLocation(); // 우리가 어디 있는지, 어디로 갈지 알려주는 마법의 지도를 가져와요.
-  const navigate = useNavigate();
-  const initialPost = location.state?.post; // 원래 게시글 정보를 가져와요.
-  const [post, setPost] = useState(initialPost); // 게시글 정보를 담을 특별한 상자를 만들어요.
-  const [images, setImages] = useState(post.images || []); // 사진들을 담을 상자도 만들어요.
-  const [currentSlide, setCurrentSlide] = useState(0); // 지금 보고 있는 사진이 몇 번째인지 기억하는 상자도 만들어요.
+  const location = useLocation(); // 현재 위치 정보를 가져옵니다.
+  const navigate = useNavigate(); // 페이지 이동을 위한 함수입니다.
+  const initialPost = location.state?.post; // 수정할 게시글의 초기 데이터를 가져옵니다.
+  const [post, setPost] = useState(initialPost); // 게시글 정보를 상태로 관리합니다.
+  const [images, setImages] = useState(post.images || []); // 게시글의 이미지를 상태로 관리합니다.
+  const [currentSlide, setCurrentSlide] = useState(0); // 현재 슬라이드 인덱스를 상태로 관리합니다.
 
-  // 게시글 정보가 바뀌면 우리의 상자도 같이 바꿔줘요.
+  // 게시글 정보가 변경 업데이트
   useEffect(() => {
     setPost(initialPost);
     setImages(initialPost.images || []);
   }, [initialPost]);
 
-  // 새 사진을 올릴 때 어떻게 할지 정해요.
+  // 이미지 업로드 처리 함수
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files); // 사진들을 가져와서
+    const files = Array.from(e.target.files); // 파일들을 배열로 정리
     const newImages = files.map((file) => {
-      // 하나씩 특별한 방법으로 바꿔요.
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
+        reader.onloadend = () => resolve(reader.result); // 파일을 읽은 후 결과를 반환
         reader.onerror = reject;
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file); // 파일 데이터를 URL로 읽음
       });
     });
 
-    // 모든 사진이 바뀌면 우리의 사진 상자에 넣어줘요.
+    // 모든 사진 파일을 읽은 후 이미지를 추가
     Promise.all(newImages).then((results) => {
       setImages([...images, ...results]);
     });
   };
 
-  // 다음 사진을 보고 싶을 때 어떻게 할지 정해요.
+  // 다음 사진 슬라이드를 표시하는 함수
   const handleNextSlide = () => {
     setCurrentSlide((prevSlide) =>
       prevSlide === Math.floor((images.length - 1) / 4) ? 0 : prevSlide + 1
     );
   };
 
-  // 이전 사진을 보고 싶을 때 어떻게 할지 정해요.
+  // 이전 사진 슬라이드를 표시하는 함수
   const handlePrevSlide = () => {
     setCurrentSlide((prevSlide) =>
       prevSlide === 0 ? Math.floor((images.length - 1) / 4) : prevSlide - 1
     );
   };
 
-  // 게시글 수정이 끝났을 때 어떻게 할지 정해요.
-  const handleSubmit = (event) => {
+  // 폼 제출 처리 함수
+  const handleSubmit = async (event) => {
     event.preventDefault(); // 페이지가 새로고침되는 걸 막아요.
 
-    // 수정된 게시글 정보를 모아요.
+    // 수정된 게시글 정보를 생성
     const modifiedPost = {
-      ...post,
+      ...post, // 기존 게시글의 모든 속성을 복사합니다.
       images,
+      priceType: post.priceType === '시급' ? 'HOURLY' : 'DAILY',
+      price: parseInt(post.price),
+      startTime: new Date(post.startDate).toISOString(), // IOS 형식으로 변환
+      endTime: new Date(post.endDate).toISOString(), // IOS 형식으로 변환
     };
 
-    // 여기에 수정된 게시글을 저장하는 마법 주문을 넣을 수 있어요.
+    try {
+      const response = await axios.patch(
+        'http://localhost:8080/api/v1/boards/${post.Id}',
+        modifiedPost,
+        {
+          headers: {
+            ContentType: 'application/json',
+          },
+        }
+      );
 
-    // 수정이 끝났다고 알려줘요.
-    alert('게시글이 수정되었습니다.');
+      console.log('서버 응답', response);
 
-    // 게시글 목록으로 돌아가요.
-    navigate('/board-list');
+      if (response === 201) {
+        alert('게시글이 수정되었습니다.');
+        navigate('/board-list');
+      } else {
+        throw new Error('게시글 수정 실패!');
+      }
+    } catch (error) {
+      console.error('Error', error);
+      alert('게시글 수정에 실패했습니다.');
+    }
   };
 
-  // 지도에서 장소를 선택했을 때 어떻게 할지 정해요.
+  // 지도에서 선택한 장소를 처리하는 함수
   const handlePlaceSelect = (address) => {
     setPost({
-      ...post,
+      ...post, // 기존 게시글의 모든 속성을 복사합니다.
       location: address,
     });
   };
 
-  // 이제 우리가 만든 수정 공간을 보여줄 거예요.
+  // 수정 폼 렌더링
   return (
     <div className="modify-post-container">
-      {/* 사진을 올리는 공간 */}
+      {/* 이미지 업로드 영역 */}
       <div className="image-upload">
         {/* 사진 올리기 버튼 */}
         <label htmlFor="image-upload" className="image-upload-button">
@@ -102,14 +120,11 @@ const ModifyPostForm = () => {
           onChange={handleImageUpload}
           style={{ display: 'none' }}
         />
-        {/* 올린 사진들을 보여주는 공간 */}
         {images.length > 0 && (
           <div className="image-slider">
-            {/* 이전 사진 보기 버튼 */}
             <button className="prev-button" onClick={handlePrevSlide}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
-            {/* 사진들을 보여주는 공간 */}
             <div className="image-preview-container">
               {images
                 .slice(currentSlide * 4, currentSlide * 4 + 4)
@@ -122,16 +137,14 @@ const ModifyPostForm = () => {
                   />
                 ))}
             </div>
-            {/* 다음 사진 보기 버튼 */}
             <button className="next-button" onClick={handleNextSlide}>
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>
         )}
       </div>
-      {/* 게시글 정보를 수정하는 공간 */}
+      {/* 게시글 수정 폼 */}
       <form onSubmit={handleSubmit} className="modify-post-form">
-        {/* 제목을 수정하는 공간 */}
         <label htmlFor="title">제목:</label>
         <input
           type="text"
@@ -141,7 +154,6 @@ const ModifyPostForm = () => {
           placeholder="제목을 입력하세요."
           required
         />
-        {/* 가격 종류를 선택하는 공간 */}
         <div className="price-buttons">
           <button
             type="button"
@@ -161,7 +173,6 @@ const ModifyPostForm = () => {
           >
             일급
           </button>
-          {/* 가격 제안 받기 선택하는 공간 */}
           <label>
             <input
               type="checkbox"
@@ -173,7 +184,6 @@ const ModifyPostForm = () => {
             가격 제안 받기
           </label>
         </div>
-        {/* 금액을 입력하는 공간 */}
         <label htmlFor="price">금액:</label>
         <input
           type="price"
@@ -182,7 +192,6 @@ const ModifyPostForm = () => {
           onChange={(e) => setPost({ ...post, price: e.target.value })}
           placeholder="금액을 입력하세요."
         ></input>
-        {/* 날짜와 시간을 입력하는 공간 */}
         <div className="datetime-container">
           <label htmlFor="startDate">날짜 및 시간:</label>
           <div className="datetime-inputs">
@@ -203,8 +212,6 @@ const ModifyPostForm = () => {
             />
           </div>
         </div>
-
-        {/* 내용을 수정하는 공간 */}
         <label htmlFor="content">내용:</label>
         <textarea
           id="content"
@@ -214,7 +221,6 @@ const ModifyPostForm = () => {
           cols="50"
           required
         />
-        {/* 만나는 장소를 선택하는 공간 */}
         <label htmlFor="location">만나는 장소:</label>
         <div className="location-container">
           <KakaoMap onSelectPlace={handlePlaceSelect} />
@@ -228,8 +234,6 @@ const ModifyPostForm = () => {
             }
           />
         </div>
-
-        {/* 수정 완료와 취소 버튼 */}
         <div className="button-container">
           <button type="submit" className="md-submit-button">
             수정 완료
@@ -237,7 +241,7 @@ const ModifyPostForm = () => {
           <button
             type="button"
             className="cancel-button"
-            onClick={() => navigate('/board-list')}
+            onClick={() => navigate(-1)}
           >
             취소
           </button>
@@ -247,5 +251,5 @@ const ModifyPostForm = () => {
   );
 };
 
-// 우리가 만든 수정 공간을 다른 곳에서도 쓸 수 있게 내보내요.
+// 컴포넌트를 내보내서 다른 곳에서도 사용할 수 있게 합니다.
 export default ModifyPostForm;

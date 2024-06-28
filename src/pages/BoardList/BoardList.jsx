@@ -50,7 +50,7 @@ const BoardList = () => {
 
   const navigate = useNavigate();
 
-  const memberNickName = 'kim'; // 로그인 유저의 임시 id 나중에 바꿔야 함
+  const memberId = 1; // 로그인 유저의 임시 id 나중에 바꿔야 함
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -96,7 +96,7 @@ const BoardList = () => {
   }, [selectedRegion, selectedDistrict, selectedNeighborhood, posts]);
 
   const handlePostClick = (post) => {
-    navigate(`/post/${post.id}`, { state: { post, memberNickName } });
+    navigate(`/post/${post.id}`, { state: { post, memberId } });
   };
 
   const scrollToTop = () => {

@@ -4,6 +4,7 @@ import './PostView.css';
 import KakaoWithoutSearch from '../../modules/KakaoWithoutSearch';
 import pawpaw from './../../assets/pawpaw.png';
 import PostReportModal from '../../components/ReportModal/PostReportModal';
+import axios from 'axios';
 
 const SERVER_URL = 'https://192.168.0.45:8080/api/v1/posts';
 
@@ -36,11 +37,19 @@ const PostView = () => {
     navigate(`/modify-post/${postId}`, { state: { post } });
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     // 삭제 확인 및 처리 로직
     if (window.confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
-      console.log('삭제하기');
-      // 여기에 실제 삭제 로직을 추가하세요
+      try {
+        const response = await axios.delete(
+          'http://localhost:8080/api/v1/posts/${postId}'
+        );
+        console.log('삭제 응답', response);
+        navigate('/board-list');
+      } catch (error) {
+        console.error('삭제 오류', error);
+        alert('게시글을 삭제 할 수 없습니다.');
+      }
     }
   };
 
@@ -79,9 +88,9 @@ const PostView = () => {
         {memberNickName === post.memberId && (
           <div className="post-status">
             <select value={status} onChange={handleStatusChange}>
-              <option value="구인중">구인중</option>
-              <option value="구인 대기중">구인 대기중</option>
-              <option value="구인 완료">구인 완료</option>
+              <option value="RECRUITING">구인중</option>
+              <option value="RESERVED">구인 대기중</option>
+              <option value="COMPLETED">구인 완료</option>
             </select>
           </div>
         )}
@@ -105,7 +114,9 @@ const PostView = () => {
           <span
             className={`post-status ${status.toLowerCase().replace(' ', '-')}`}
           >
-            {status}
+            {status === 'RECRUITING' && '구인중'}
+            {status === 'RESERVED' && '구인 대기중'}
+            {status === 'COMPLETED' && '구인 완료'}
           </span>{' '}
           - {post.title}
         </div>
