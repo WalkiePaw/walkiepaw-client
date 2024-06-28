@@ -19,7 +19,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['@sendbird/uikit-react'],
+    include: ['emoji-picker-react']
   },
   server: {
     proxy: {
@@ -34,6 +34,15 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [tailwindcss(), autoprefixer()],
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        globals: {
+          global: 'window',
+        },
+      },
     },
   },
 });

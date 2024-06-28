@@ -18,6 +18,9 @@ const Home = () => {
       </div>
       <div className="homebox2">
         <img src="img/dog2.jpg" className="homebox2-img" alt="homeImg"></img>
+
+       
+     
         <h2>
           <p>믿을만한 지역 주민 산책인 모집</p>
         </h2>

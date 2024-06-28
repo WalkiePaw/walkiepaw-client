@@ -2,13 +2,12 @@ import BoardList from './pages/BoardList/BoardList';
 import Home from './pages/Home/Home';
 import Layout from './Layout';
 import './App.css';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Notfound from './components/Notfound';
 import MyPage from './pages/MyPage/MyPage';
 import MyPageLayout from './pages/MyPage/MyPageLayout';
 import MyHistory from './pages/MyPage/MyHistory';
 import MySettings from './pages/MyPage/MySettings';
-import MyReview from './pages/MyPage/MyReview';
 import MembershipWithdrawal from './pages/MyPage/MembershipWithdrawal';
 
 import MyInformation from './pages/MyPage/MyInformation';
@@ -16,7 +15,6 @@ import NewPostForm from './pages/Post/New/NewPostForm';
 import Login from './pages/Login';
 import Dashboard from '/src/pages/Dashboard/Dashboard';
 import PostList from '/src/pages/Dashboard/PostList';
-import Review from '/src/pages/Dashboard/Review';
 import Introduction from '/src/pages/Dashboard/Introduction';
 import Preferences from './pages/MyPage/Preferences';
 import React from 'react';
@@ -24,14 +22,24 @@ import ModifyPostForm from './pages/Post/Modify/ModifyPostForm';
 
 import CustomerService from './pages/MyPage/CustomerService';
 import PostView from './pages/PostView/PostView';
-import SignUpForm from './pages/OAuth/SignUpForm.jsx';
-import ChatPage from "./pages/chatroom/ChatPage.jsx";
 
+import MyTransaction from "./pages/MyPage/MyTransaction.jsx";
+import KakaoLoginCallback from "./components/OAuth/KakaoLoginCallback.jsx";
+import NaverLoginCallback from "./components/OAuth/NaverLoginCallback.jsx";
+import GoogleLoginCallback from "./components/OAuth/GoogleLoginCallback.jsx";
+import Review from "./components/Review.jsx";
+import SignUp from "./pages/OAuth/SignUp.jsx";
+import ChatPage from "./pages/chatroom/ChatPage.jsx";
+import MemberReport from "./admin/MemberReport.jsx";
+import BoardReport from "./admin/BoardReport.jsx";
+import CSManagement from "./admin/CSManagement.jsx";
+import Admin from "./admin/Admin.jsx";
+import MemberList from "./admin/MemberList.jsx";
 
 function App() {
   const nav = useNavigate();
   const onClickButton = () => {
-    nav('/new');
+    nav("/new");
   };
   return (
     <>
@@ -42,11 +50,12 @@ function App() {
           <Route path="/mypage" element={<MyPageLayout />}>
             <Route index element={<MyPage />} />
             <Route path="history" element={<MyHistory />} />
-            <Route path="review" element={<MyReview />} />
+            <Route path="transaction" element={<MyTransaction />} />
             <Route path="preferences" element={<Preferences />} />
             <Route path="information" element={<MyInformation />} />
             <Route path="customer-service" element={<CustomerService />} />
             <Route path="settings" element={<MySettings />} />
+            <Route path="review" element={<Review />} />
             <Route path="withdrawal" element={<MembershipWithdrawal />} />
           </Route>
 
@@ -56,7 +65,10 @@ function App() {
           <Route path="new-post" element={<NewPostForm />}></Route>
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
           <Route path="login" element={<Login />} />
-          <Route path="signupform" element={<SignUpForm />} />
+          <Route path="/login/kakao" element={<KakaoLoginCallback />} />
+          <Route path="/login/naver" element={<NaverLoginCallback />} />
+          <Route path="/login/google" element={<GoogleLoginCallback />} />
+          <Route path="signup" element={<SignUp />} />
           <Route path="chatpage" element={<ChatPage />} />
           <Route path="post/:postId" element={<PostView />} />
 
@@ -64,6 +76,13 @@ function App() {
             <Route index element={<Introduction />} />
             <Route path="postlist" element={<PostList />} />
             <Route path="review" element={<Review />} />
+          </Route>
+
+          <Route path="/admin" element={<Admin />}>
+            <Route path="member-list" element={<MemberList />} />
+            <Route path="member-report" element={<MemberReport />} />
+            <Route path="board-report" element={<BoardReport />} />
+            <Route path="cs-mngmt" element={<CSManagement />} />
           </Route>
         </Route>
       </Routes>

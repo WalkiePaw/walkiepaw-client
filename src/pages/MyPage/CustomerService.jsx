@@ -8,6 +8,8 @@ import withReactContent from "sweetalert2-react-content";
 // 아이콘: font-awesome 적용
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+// 기존 고객센터 문의 내역 목록 임포트
+import QnaList from "./QnaList";
 
 const MySwal = withReactContent(Swal);
 
@@ -30,10 +32,12 @@ const CustomerService = () => {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">고객센터</h1>
+    <di className="max-h-screen overflow-y-auto">
+      <h1 className="text-3xl font-bold mb-6">고객센터</h1>
+      <h2 className="text-2xl font-bold mb-3">🔔 1:1 문의</h2>
+
       <div className="flex items-center mb-2">
-        <FontAwesomeIcon icon={faCircleInfo} className="text-orange-500 mr-2" />
+        <FontAwesomeIcon icon={faCircleInfo} className="mr-2" />
         <h2 className="font-bold">온라인 보안 팁</h2>
       </div>
       <p className="mb-6">
@@ -42,7 +46,7 @@ const CustomerService = () => {
       </p>
       <h2 className="text-2xl font-bold mb-6">도움이 필요하신가요?</h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
+        <div className="mb-3">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="title"
@@ -59,7 +63,7 @@ const CustomerService = () => {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-3">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="content"
@@ -75,7 +79,7 @@ const CustomerService = () => {
             required
           />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="text-right items-center justify-between">
           <button
             type="submit"
             className="bg-[#43312A] hover:bg-[#43312A] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -84,7 +88,13 @@ const CustomerService = () => {
           </button>
         </div>
       </form>
-    </div>
+      <hr className="my-8 border-t-2 border-gray-300" />
+            {/* QnaList 컴포넌트 추가 */}
+            <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-3">내 문의 내역 💬</h2>
+        <QnaList />
+        </div>
+    </di>
   );
 };
 

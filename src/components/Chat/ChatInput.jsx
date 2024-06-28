@@ -1,4 +1,3 @@
-// ChatInput.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Picker from 'emoji-picker-react';
@@ -53,8 +52,8 @@ function ChatInput({ onSend }) {
     }
   };
 
-  const onEmojiClick = (event, emojiObject) => {
-    setMessage(message + emojiObject.emoji);
+  const handleEmojiClick = (emojiObject) => {
+    setMessage(prevMessage => prevMessage + emojiObject.emoji);
   };
 
   return (
@@ -62,7 +61,7 @@ function ChatInput({ onSend }) {
         <EmojiButton onClick={() => setShowEmojiPicker(!showEmojiPicker)}>😊</EmojiButton>
         {showEmojiPicker && (
             <div style={{ position: 'absolute', bottom: '50px', left: '10px' }}>
-              <Picker onEmojiClick={onEmojiClick} />
+              <Picker onEmojiClick={handleEmojiClick} />
             </div>
         )}
         <Input
