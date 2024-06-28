@@ -1,0 +1,31 @@
+.my-town {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.select-container {
+  display: flex;
+  gap: 10px;
+}
+
+.select-box {
+  width: 100px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.mb-4 {
+  width: 180px;
+  margin-left: 8px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  text-align: left;
+  background: #fff
+    url(https://d1unjqcospf8gs.cloudfront.net/assets/home/articles/icon-arrow-down-ea33c4b4c74ce0aca95580c70c5ba1f464ff5833213b0fc8db5de0fab98b57e1.svg)
+    no-repeat 89% 50%;
+}
