@@ -20,7 +20,6 @@ const HeaderContainer = styled.header`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1rem;
     margin: 0 auto;
     max-width: 1200px;
   }
@@ -104,7 +103,7 @@ const UserIcon = styled.span`
   margin-right: 0.5rem;
 `;
 
-const Header = ({ children }) => {
+const Header = () => {
   const { isLoggedIn, logout } = 0;
   // useAuth();
 

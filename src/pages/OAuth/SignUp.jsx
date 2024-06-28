@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import UserButton from "../../components/UserButton.jsx";
 import AuthTemplate from "../../components/OAuth/AuthTemplate";
 import AddressModal from "../../components/OAuth/AddressModal";
-// import ImageUpload from '../../components/ImageUpload';
+import ImageUpload from '../../components/ImageUpload';
 import React, { useState, useEffect } from "react";
 import {Modal} from "antd";
 
@@ -135,18 +135,19 @@ const SignUp = () => {
   };
 
   // 이미지 변경
-  // const [imagePreview, setImagePreview] = useState(null);
-  // const handleImageChange = (event) => {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setImagePreview(reader.result);
-  //     };
-  //     reader.readAsDataURL(file);
-  //     console.log('Selected image:', file);
-  //   }
-  // };
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+      console.log('Selected image:', file);
+    }
+  };
 
   useEffect(() => {
     const subscription = watch((value, { name }) => {
@@ -255,7 +256,7 @@ const SignUp = () => {
           </InputGroup>
           {errors.address && <ErrorMessage>{errors.address.message}</ErrorMessage>}
 
-          <Label htmlFor="introduction">소개</Label>
+          <Label htmlFor="profile">소개</Label>
           <TextArea
               placeholder="자신을 자유롭게 소개해주세요 :)"
               rows="4"
@@ -263,10 +264,7 @@ const SignUp = () => {
           />
 
           <Label htmlFor="profilePicture">프로필 사진</Label>
-          <Input
-              type="file"
-              {...register('photo')}
-          />
+          <ImageUpload onImageChange={handleImageChange} />
 
           <ButtonContainer>
             <UserButton

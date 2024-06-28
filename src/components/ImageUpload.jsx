@@ -25,7 +25,6 @@ const ImageUpload = () => {
 
   return (
     <div className="mb-3">
-      <label className="block mb-1">사진</label>
       <div className="relative w-48 h-48 border-2 border-dashed border-gray-300 rounded-md overflow-hidden">
         <input
           type="file"
