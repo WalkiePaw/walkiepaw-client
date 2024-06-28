@@ -1,11 +1,13 @@
 import { useForm } from 'react-hook-form';
-import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import {useLocation, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import UserButton from "../../components/UserButton.jsx";
 import AuthTemplate from "../../components/OAuth/AuthTemplate";
 import AddressModal from "../../components/OAuth/AddressModal";
 // import ImageUpload from '../../components/ImageUpload';
 import React, { useState, useEffect } from "react";
+import {Modal} from "antd";
 
 const Label = styled.label`
   margin-bottom: 0.1rem;
@@ -76,8 +78,11 @@ const SignUp = () => {
   const { register, handleSubmit, formState: { errors }, watch, setValue, trigger, clearErrors } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [address, setAddress] = useState('');
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isSocialSignUp = location.state?.isSocialSignUp || false;
+
 
   useEffect(() => {
     if (location.state) {
@@ -87,19 +92,35 @@ const SignUp = () => {
     }
   }, [location.state, setValue]);
 
-  const onSubmit = async (data) => {
-    console.log(data);
+  const submitSignUp = async (data) => {
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/members', data);
+      console.log('회원가입 성공:', response.data);
+      setIsSuccessModalVisible(true);
+    } catch (error) {
+      console.error('회원가입 실패:', error.response?.data || error.message);
+      Modal.error({
+        title: '회원가입 실패',
+        content: error.response?.data?.message || '회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.',
+      });
+    }
   };
 
   const handleSignUp = async () => {
     const result = await trigger();
     if (result) {
-      handleSubmit(onSubmit)();
+      const formData = watch();
+      await submitSignUp(formData);
     } else {
       Object.keys(register).forEach(fieldName => {
         trigger(fieldName);
       });
     }
+  };
+
+  const handleSuccessModalOk = () => {
+    setIsSuccessModalVisible(false);
+    navigate('/');  // 홈페이지로 이동
   };
 
   const handleAddressSearch = () => {
@@ -207,7 +228,7 @@ const SignUp = () => {
           <Input
               type="tel"
               placeholder="전화번호는 숫자로만 입력해주세요('-'제외)"
-              {...register('tel', { required: '전화번호는 필수 입력 사항입니다.' })}
+              {...register('phoneNumber', { required: '전화번호는 필수 입력 사항입니다.' })}
           />
           {errors.phone && <ErrorMessage>{errors.phone.message}</ErrorMessage>}
 
@@ -215,7 +236,7 @@ const SignUp = () => {
           <Input
               type="date"
               placeholder="생년월일"
-              {...register('birthdate', { required: '생년월일은 필수 입력 사항입니다.' })}
+              {...register('birth', { required: '생년월일은 필수 입력 사항입니다.' })}
           />
           {errors.birthdate && <ErrorMessage>{errors.birthdate.message}</ErrorMessage>}
 
@@ -236,15 +257,15 @@ const SignUp = () => {
 
           <Label htmlFor="introduction">소개</Label>
           <TextArea
-              placeholder="자기소개"
+              placeholder="자신을 자유롭게 소개해주세요 :)"
               rows="4"
-              {...register('introduction')}
+              {...register('profile')}
           />
 
           <Label htmlFor="profilePicture">프로필 사진</Label>
           <Input
               type="file"
-              {...register('profilePicture')}
+              {...register('photo')}
           />
 
           <ButtonContainer>
@@ -261,6 +282,17 @@ const SignUp = () => {
             onClose={() => setIsModalOpen(false)}
             onComplete={handleAddressComplete}
         />
+
+        <Modal
+            title="회원가입 완료"
+            visible={isSuccessModalVisible}
+            onOk={handleSuccessModalOk}
+            onCancel={handleSuccessModalOk}
+            okText="확인"
+            cancelText="닫기"
+        >
+          <p>회원가입이 성공적으로 완료되었습니다.</p>
+        </Modal>
       </AuthTemplate>
   );
 };

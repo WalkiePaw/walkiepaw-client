@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import UserInput from '../components/UserInput';
 import UserButton from '../components/UserButton';
 import KakaoLogin from '../components/OAuth/KakaoLogin';
+import NaverLogin from '../components/OAuth/NaverLogin';
+import GoogleLogin from '../components/OAuth/GoogleLogin';
 import pawpaw from '../assets/pawpaw.png';
-import naver_login from '../assets/naver_login.png';
-import google_login from '../assets/google_login.png';
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState({
@@ -131,12 +131,8 @@ const Login = () => {
 
           <div className="flex justify-between w-3/4 mb-4">
             <KakaoLogin />
-            <button onClick={handleNaverLogin} style={{ width: '183px', height: '45px' }}>
-              <img src={naver_login} alt="naver" style={{ width: '100%', height: '100%' }} />
-            </button>
-            <button onClick={handleGoogleLogin} style={{ width: '183px', height: '45px' }}>
-              <img src={google_login} alt="google" style={{ width: '100%', height: '100%' }} />
-            </button>
+            <NaverLogin />
+            <GoogleLogin />
           </div>
         </div>
       </div>

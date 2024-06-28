@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const LoginCallback = () => {
+const KakaoLoginCallback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const LoginCallback = () => {
         localStorage.setItem('user', JSON.stringify(response.data));
 
         // 이메일과 이름을 상태로 전달하며 회원가입 페이지로 이동
-        navigate('/signup', { state: { ...email,name, isSocialSignUp: true } });
+        navigate('/signup', { state: { email, name, isSocialSignUp: true } });
       })
       .catch(error => {
         console.error('Error during Kakao login:', error);
@@ -31,4 +31,4 @@ const LoginCallback = () => {
   return <div>Loading...</div>;
 };
 
-export default LoginCallback;
+export default KakaoLoginCallback;
