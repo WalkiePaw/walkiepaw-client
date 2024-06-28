@@ -1,9 +1,9 @@
 // 내 거래 내역 보기
-// src/pages/MyReview.jsx
+// src/pages/MyTransaction.jsx
 
 import { useState } from "react";
 
-const MyReview = () => {
+const MyTransaction = () => {
   const [activeTab, setActiveTab] = useState("walk"); // 기본 선택 탭 설정
 
   // 게시글 데이터 예시
@@ -28,25 +28,29 @@ const MyReview = () => {
 
   return (
       <div className="flex flex-col">
-        <h1 className="text-2xl font-bold mb-4 mr-4">내 거래 내역</h1>
-          <div className="flex mb-4">
-            <button
-              className={`px-8 py-2 rounded-md mr-4 ${
-                activeTab === "walk" ? "bg-[#43312A] text-white" : "bg-[#E8C5A5] text-gray-800"
-              }`}
-              onClick={() => handleTabClick("walk")}
-            >
-              산책
-            </button>
-            <button
-              className={`px-8 py-2 rounded-md ${
-                activeTab === "partTimeJob" ? "bg-[#43312A] text-white" : "bg-[#E8C5A5] text-gray-800"
-              }`}
-              onClick={() => handleTabClick("partTimeJob")}
-            >
-              알바
-            </button>
-          </div>
+        <h1 className="text-3xl font-bold mb-5 mr-4">내 거래 내역</h1>
+        <div className="flex mb-3 dlomb-4">
+        <button
+          className={`px-8 py-2 rounded-md mr-4 ${
+            activeTab === "walk"
+              ? "bg-[#43312A] text-white"
+              : "bg-[#E8C5A5] text-gray-800"
+          }`}
+          onClick={() => handleTabClick("walk")}
+        >
+          산책
+        </button>
+        <button
+          className={`px-8 py-2 rounded-md ${
+            activeTab === "partTimeJob"
+              ? "bg-[#43312A] text-white"
+              : "bg-[#E8C5A5] text-gray-800"
+          }`}
+          onClick={() => handleTabClick("partTimeJob")}
+        >
+          알바
+        </button>
+      </div>
           <div className="w-full overflow-hidden rounded-lg border border-gray-300">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -81,7 +85,7 @@ const MyReview = () => {
   );
 }
 
-export default MyReview;
+export default MyTransaction;
 
 
 // 추가될 부분: 리뷰 상태에 따라 리뷰 남기기 버튼 필요

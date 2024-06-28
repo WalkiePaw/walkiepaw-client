@@ -1,12 +1,12 @@
 // src/pages/Dashboard/DashboardLayout.jsx
 
 import React from 'react';
-import Sidebar from './Sidebar';
+import DashboardSidebar from './DashboardSidebar';
 
 const DashboardLayout = ({ children }) => {
   return (
     <div className="flex">
-      <Sidebar />
+      <DashboardSidebar />
       <div className="flex-grow p-4">
         {children}
       </div>
