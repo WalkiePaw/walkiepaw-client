@@ -85,7 +85,7 @@ const ModifyPostForm = () => {
 
       if (response === 201) {
         alert('게시글이 수정되었습니다.');
-        navigate('/board-list');
+        navigate('/recruit');
       } else {
         throw new Error('게시글 수정 실패!');
       }
@@ -241,7 +241,7 @@ const ModifyPostForm = () => {
           <button
             type="button"
             className="cancel-button"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(-1)} // 현재 페이지에서 이전 페이지로 이동합니다.
           >
             취소
           </button>

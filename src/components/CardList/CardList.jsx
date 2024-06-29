@@ -11,6 +11,7 @@ const CardList = ({
   image,
   memberNickName,
   status,
+  category,
   onCardClick,
 }) => {
   const [liked, setLiked] = useState(false);

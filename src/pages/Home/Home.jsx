@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 const Home = () => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate('/board-list1');
+    navigate('/jobs');
   };
 
   return (
@@ -19,13 +19,11 @@ const Home = () => {
       <div className="homebox2">
         <img src="img/dog2.jpg" className="homebox2-img" alt="homeImg"></img>
 
-       
-     
         <h2>
           <p>믿을만한 지역 주민 산책인 모집</p>
         </h2>
         <div className="button1">
-          <Link to="/board-list">산책인 모집하기</Link>{' '}
+          <Link to="/recruit">산책인 모집하기</Link>{' '}
           {/* 버튼을 눌렀을 때 산책 list로 이동 */}
         </div>
       </div>

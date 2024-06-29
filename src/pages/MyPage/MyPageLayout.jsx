@@ -1,6 +1,6 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import MyPageSidebar from "./MyPageSidebar";
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import MyPageSidebar from './MyPageSidebar';
 
 const MyPageLayout = () => (
   <div className="flex h-screen">

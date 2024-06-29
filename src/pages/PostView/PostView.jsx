@@ -38,6 +38,7 @@ const PostView = () => {
   };
 
   const handleDelete = async () => {
+    // 삭제는 board_id는 남겨두고 '삭제된 게시글 입니다'라고 표시하기.
     // 삭제 확인 및 처리 로직
     if (window.confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
       try {
@@ -45,7 +46,7 @@ const PostView = () => {
           'http://localhost:8080/api/v1/posts/${postId}'
         );
         console.log('삭제 응답', response);
-        navigate('/board-list');
+        navigate('/recruit');
       } catch (error) {
         console.error('삭제 오류', error);
         alert('게시글을 삭제 할 수 없습니다.');

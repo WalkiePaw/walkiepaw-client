@@ -9,9 +9,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// 유효성 검사: yup 적용
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
@@ -24,6 +21,8 @@ const NewPostForm = () => {
   const [images, setImages] = useState([]);
   const [detailedLocation, setDetailedLocation] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [category, setCategory] = useState('JOB_OPENING');
+
   const navigate = useNavigate();
 
   const handleImageUpload = (e) => {
@@ -71,6 +70,7 @@ const NewPostForm = () => {
       // detailedLocation,
       // images,
       memberId,
+      category: category === '산책' ? 'JOB_OPEING' : 'JOB_SEARCH',
     };
 
     try {
@@ -88,7 +88,7 @@ const NewPostForm = () => {
 
       if (response?.status === 201) {
         alert('게시글 저장 완료!');
-        navigate('/board-list');
+        navigate(`/recruit${category === 'JOB_OPENING' ? '' : '1'}`);
       } else {
         throw new Error('게시글 저장 실패!');
       }
@@ -104,6 +104,10 @@ const NewPostForm = () => {
 
   const handlePriceTypeClick = (type) => {
     setPriceType(type);
+  };
+
+  const handleCategoryClick = (category) => {
+    setCategory(category);
   };
 
   return (
@@ -142,6 +146,22 @@ const NewPostForm = () => {
             </button>
           </div>
         )}
+      </div>
+      <div className="category-buttons">
+        <button
+          type="button"
+          className={`btn-category ${category === '산책' ? 'selected' : ''}`}
+          onClick={() => handleCategoryClick('산책')}
+        >
+          산책
+        </button>
+        <button
+          type="button"
+          className={`btn-category ${category === '알바' ? 'selected' : ''}`}
+          onClick={() => handleCategoryClick('알바')}
+        >
+          알바
+        </button>
       </div>
       <form onSubmit={handleSubmit} className="new-post-form">
         <label htmlFor="title">제목:</label>

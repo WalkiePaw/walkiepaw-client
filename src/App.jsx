@@ -23,23 +23,23 @@ import ModifyPostForm from './pages/Post/Modify/ModifyPostForm';
 import CustomerService from './pages/MyPage/CustomerService';
 import PostView from './pages/PostView/PostView';
 
-import MyTransaction from "./pages/MyPage/MyTransaction.jsx";
-import KakaoLoginCallback from "./components/OAuth/KakaoLoginCallback.jsx";
-import NaverLoginCallback from "./components/OAuth/NaverLoginCallback.jsx";
-import GoogleLoginCallback from "./components/OAuth/GoogleLoginCallback.jsx";
-import Review from "./components/Review.jsx";
-import SignUp from "./pages/OAuth/SignUp.jsx";
-import ChatPage from "./pages/chatroom/ChatPage.jsx";
-import MemberReport from "./admin/MemberReport.jsx";
-import BoardReport from "./admin/BoardReport.jsx";
-import CSManagement from "./admin/CSManagement.jsx";
-import Admin from "./admin/Admin.jsx";
-import MemberList from "./admin/MemberList.jsx";
+import MyTransaction from './pages/MyPage/MyTransaction.jsx';
+import KakaoLoginCallback from './components/OAuth/KakaoLoginCallback.jsx';
+import NaverLoginCallback from './components/OAuth/NaverLoginCallback.jsx';
+import GoogleLoginCallback from './components/OAuth/GoogleLoginCallback.jsx';
+import Review from './components/Review.jsx';
+import SignUp from './pages/OAuth/SignUp.jsx';
+import ChatPage from './pages/chatroom/ChatPage.jsx';
+import MemberReport from './admin/MemberReport.jsx';
+import BoardReport from './admin/BoardReport.jsx';
+import CSManagement from './admin/CSManagement.jsx';
+import Admin from './admin/Admin.jsx';
+import MemberList from './admin/MemberList.jsx';
 
 function App() {
   const nav = useNavigate();
   const onClickButton = () => {
-    nav("/new");
+    nav('/new');
   };
   return (
     <>
@@ -60,8 +60,11 @@ function App() {
           </Route>
 
           <Route index element={<Home />} />
-          <Route path="board-list" element={<BoardList />} />
-          <Route path="board-list1" element={<BoardList />} />
+          <Route
+            path="recruit"
+            element={<BoardList category="JOB_OPENING" />}
+          />
+          <Route path="jobs" element={<BoardList category="JOB_SEARCH" />} />
           <Route path="new-post" element={<NewPostForm />}></Route>
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
           <Route path="login" element={<Login />} />
