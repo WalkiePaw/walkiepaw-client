@@ -115,41 +115,40 @@ const Header = ({ children }) => {
           <img src={logo} alt="Logo" />
         </NavLink>
 
-          <nav>
-            <Menus>
-              <li>
-                <NavLink to="/hire" activeClassName="active">
-                  산책
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/work" activeClassName="active">
-                  알바
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/chatpage" activeClassName="active">
-                  채팅
-                </NavLink>
-              </li>
-            </Menus>
-          </nav>
+        <nav>
+          <Menus>
+            <li>
+              <NavLink to="/recruit" activeClassName="active">
+                산책인 구인글
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/jobs" activeClassName="active">
+                알바 구직글
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/chatpage" activeClassName="active">
+                채팅
+              </NavLink>
+            </li>
+          </Menus>
+        </nav>
 
-
-          <div className="buttons">
-            {isLoggedIn ? (
-                <>
-                  <img src={default_user} alt="user" />
-                  <button onClick={logout}>로그아웃</button>
-                </>
-            ) : (
-                <button>
-                  <Link to="/login">로그인</Link>
-                </button>
-            )}
-          </div>
+        <div className="buttons">
+          {isLoggedIn ? (
+            <>
+              <img src={default_user} alt="user" />
+              <button onClick={logout}>로그아웃</button>
+            </>
+          ) : (
+            <button>
+              <Link to="/login">로그인</Link>
+            </button>
+          )}
         </div>
-      </HeaderContainer>
+      </div>
+    </HeaderContainer>
   );
 };
 

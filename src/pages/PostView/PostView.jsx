@@ -121,7 +121,13 @@ const PostView = () => {
           </span>{' '}
           - {post.title}
         </div>
-        <div className="post-content-description">{post.content}</div>
+        <div className="post-content-description">
+          <ul>
+            <li>{post.priceType}</li>
+            <li>{post.price}</li>
+            <li>{post.content}</li>
+          </ul>
+        </div>
         <div className="post-location-map">
           <KakaoWithoutSearch defaultAddress={post.location} />
         </div>

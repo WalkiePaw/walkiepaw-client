@@ -12,6 +12,10 @@ const CardList = ({
   memberNickName,
   status,
   category,
+  price,
+  priceType,
+  startTime,
+  endTime,
   onCardClick,
 }) => {
   const [liked, setLiked] = useState(false);
@@ -38,10 +42,17 @@ const CardList = ({
         <span
           className={`post-status ${status?.toLowerCase()?.replace(' ', '-')}`}
         >
-          {status}
+          {status === 'RECRUITING' && '구인중'}
+          {status === 'RESERVED' && '구인 대기중'}
+          {status === 'COMPLETED' && '구인 완료'}
         </span>
         {` - ${title}`}
       </div>
+      <div className="PriceType">{priceType}</div>
+      <div className="Time">
+        시간: {startTime} ~ {endTime}
+      </div>
+      <div className="Price">금액: {price}</div>
       <div className="CardImageBox">
         <img className="CardImage" src={image} alt="card" />
       </div>

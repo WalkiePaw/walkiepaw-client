@@ -70,7 +70,7 @@ const NewPostForm = () => {
       // detailedLocation,
       // images,
       memberId,
-      category: category === '산책' ? 'JOB_OPEING' : 'JOB_SEARCH',
+      category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
     };
 
     try {

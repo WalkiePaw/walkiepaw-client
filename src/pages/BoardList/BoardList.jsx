@@ -8,20 +8,93 @@ import MyTown from '../MyTown/MyTown';
 const BoardList = ({ category }) => {
   const [posts, setPosts] = useState(); // 게시글 목록을 저장
   const [filteredPosts, setFilteredPosts] = useState([]); // 필터링된 게시글 목록을 저장
-  const [selectedRegion, setSelectedRegion] = useState('');
-  const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
+  const [selectedSi, setSelectedSi] = useState('');
+  const [selectedGu, setSelectedGu] = useState('');
+  const [selectedDong, setSelectedDong] = useState('');
 
   const navigate = useNavigate();
 
   const memberId = 1; // 로그인 유저의 임시 id 나중에 바꿔야 함
 
+  const testData = [
+    {
+      id: 1,
+      title: '골댕이 산책 시켜주실 분 구해요.',
+      local: '역삼동',
+      image: 'img/dog1.jpg',
+      memberNickName: 'hong',
+      status: 'RECRUITING',
+      price: 15000,
+      priceType: '시급',
+      startTime: 18,
+      endTime: 20,
+      category: 'JOB_OPENING',
+      dong: '역삼동',
+      content: '산책 물품은 준비해드려요~!!',
+    },
+    {
+      id: 2,
+      title: '강아지 산책 시켜드려요~22',
+      local: '역삼동',
+      image: 'img/dog1.jpg',
+      memberNickName: 'hong',
+      status: 'RECRUITING',
+      price: 15000,
+      priceType: '시급',
+      startTime: 18,
+      endTime: 20,
+      category: 'JOB_SEARCH',
+      dong: '역삼동',
+      content: '간식 및 야간 산책에 필요한 형광 조끼는 가지고있습니다!',
+    },
+    {
+      id: 3,
+      title: '골댕이 산책 시켜주실 분 구해요.33',
+      local: '역삼동',
+      image: 'img/dog1.jpg',
+      memberNickName: 'hong',
+      status: 'RECRUITING',
+      price: 15000,
+      priceType: '일급',
+      startTime: 18,
+      endTime: 20,
+      category: 'JOB_OPENING',
+      dong: '청담동',
+      content: '산책 물품은 준비해드려요~!!',
+    },
+    {
+      id: 4,
+      title: '강아지 산책 시켜드려요~44',
+      local: '역삼동',
+      image: 'img/dog1.jpg',
+      memberNickName: 'hong',
+      status: 'RECRUITING',
+      price: 15000,
+      priceType: '일급',
+      startTime: 18,
+      endTime: 20,
+      category: 'JOB_SEARCH',
+      dong: '청담동',
+      content: '간식 및 야간 산책에 필요한 형광 조끼는 가지고있습니다!',
+    },
+  ];
+
+  function testApiData() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(testData);
+      }, 1000);
+    });
+  }
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/v1/boards'); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        const response = await testApiData();
+        // const response = await axios.get('http://localhost:8080/api/v1/boards'); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         console.log(response);
-        const data = response.data ?? [];
+        // const data = response?.data ?? [];
+        const data = response ?? [];
         setPosts(data);
       } catch (error) {
         console.error('Failed to fetch posts', error);
@@ -45,19 +118,19 @@ const BoardList = ({ category }) => {
       }
 
       // 지역 필터링
-      if (selectedRegion) {
+      if (selectedSi) {
         newFilteredPosts = newFilteredPosts.filter(
-          (post) => post.region === selectedRegion
+          (post) => post.si === selectedSi
         );
       }
-      if (selectedDistrict) {
+      if (selectedGu) {
         newFilteredPosts = newFilteredPosts.filter(
-          (post) => post.district === selectedDistrict
+          (post) => post.gu === selectedGu
         );
       }
-      if (selectedNeighborhood) {
+      if (selectedDong) {
         newFilteredPosts = newFilteredPosts.filter(
-          (post) => post.neighborhood === selectedNeighborhood
+          (post) => post.dong === selectedDong
         );
       }
 
@@ -65,7 +138,7 @@ const BoardList = ({ category }) => {
     };
 
     filterPosts();
-  }, [category, selectedRegion, selectedDistrict, selectedNeighborhood, posts]);
+  }, [category, selectedSi, selectedGu, selectedDong, posts]);
 
   const handlePostClick = (post) => {
     navigate(`/post/${post.id}`, { state: { post, memberId } });
@@ -95,9 +168,9 @@ const BoardList = ({ category }) => {
         <img src="img/dog3.jpg" className="listTop-img" alt="반려견 산책" />
       </div>
       <MyTown
-        onRegionChange={setSelectedRegion}
-        onDistrictChange={setSelectedDistrict}
-        onNeighborhoodChange={setSelectedNeighborhood}
+        onSiChange={setSelectedSi}
+        onGuChange={setSelectedGu}
+        onDongChange={setSelectedDong}
       />
       <div
         className={`board-list ${
@@ -109,7 +182,11 @@ const BoardList = ({ category }) => {
             <div key={post.id} onClick={() => handlePostClick(post)}>
               <CardList
                 title={post.title}
-                local={post.neighborhood}
+                local={post.dong}
+                price={post.price}
+                priceType={post.priceType}
+                startTime={post.startTime}
+                endTime={post.endTime}
                 image={post.image}
                 memberNickName={`작성자: ${post.memberNickName}`}
                 status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
