@@ -1,6 +1,6 @@
 .CardStyled {
   width: 250px;
-  height: 436px;
+  height: 460px;
   margin: auto;
   border-radius: 18px;
   text-align: start;
@@ -100,6 +100,7 @@
 }
 
 .Icon {
+  padding-left: 10px;
   display: flex;
   align-items: center;
   cursor: pointer;

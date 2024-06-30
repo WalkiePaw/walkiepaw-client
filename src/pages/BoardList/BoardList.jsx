@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import CardList from '../../components/CardList/CardList';
 import './BoardList.css';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import MyTown from '../MyTown/MyTown';
 
 const BoardList = ({ category }) => {
@@ -26,8 +25,8 @@ const BoardList = ({ category }) => {
       status: 'RECRUITING',
       price: 15000,
       priceType: '시급',
-      startTime: 18,
-      endTime: 20,
+      startTime: new Date('2024-06-21T18:00:00').toISOString(),
+      endTime: new Date('2024-06-21T20:00:00').toISOString(),
       category: 'JOB_OPENING',
       dong: '역삼동',
       content: '산책 물품은 준비해드려요~!!',
@@ -41,8 +40,8 @@ const BoardList = ({ category }) => {
       status: 'RECRUITING',
       price: 15000,
       priceType: '시급',
-      startTime: 18,
-      endTime: 20,
+      startTime: new Date('2024-06-21T18:00:00').toISOString(),
+      endTime: new Date('2024-06-21T20:00:00').toISOString(),
       category: 'JOB_SEARCH',
       dong: '역삼동',
       content: '간식 및 야간 산책에 필요한 형광 조끼는 가지고있습니다!',
@@ -56,8 +55,8 @@ const BoardList = ({ category }) => {
       status: 'RECRUITING',
       price: 15000,
       priceType: '일급',
-      startTime: 18,
-      endTime: 20,
+      startTime: new Date('2024-06-21T18:00:00').toISOString(),
+      endTime: new Date('2024-06-21T20:00:00').toISOString(),
       category: 'JOB_OPENING',
       dong: '청담동',
       content: '산책 물품은 준비해드려요~!!',
@@ -71,8 +70,8 @@ const BoardList = ({ category }) => {
       status: 'RECRUITING',
       price: 15000,
       priceType: '일급',
-      startTime: 18,
-      endTime: 20,
+      startTime: new Date('2024-06-21T18:00:00').toISOString(),
+      endTime: new Date('2024-06-21T20:00:00').toISOString(),
       category: 'JOB_SEARCH',
       dong: '청담동',
       content: '간식 및 야간 산책에 필요한 형광 조끼는 가지고있습니다!',
@@ -112,26 +111,18 @@ const BoardList = ({ category }) => {
 
       // 카테고리 필터링
       if (category) {
-        newFilteredPosts = newFilteredPosts.filter(
-          (post) => post.category === category
-        );
+        newFilteredPosts = newFilteredPosts.filter((post) => post.category === category);
       }
 
       // 지역 필터링
       if (selectedSi) {
-        newFilteredPosts = newFilteredPosts.filter(
-          (post) => post.si === selectedSi
-        );
+        newFilteredPosts = newFilteredPosts.filter((post) => post.si === selectedSi);
       }
       if (selectedGu) {
-        newFilteredPosts = newFilteredPosts.filter(
-          (post) => post.gu === selectedGu
-        );
+        newFilteredPosts = newFilteredPosts.filter((post) => post.gu === selectedGu);
       }
       if (selectedDong) {
-        newFilteredPosts = newFilteredPosts.filter(
-          (post) => post.dong === selectedDong
-        );
+        newFilteredPosts = newFilteredPosts.filter((post) => post.dong === selectedDong);
       }
 
       setFilteredPosts(newFilteredPosts);
@@ -167,16 +158,8 @@ const BoardList = ({ category }) => {
         </h1>
         <img src="img/dog3.jpg" className="listTop-img" alt="반려견 산책" />
       </div>
-      <MyTown
-        onSiChange={setSelectedSi}
-        onGuChange={setSelectedGu}
-        onDongChange={setSelectedDong}
-      />
-      <div
-        className={`board-list ${
-          filteredPosts?.length === 0 ? 'no-posts-container' : ''
-        }`}
-      >
+      <MyTown onSiChange={setSelectedSi} onGuChange={setSelectedGu} onDongChange={setSelectedDong} />
+      <div className={`board-list ${filteredPosts?.length === 0 ? 'no-posts-container' : ''}`}>
         {filteredPosts?.length > 0 ? (
           filteredPosts.map((post) => (
             <div key={post.id} onClick={() => handlePostClick(post)}>
@@ -188,7 +171,7 @@ const BoardList = ({ category }) => {
                 startTime={post.startTime}
                 endTime={post.endTime}
                 image={post.image}
-                memberNickName={`작성자: ${post.memberNickName}`}
+                memberNickName={post.memberNickName}
                 status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
                 category={post.category} // 카테고리 정보 전달
                 onCardClick={() => handlePostClick(post)}

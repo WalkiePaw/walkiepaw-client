@@ -42,9 +42,7 @@ const PostView = () => {
     // 삭제 확인 및 처리 로직
     if (window.confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
       try {
-        const response = await axios.delete(
-          'http://localhost:8080/api/v1/posts/${postId}'
-        );
+        const response = await axios.delete('http://localhost:8080/api/v1/posts/${postId}');
         console.log('삭제 응답', response);
         navigate('/recruit');
       } catch (error) {
@@ -55,15 +53,33 @@ const PostView = () => {
   };
 
   const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) =>
-      prevSlide === post.images.length - 1 ? 0 : prevSlide + 1
-    );
+    setCurrentSlide((prevSlide) => (prevSlide === post.images.length - 1 ? 0 : prevSlide + 1));
   };
 
   const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) =>
-      prevSlide === post.images.length - 1 ? 0 : prevSlide - 1
-    );
+    setCurrentSlide((prevSlide) => (prevSlide === post.images.length - 1 ? 0 : prevSlide - 1));
+  };
+
+  const formatTime = (dataTimeString) => {
+    const date = new Date(dataTimeString);
+    return date.toLocaleString(); // 날짜와 시간 모두 포함한 문자열로 변환
+  };
+
+  const totalTime = (startTime, endTime) => {
+    const start = new Date(startTime); // ISO 문자열에서 직접 Date 타입 객체로 변환
+    const end = new Date(endTime);
+
+    const diff = Math.abs(end - start) / 1000; // 초 단위로 차이 계산
+    const hours = Math.floor(diff / 3600); // 시간 단위
+    const minutes = Math.floor((diff % 3600) / 60); // 분 단위
+
+    if (hours >= 24) {
+      const days = Math.floor(hours / 24);
+      const remainingHours = hours % 24;
+      return `${days}일 ${remainingHours}시간`;
+    } else {
+      return `${hours}시간 ${minutes}분`;
+    }
   };
 
   return (
@@ -75,11 +91,7 @@ const PostView = () => {
               <button className="prev-button" onClick={handlePrevSlide}>
                 &#10094;
               </button>
-              <img
-                src={post.images[currentSlide]}
-                alt="Post"
-                className="post-image"
-              />
+              <img src={post.images[currentSlide]} alt="Post" className="post-image" />
               <button className="next-button" onClick={handleNextSlide}>
                 &#10095;
               </button>
@@ -97,24 +109,20 @@ const PostView = () => {
         )}
         <div className="post-header">
           <div className="author-info">
-            <img
-              src="https://via.placeholder.com/40"
-              alt="Author"
-              className="author-image"
-            />
+            {' '}
+            {/* 맴버 사진으로 넣어야함 */}
+            <img src="https://via.placeholder.com/40" alt="Author" className="author-image" />
             <div className="author-details">
               <span className="author-name">{post.memberNickName}</span>
               <span className="post-location">{post.local}</span>
             </div>
           </div>
           <div className="rating">
-            <img src={pawpaw} alt="Rating" className="Rating-images" /> 5.0
+            <img src={pawpaw} alt="Rating" className="Rating-images" /> 5.0 {/* 서버에서 평균값을 받아서 출력해야함 */}
           </div>
         </div>
         <div className="post-title">
-          <span
-            className={`post-status ${status.toLowerCase().replace(' ', '-')}`}
-          >
+          <span className={`post-status ${status.toLowerCase().replace(' ', '-')}`}>
             {status === 'RECRUITING' && '구인중'}
             {status === 'RESERVED' && '구인 대기중'}
             {status === 'COMPLETED' && '구인 완료'}
@@ -123,8 +131,13 @@ const PostView = () => {
         </div>
         <div className="post-content-description">
           <ul>
-            <li>{post.priceType}</li>
-            <li>{post.price}</li>
+            <li>
+              날짜 및 시간: {formatTime(post.startTime)} ~ {formatTime(post.endTime)} 총 시간:{' '}
+              {totalTime(post.startTime, post.endTime)}
+            </li>
+            <li>
+              {post.priceType} {post.price}
+            </li>
             <li>{post.content}</li>
           </ul>
         </div>
@@ -132,10 +145,7 @@ const PostView = () => {
           <KakaoWithoutSearch defaultAddress={post.location} />
         </div>
         <div className="report-box">
-          <button
-            className="report-button"
-            onClick={() => setShowReportModal(true)}
-          >
+          <button className="report-button" onClick={() => setShowReportModal(true)}>
             이 게시글 신고하기
           </button>
         </div>
