@@ -19,7 +19,6 @@ import Introduction from '/src/pages/Dashboard/Introduction';
 import Preferences from './pages/MyPage/Preferences';
 import React from 'react';
 import ModifyPostForm from './pages/Post/Modify/ModifyPostForm';
-
 import CustomerService from './pages/MyPage/CustomerService';
 import PostView from './pages/PostView/PostView';
 
@@ -35,6 +34,7 @@ import BoardReport from "./admin/BoardReport.jsx";
 import CSManagement from "./admin/CSManagement.jsx";
 import Admin from "./admin/Admin.jsx";
 import MemberList from "./admin/MemberList.jsx";
+import QnaList from './pages/MyPage/QnaList.jsx';
 
 function App() {
   const nav = useNavigate();
@@ -57,6 +57,7 @@ function App() {
             <Route path="settings" element={<MySettings />} />
             <Route path="review" element={<Review />} />
             <Route path="withdrawal" element={<MembershipWithdrawal />} />
+            <Route path="qna-list" element={<QnaList />} />
           </Route>
 
           <Route index element={<Home />} />

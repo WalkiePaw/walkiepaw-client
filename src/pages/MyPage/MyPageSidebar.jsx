@@ -22,7 +22,7 @@ const MyPageSidebar = () => {
           setMemberData(response.data); // 사용자 데이터를 state에 저장
         })
         .catch(error => {
-          console.error('Error fetching member data:', error);
+          console.error('회원 정보를 가져오던 도중 오류 발생:', error);
         });
     } else {
       console.error('No user ID found in local storage.');
@@ -166,6 +166,19 @@ const MyPageSidebar = () => {
                   style={{ marginRight: "0.5rem" }}
                 />
                 1:1 문의
+              </NavLink>
+            </li>
+            <li className="my-2">
+              <NavLink
+                to="/mypage/qna-list"
+                className="text-black hover:text-orange-300"
+                activeClassName="text-orange-600"
+              >
+                <FontAwesomeIcon
+                  icon={faGripLines}
+                  style={{ marginRight: "0.5rem" }}
+                />
+                내 문의 내역
               </NavLink>
             </li>
           </ul>

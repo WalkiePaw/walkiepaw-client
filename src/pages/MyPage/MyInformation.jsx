@@ -7,8 +7,12 @@ import { useForm } from 'react-hook-form';
 // 유효성 검사: yup 적용
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+// 비밀번호 변경 컴포넌트 임포트
+import { handleChangePassword } from './PasswordSchema';
 // ImageUpload 컴포넌트 임포트
-import ImageUpload from '../../components/ImageUpload';  
+import ImageUpload from '../../components/ImageUpload';
+// 도로명 주소 모달 임포트
+import AddressModal from '../../components/OAuth/AddressModal';
 // axios 임포트
 import axios from 'axios';
 
@@ -21,31 +25,26 @@ const schema = yup.object().shape({
   email: yup.string().email("올바른 이메일 주소를 입력해주세요.").required("이메일은 필수 입력 사항입니다."),
   phoneNumber: yup
     .string()
-    // .matches(/^\d+$/, "전화번호는 숫자로만 입력해주세요.")
     .required("전화번호는 필수 입력 사항입니다."),
   address: yup.string().required("주소는 필수 입력 사항입니다."),
   birth: yup.date().required("생년월일은 필수 입력 사항입니다."),
-  password: yup
-    .string()
-    .min(8, "비밀번호는 최소 8자 이상이어야 합니다."),
-  passwordConfirm: yup
-    .string()
-    .oneOf([yup.ref('password'), null], '비밀번호가 일치하지 않습니다.'),
 });
 
 const MyInformation = () => {
   // 유효성 검사
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+  const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm({
     resolver: yupResolver(schema),
   });
-
+  
   const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [profile, setProfile] = useState("");
   const [birth, setBirth] = useState("");
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
 
   // 회원 정보 불러오기
   useEffect(() => {
@@ -56,14 +55,12 @@ const MyInformation = () => {
         const memberData = response.data;
         setValue('name', memberData.name);
         setValue('nickname', memberData.nickname);
+        setValue('password', memberData.password);
         setValue('phoneNumber', memberData.phoneNumber);
         setValue('address', memberData.address);
         setValue('birth', memberData.birth);
         setValue('email', memberData.email);
         setValue('profile', memberData.profile);
-        console.log(memberData.name);
-        // 기타 필요한 필드 설정
-        console.log(memberData.nickname);
       })
       .catch(error => {
         console.error('There was an error fetching the member data!', error);
@@ -81,6 +78,7 @@ const MyInformation = () => {
         address: address,
         profile: profile,
         birth: birth,
+        password: password,
         // 기타 필요한 정보들도 동일하게 추가
       };
   
@@ -92,44 +90,6 @@ const MyInformation = () => {
         .catch(error => {
           console.error('Error updating user information:', error);
         });
-    };
-
-    // 비밀번호 변경 팝업
-    const handleChangePassword = async () => {
-      const { value: formValues } = await MySwal.fire({
-        title: '새 비밀번호 입력',
-        html:
-          '<input id="swal-input1" class="swal2-input" placeholder="비밀번호 입력" type="password">' +
-          '<input id="swal-input2" class="swal2-input" placeholder="비밀번호 재확인" type="password">',
-        focusConfirm: false,
-        preConfirm: () => {
-          return [
-            document.getElementById('swal-input1').value,
-            document.getElementById('swal-input2').value
-          ];
-        }
-      });
-
-      if (formValues) {
-        const [password, passwordConfirm] = formValues;
-  
-        const result = await schema.validate({ password, passwordConfirm }).catch(err => err);
-  
-        if (result.errors) {
-          MySwal.fire({
-            icon: 'error',
-            title: '오류',
-            text: result.errors.join('\n'),
-          });
-        } else {
-          MySwal.fire({
-            icon: 'success',
-            title: '성공',
-            text: '비밀번호가 성공적으로 변경되었습니다!',
-          });
-          // 비밀번호 변경 로직 추가
-        }
-      }
     };
   
     // 회원 정보 저장(제출)
@@ -171,13 +131,32 @@ const MyInformation = () => {
       }
     };
 
+    // handleInputChange 함수 수정
     const handleInputChange = (e) => {
       const { name, value } = e.target;
       setValue(name, value); // react-hook-form의 setValue로 입력 필드 상태 업데이트
 
       // 모든 필수 입력 필드에 값이 있는지 확인
-      const formData = register.getValues();
+      const formData = getValues(); // useForm 훅에서 추출한 getValues 함수 사용
       setIsFormValid(schema.isValidSync(formData)); // yup 스키마에 따라 유효성 검사 수행
+    };
+
+    // 주소 검색 모달 열기
+    const handleAddressSearch = () => {
+      setIsAddressModalOpen(true);
+    };
+
+    // 주소 선택 처리
+    const handleAddressSelect = (selectedAddress) => {
+      setValue('address', selectedAddress);
+      setAddress(selectedAddress);
+      setIsAddressModalOpen(false);
+    };
+
+    const handleAddressComplete = (newAddress) => {
+      setValue('address', newAddress);
+      setAddress(newAddress);
+      setIsAddressModalOpen(false);
     };
 
     // 이미지 변경 
@@ -240,19 +219,10 @@ const MyInformation = () => {
           </div>
           <div className="mb-3">
             <label className="block mb-1">비밀번호</label>
-            <div className="flex flex-col space-y-2 mb-2">
-              <input
-                type="password"
-                placeholder="비밀번호 입력"
-                {...register("password")}
-                className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              />
-              {errors.password && (
-                <p className="text-red-500">{errors.password.message}</p>
-              )}
-            </div>
             <button
               type="button"
+              name="password"
+              {...register("password")}
               className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none"
               onClick={handleChangePassword}
             >
@@ -269,7 +239,9 @@ const MyInformation = () => {
                 placeholder="xxxx@xxxx.com"
                 className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
-              {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-red-500">{errors.email.message}</p>
+              )}
               <button
                 type="button"
                 className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none"
@@ -288,7 +260,9 @@ const MyInformation = () => {
               placeholder="전화번호는 숫자로만 입력해주세요('-'제외)"
               className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
-            {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
+            {errors.phoneNumber && (
+              <p className="text-red-500">{errors.phoneNumber.message}</p>
+            )}
           </div>
           <div className="mb-3">
             <label className="block mb-1">주소</label>
@@ -296,16 +270,18 @@ const MyInformation = () => {
               <input
                 type="text"
                 name="address"
-                placeholder="도로명 주소를 검색하세요."
                 {...register("address")}
-                onChange={handleInputChange}
+                value={address}
+                placeholder="주소를 검색해주세요"
+                readOnly
                 className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
               <button
                 type="button"
                 className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none"
+                onClick={handleAddressSearch}
               >
-                주소 검색
+                {address ? "주소 재검색" : "주소 검색"}
               </button>
             </div>
             {errors.address && (
@@ -322,6 +298,7 @@ const MyInformation = () => {
               className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
           </div>
+          <label className="block mb-1">프로필 사진</label>
           <ImageUpload onImageChange={handleImageChange} />
           <div className="mb-3">
             <label className="block mb-1">소개</label>
@@ -337,16 +314,22 @@ const MyInformation = () => {
           </div>
           <div className="flex justify-end">
             <button
-          type="submit"
-          className={`px-4 py-2 bg-[#43312A] text-white rounded-md hover:bg-yellow-700 ${
-            Object.keys(errors).length !== 0 &&
-            "opacity-50 cursor-not-allowed"
-          }`}
-          disabled={Object.keys(errors).length !== 0}
-        >
-          저장
-        </button>
+              type="submit"
+              className={`px-4 py-2 bg-[#43312A] text-white rounded-md hover:bg-yellow-700 ${
+                Object.keys(errors).length !== 0 &&
+                "opacity-50 cursor-not-allowed"
+              }`}
+              disabled={Object.keys(errors).length !== 0}
+            >
+              저장
+            </button>
           </div>
+          {/* 도로명 주소 */}
+          <AddressModal
+            visible={isAddressModalOpen}
+            onClose={() => setIsAddressModalOpen(false)}
+            onComplete={handleAddressComplete}
+          />
         </form>
         {/* 페이지 하단에 여백주기 */}
         <div className="mt-8 pb-8"></div>
