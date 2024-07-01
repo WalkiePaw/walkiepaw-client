@@ -23,8 +23,7 @@ const Home = () => {
           <p>믿을만한 지역 주민 산책인 모집</p>
         </h2>
         <div className="button1">
-          <Link to="/recruit">산책인 모집하기</Link>{' '}
-          {/* 버튼을 눌렀을 때 산책 list로 이동 */}
+          <Link to="/recruit">산책인 모집하기</Link> {/* 버튼을 눌렀을 때 산책 list로 이동 */}
         </div>
       </div>
       <div className="homebox3">
@@ -33,11 +32,9 @@ const Home = () => {
           <p>귀여운 강아지와 산책하며 일하기</p>
         </h2>
         <div className="button2">
-          <button onClick={handleClick}>내 근처 알바 보기</button>{' '}
-          {/* 버튼을 눌렀을 때 알바 list로 이동 */}
+          <button onClick={handleClick}>내 근처 알바 보기</button> {/* 버튼을 눌렀을 때 알바 list로 이동 */}
         </div>
       </div>
-      <div className="homebox4"></div>
     </div>
   );
 };

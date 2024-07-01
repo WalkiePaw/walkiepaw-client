@@ -62,7 +62,9 @@ const PostView = () => {
 
   const formatTime = (dataTimeString) => {
     const date = new Date(dataTimeString);
-    return date.toLocaleString(); // 날짜와 시간 모두 포함한 문자열로 변환
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`; // 날짜와 시간 모두 포함한 문자열로 변환
   };
 
   const totalTime = (startTime, endTime) => {

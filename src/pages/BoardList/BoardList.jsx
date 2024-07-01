@@ -19,7 +19,6 @@ const BoardList = ({ category }) => {
     {
       id: 1,
       title: '골댕이 산책 시켜주실 분 구해요.',
-      local: '역삼동',
       image: 'img/dog1.jpg',
       memberNickName: 'hong',
       status: 'RECRUITING',
@@ -34,7 +33,6 @@ const BoardList = ({ category }) => {
     {
       id: 2,
       title: '강아지 산책 시켜드려요~22',
-      local: '역삼동',
       image: 'img/dog1.jpg',
       memberNickName: 'hong',
       status: 'RECRUITING',
@@ -49,7 +47,6 @@ const BoardList = ({ category }) => {
     {
       id: 3,
       title: '골댕이 산책 시켜주실 분 구해요.33',
-      local: '역삼동',
       image: 'img/dog1.jpg',
       memberNickName: 'hong',
       status: 'RECRUITING',
@@ -64,7 +61,6 @@ const BoardList = ({ category }) => {
     {
       id: 4,
       title: '강아지 산책 시켜드려요~44',
-      local: '역삼동',
       image: 'img/dog1.jpg',
       memberNickName: 'hong',
       status: 'RECRUITING',

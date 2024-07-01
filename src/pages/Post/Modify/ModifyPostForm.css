@@ -36,6 +36,27 @@
   box-sizing: border-box;
 }
 
+.modify-post-container .category-buttons {
+  display: flex;
+  justify-content: center;
+  margin: 12px;
+}
+
+.modify-post-container .category-buttons button {
+  padding: 10px 20px;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.modify-post-container .category-buttons button.selected {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
 .modify-post-container .price-buttons {
   display: flex;
   justify-content: center;
