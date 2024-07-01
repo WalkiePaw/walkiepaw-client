@@ -14,7 +14,7 @@ const CSManagement = () => {
   }, []);
 
   const fetchQnaList = () => {
-    axios.get('/api/v1/qna')
+    axios.get('http://localhost:8080/api/v1/qna')
       .then(response => {
         setQnaList(response.data);
       })
@@ -80,7 +80,7 @@ const CSManagement = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-5">1:1 문의 내역 관리 페이지</h1>
+      <h1 className="text-3xl font-bold mb-7">1:1 문의 내역 관리 페이지</h1>
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
