@@ -3,6 +3,7 @@ import CardList from '../../components/CardList/CardList';
 import './BoardList.css';
 import { Link, useNavigate } from 'react-router-dom';
 import MyTown from '../MyTown/MyTown';
+import axios from 'axios';
 
 const BoardList = ({ category }) => {
   const [posts, setPosts] = useState(); // 게시글 목록을 저장
@@ -85,11 +86,11 @@ const BoardList = ({ category }) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await testApiData();
-        // const response = await axios.get('http://localhost:8080/api/v1/boards'); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        // const response = await testApiData();
+        const response = await axios.get('http://localhost:8080/api/v1/boards'); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         console.log(response);
-        // const data = response?.data ?? [];
-        const data = response ?? [];
+        const data = response?.data ?? [];
+        // const data = response ?? [];
         setPosts(data);
       } catch (error) {
         console.error('Failed to fetch posts', error);

@@ -192,14 +192,16 @@ const ModifyPostForm = () => {
           >
             일급
           </button>
-          <label>
-            <input
-              type="checkbox"
-              checked={post.priceProposal}
-              onChange={(e) => setPost({ ...post, priceProposal: e.target.checked })}
-            />
-            가격 제안 받기
-          </label>
+          <div className="price-proposal">
+            <label>
+              <input
+                type="checkbox"
+                checked={post.priceProposal}
+                onChange={(e) => setPost({ ...post, priceProposal: e.target.checked })}
+              />
+              가격 제안 받기
+            </label>
+          </div>
         </div>
         <label htmlFor="price">금액:</label>
         <input

@@ -42,9 +42,12 @@ const PostView = () => {
     // 삭제 확인 및 처리 로직
     if (window.confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
       try {
-        const response = await axios.delete('http://localhost:8080/api/v1/posts/${postId}');
+        const response = await axios.delete(`http://localhost:8080/api/v1/boards/${postId}`);
         console.log('삭제 응답', response);
-        navigate('/recruit');
+        alert('게시글이 삭제되었습니다.');
+        // 카테고리 기반으로 경로 설정
+        const categoryPath = post.category === 'JOB_OPENING' ? '/recruit' : '/jobs';
+        navigate(categoryPath);
       } catch (error) {
         console.error('삭제 오류', error);
         alert('게시글을 삭제 할 수 없습니다.');
@@ -138,7 +141,7 @@ const PostView = () => {
               {totalTime(post.startTime, post.endTime)}
             </li>
             <li>
-              {post.priceType} {post.price}
+              {post.priceType === 'HOURLY' && '시급'} {post.priceType === 'DAILY' && '일급'} {post.price}
             </li>
             <li>{post.content}</li>
           </ul>
