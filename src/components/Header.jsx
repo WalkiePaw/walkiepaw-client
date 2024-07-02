@@ -152,8 +152,5 @@ const Header = () => {
   );
 };
 
-Header.propTypes = {
-  children: PropTypes.node.isRequired,
-};
 
 export default Header;

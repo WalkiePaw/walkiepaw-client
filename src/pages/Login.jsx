@@ -115,7 +115,7 @@ const Login = () => {
           />
           <div className="flex justify-between w-3/4 mb-6">
             <button className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300">
-              아이디 찾기
+              이메일 찾기
             </button>
             <button className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300">
               비밀번호 찾기

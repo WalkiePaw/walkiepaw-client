@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import {
   ChatContainer,
@@ -12,10 +12,11 @@ import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import ChatRoom from '../../components/Chat/ChatRoom.jsx';
 import ChatInput from '../../components/Chat/ChatInput.jsx';
 
+
 const ChatLayout = styled.div`
   display: flex;
-  margin-top: 1rem;
-  height: 100%;
+  margin-top: 0.1rem;
+  height: auto;
 `;
 
 const ChatArea = styled.div`
@@ -30,7 +31,7 @@ const StyledChatContainer = styled(ChatContainer)`
 
 const StyledConversationHeader = styled(ConversationHeader)`
   background-color: #f0f0f0;
-  padding: 10px;
+  //padding: 10px;
 `;
 
 const StyledMessageInput = styled(MessageInput)`
@@ -38,6 +39,27 @@ const StyledMessageInput = styled(MessageInput)`
 `;
 
 function ChatPage() {
+  const [messages, setMessages] = useState([
+    {
+      message: "안녕하세요 ~~~~",
+      sentTime: "오후 3:44",
+      sender: "골댕이",
+      direction: "incoming",
+      position: "single"
+    }
+  ]);
+
+  const addMessage = (newMessage) => {
+    setMessages(prevMessages => [...prevMessages, {
+      message: newMessage,
+      sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      sender: "나",
+      direction: "outgoing",
+      position: "single"
+    }]);
+  };
+
+
   return (
       <ChatLayout>
         <ChatRoom />
@@ -48,30 +70,15 @@ function ChatPage() {
               <ConversationHeader.Content userName="골댕이" info="안읽은 메세지만 보기" />
             </StyledConversationHeader>
             <MessageList>
-              <Message model={{
-                message: "안녕하세요 ~~~~",
-                sentTime: "오후 3:44",
-                sender: "산책왕",
-                direction: "incoming",
-                position: "single"
-              }}>
-                <Avatar src="path_to_avatar_image.jpg" name="산책왕" />
-              </Message>
-              <Message model={{
-                message: "안녕하세요. 산책합니다",
-                sentTime: "오후 3:46",
-                sender: "골댕이",
-                direction: "outgoing",
-                position: "single"
-              }} />
-              {/* 추가 메시지들 */}
+              {messages.map((msg, index) => (
+                  <Message key={index} model={msg}>
+                    {msg.direction === "incoming" && <Avatar src="path_to_avatar_image.jpg" name={msg.sender} />}
+                  </Message>
+              ))}
             </MessageList>
           </StyledChatContainer>
-          <ChatInput>
-
-          </ChatInput>
+          <ChatInput onSend={addMessage} />
         </ChatArea>
-
       </ChatLayout>
   );
 }

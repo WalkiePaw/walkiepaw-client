@@ -283,7 +283,7 @@ const SignUp = () => {
 
         <Modal
             title="회원가입 완료"
-            visible={isSuccessModalVisible}
+            open={isSuccessModalVisible}
             onOk={handleSuccessModalOk}
             onCancel={handleSuccessModalOk}
             okText="확인"
