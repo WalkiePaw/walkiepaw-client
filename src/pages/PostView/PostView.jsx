@@ -87,6 +87,19 @@ const PostView = () => {
     }
   };
 
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'RECRUITING':
+        return 'recruiting';
+      case 'RESERVED':
+        return 'reserved';
+      case 'COMPLETED':
+        return 'completed';
+      default:
+        return '';
+    }
+  };
+
   return (
     <div className="post-view">
       <div className="post-content">
@@ -105,10 +118,16 @@ const PostView = () => {
         )}
         {memberNickName === post.memberId && (
           <div className="post-status">
-            <select value={status} onChange={handleStatusChange}>
-              <option value="RECRUITING">구인중</option>
-              <option value="RESERVED">구인 대기중</option>
-              <option value="COMPLETED">구인 완료</option>
+            <select value={status} onChange={handleStatusChange} className={getStatusClass(status)}>
+              <option value="RECRUITING" className="post-status-option recruiting">
+                구인중
+              </option>
+              <option value="RESERVED" className="post-status-option reserved">
+                구인 대기중
+              </option>
+              <option value="COMPLETED" className="post-status-option completed">
+                구인 완료
+              </option>
             </select>
           </div>
         )}
@@ -127,7 +146,7 @@ const PostView = () => {
           </div>
         </div>
         <div className="post-title">
-          <span className={`post-status ${status.toLowerCase().replace(' ', '-')}`}>
+          <span className={`post-status ${status.toLowerCase().replace(' ', '-')} ${getStatusClass(status)}`}>
             {status === 'RECRUITING' && '구인중'}
             {status === 'RESERVED' && '구인 대기중'}
             {status === 'COMPLETED' && '구인 완료'}
@@ -135,20 +154,21 @@ const PostView = () => {
           - {post.title}
         </div>
         <div className="post-content-description">
-          <ul>
-            <li>
-              날짜 및 시간: {formatTime(post.startTime)} ~ {formatTime(post.endTime)} 총 시간:{' '}
-              {totalTime(post.startTime, post.endTime)}
-            </li>
-            <li>
-              {post.priceType === 'HOURLY' && '시급'} {post.priceType === 'DAILY' && '일급'} {post.price}
-            </li>
-            <li>{post.content}</li>
-          </ul>
+          <div className="post-info-box">
+            <div className="post-info-item post-dateTime">
+              날짜 및 시간 : {formatTime(post.startTime)} ~ {formatTime(post.endTime)}
+              <div className="post-totalTime">총 시간: {totalTime(post.startTime, post.endTime)}</div>
+            </div>
+            <div className="post-info-item post-priceType">
+              {post.priceType === 'HOURLY' && '시급'} {post.priceType === 'DAILY' && '일급'} : {post.price}
+            </div>
+            <div className="post-info-item post-content-box">{post.content}</div>
+          </div>
         </div>
         <div className="post-location-map">
           <KakaoWithoutSearch defaultAddress={post.location} />
         </div>
+        <div className="post-location-box">지역 : {post.location}</div>
         <div className="report-box">
           <button className="report-button" onClick={() => setShowReportModal(true)}>
             이 게시글 신고하기
