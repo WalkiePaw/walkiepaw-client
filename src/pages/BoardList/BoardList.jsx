@@ -83,6 +83,12 @@ const BoardList = ({ category }) => {
     });
   }
 
+  const dongFromLocal = (location) => {
+    console.log('location값이댜', location);
+    const match = location?.match(/[가-힣]+동/);
+    return match ? match[0] : location;
+  };
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -162,7 +168,7 @@ const BoardList = ({ category }) => {
             <div key={post.id} onClick={() => handlePostClick(post)}>
               <CardList
                 title={post.title}
-                local={post.dong}
+                location={dongFromLocal(post.location)}
                 price={post.price}
                 priceType={post.priceType}
                 startTime={post.startTime}

@@ -73,7 +73,8 @@ const KakaoMap = ({ onSelectPlace }) => {
       });
 
       window.kakao.maps.event.addListener(marker, 'click', () => {
-        onSelectPlace(place.road_address_name || place.address_name);
+        // onSelectPlace(place.road_address_name || place.address_name); // 도로명주소와 지번주소를 함께 출력
+        onSelectPlace(place.address_name); // 지번주소(동) 주소를 출력
       });
 
       itemEl.onmouseover = () => {
@@ -85,7 +86,8 @@ const KakaoMap = ({ onSelectPlace }) => {
       };
 
       itemEl.onclick = () => {
-        onSelectPlace(place.road_address_name || place.address_name);
+        // onSelectPlace(place.road_address_name || place.address_name);
+        onSelectPlace(place.address_name);
       };
 
       newMarkers.push(marker);
@@ -97,19 +99,14 @@ const KakaoMap = ({ onSelectPlace }) => {
   };
 
   const addMarker = (position, idx) => {
-    const imageSrc =
-      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png';
+    const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png';
     const imageSize = new window.kakao.maps.Size(36, 37);
     const imgOptions = {
       spriteSize: new window.kakao.maps.Size(36, 691),
       spriteOrigin: new window.kakao.maps.Point(0, idx * 46 + 10),
       offset: new window.kakao.maps.Point(13, 37),
     };
-    const markerImage = new window.kakao.maps.MarkerImage(
-      imageSrc,
-      imageSize,
-      imgOptions
-    );
+    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions);
     const marker = new window.kakao.maps.Marker({
       position,
       image: markerImage,
@@ -185,11 +182,7 @@ const KakaoMap = ({ onSelectPlace }) => {
   return (
     <div>
       <div style={{ position: 'relative', height: '400px' }}>
-        <div
-          id="map"
-          ref={mapRef}
-          style={{ width: '100%', height: '100%' }}
-        ></div>
+        <div id="map" ref={mapRef} style={{ width: '100%', height: '100%' }}></div>
         <div
           style={{
             position: 'absolute',
@@ -208,11 +201,7 @@ const KakaoMap = ({ onSelectPlace }) => {
             placeholder="검색할 장소를 입력하세요"
             style={{ marginRight: '10px', padding: '5px' }}
           />
-          <button
-            type="button"
-            onClick={handleSearchClick}
-            style={{ padding: '5px 10px' }}
-          >
+          <button type="button" onClick={handleSearchClick} style={{ padding: '5px 10px' }}>
             검색
           </button>
         </div>

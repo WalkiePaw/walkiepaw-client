@@ -7,7 +7,7 @@ import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 
 const CardList = ({
   title,
-  local,
+  location,
   image,
   memberNickName,
   status,
@@ -76,7 +76,7 @@ const CardList = ({
           <img src="https://via.placeholder.com/40" alt="Author" className="author-image" />
         </div>
         <div className="MemberNickName">{memberNickName}</div>
-        <div className="Local">{local}</div>
+        <div className="Local">{location}</div>
       </div>
       <div className="Title">
         <span className={`post-status ${status?.toLowerCase()?.replace(' ', '-')}`}>
@@ -95,7 +95,7 @@ const CardList = ({
         </ul>
       </div>
       <div className="Price">
-        {priceType} 금액: {price}
+        {priceType === 'HOURLY' && '시급'} {priceType === 'DAILY' && '일급'} 금액: {price}
       </div>
       <div className="CardImageBox">
         <img className="CardImage" src={image} alt="card" />
