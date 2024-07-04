@@ -100,6 +100,12 @@ const PostView = () => {
     }
   };
 
+  const formatToKRW = (value) => {
+    return new Intl.NumberFormat('ko-KR', {
+      style: 'decimal',
+    }).format(value);
+  };
+
   return (
     <div className="post-view">
       <div className="post-content">
@@ -160,7 +166,8 @@ const PostView = () => {
               <div className="post-totalTime">총 시간: {totalTime(post.startTime, post.endTime)}</div>
             </div>
             <div className="post-info-item post-priceType">
-              {post.priceType === 'HOURLY' && '시급'} {post.priceType === 'DAILY' && '일급'} : {post.price}
+              {post.priceType === 'HOURLY' && '시급'} {post.priceType === 'DAILY' && '일급'} : {formatToKRW(post.price)}
+              원
             </div>
             <div className="post-info-item post-content-box">{post.content}</div>
           </div>
@@ -169,6 +176,7 @@ const PostView = () => {
           <KakaoWithoutSearch defaultAddress={post.location} />
         </div>
         <div className="post-location-box">지역 : {post.location}</div>
+        <div className="post-ditailLocation-box">상세주소 : {post.ditailLocation}</div>
         <div className="report-box">
           <button className="report-button" onClick={() => setShowReportModal(true)}>
             이 게시글 신고하기

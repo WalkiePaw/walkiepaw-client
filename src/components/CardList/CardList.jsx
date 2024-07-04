@@ -67,6 +67,12 @@ const CardList = ({
     return result.trim();
   };
 
+  const formatToKRW = (value) => {
+    return new Intl.NumberFormat('ko-KR', {
+      style: 'decimal',
+    }).format(value);
+  };
+
   return (
     <div className="CardStyled" onClick={onCardClick}>
       <div className="Locals">
@@ -95,7 +101,7 @@ const CardList = ({
         </ul>
       </div>
       <div className="Price">
-        {priceType === 'HOURLY' && '시급'} {priceType === 'DAILY' && '일급'} 금액: {price}
+        {priceType === 'HOURLY' && '시급'} {priceType === 'DAILY' && '일급'} 금액: {formatToKRW(price)}원
       </div>
       <div className="CardImageBox">
         <img className="CardImage" src={image} alt="card" />

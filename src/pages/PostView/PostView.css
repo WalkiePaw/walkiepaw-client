@@ -126,6 +126,12 @@ select.completed {
   color: #666;
 }
 
+.post-ditailLocation-box {
+  margin: 12px 0;
+  font-size: 1.2em;
+  color: #666;
+}
+
 .post-location-map {
   border: 1px solid #ccc;
   background-color: #f9f9f9;
@@ -156,7 +162,7 @@ select.completed {
 }
 
 .massge-button {
-  width: 30%;
+  width: 40%;
   background-color: #ff7f50;
   color: white;
   padding: 10px 20px;
@@ -178,7 +184,7 @@ select.completed {
 .post-management {
   display: flex;
   justify-content: center;
-  margin: 24px;
+  margin-bottom: 15%;
 }
 .edit-button,
 .delete-button {
@@ -212,7 +218,7 @@ select.completed {
 
 .report-box {
   font-size: large;
-  margin: 24px 0;
+  margin: 10% 0;
   border-top: 2px solid #0000003d;
   border-bottom: 2px solid #0000003d;
 }

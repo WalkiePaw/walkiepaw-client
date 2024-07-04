@@ -54,10 +54,12 @@
   margin: 5px auto;
   display: block;
   width: 25%;
+  height: -webkit-fill-available; /* fierFox에서는 적용안됨 */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 1rem;
+  text-align: center;
 }
 
 @media (max-width: 639px) {

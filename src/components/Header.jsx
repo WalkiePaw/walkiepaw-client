@@ -60,7 +60,7 @@ const HeaderContainer = styled.header`
   @media (max-width: 768px) {
     .container {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
     }
 
     .buttons {
@@ -99,11 +99,6 @@ const Menus = styled.ul`
   }
 `;
 
-const UserIcon = styled.span`
-  font-size: 1.5rem;
-  margin-right: 0.5rem;
-`;
-
 const Header = ({ children }) => {
   const { isLoggedIn, logout } = 0;
   // useAuth();
@@ -119,7 +114,7 @@ const Header = ({ children }) => {
           <Menus>
             <li>
               <NavLink to="/recruit" activeClassName="active">
-                산책인 구인글
+                산책인 모집글
               </NavLink>
             </li>
             <li>
