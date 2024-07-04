@@ -59,12 +59,24 @@ const HeaderContainer = styled.header`
 
   @media (max-width: 768px) {
     .container {
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
+      gap: 1rem; /* 요소들 사이 간격 */
+    }
+
+    nav {
+      order: 1; /* 네비게이션을 아래로 이동 */
+      width: 100%; /* 전체 너비로 확장 */
+      margin-top: 1rem; /* 로고에서의 간격 */
     }
 
     .buttons {
-      margin-top: 1rem;
+      order: 3; /* 버튼들을 아래로 이동 */
+      margin-top: 1rem; /* 네비게이션에서의 간격 */
+    }
+
+    img {
+      height: 2.5rem; /* 작은 화면에 맞게 크기 조정 */
     }
 
     nav ul {
@@ -94,6 +106,7 @@ const Menus = styled.ul`
   }
 
   @media (max-width: 768px) {
+    align-items: center;
     flex-direction: column;
     gap: 0.75rem;
   }
