@@ -97,7 +97,9 @@ const ModifyPostForm = () => {
 
       if (response?.status === 200 || response?.status === 204) {
         alert('게시글이 수정되었습니다.');
-        navigate('/recruit');
+        // 카테고리 기반 경로 설정
+        const categoryPath = category === '산책' ? '/recruit' : '/jobs';
+        navigate(categoryPath);
       } else {
         throw new Error('게시글 수정 실패!');
       }

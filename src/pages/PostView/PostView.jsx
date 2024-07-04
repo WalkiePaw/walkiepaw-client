@@ -38,9 +38,22 @@ const PostView = () => {
     console.log('신고 이유: ', reason);
   };
 
-  const handleStatusChange = (e) => {
-    setStatus(e.target.value);
-    // 여기에 상태 변경을 서버에 저장하는 로직을 추가할 수 있습니다.
+  const handleStatusChange = async (e) => {
+    const newStatus = e.target.value;
+    setStatus(newStatus); // 게시글 상태 변경 즉시 반영
+    try {
+      const response = await axios.patch(`http://localhost:8080/api/v1/boards/${postId}`, {
+        status: newStatus,
+      });
+      console.log('상태 변경 됐니?!', response);
+      // setPost((prevPost) => ({
+      //   ...prevPost,
+      //   status: newStatus,
+      // }));
+    } catch (error) {
+      console.error('상태 변경 안됨!', error);
+      alert('상태를 변경 오류!');
+    }
   };
 
   const handleEdit = () => {

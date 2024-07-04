@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import CardList from '../../components/CardList/CardList';
 import './BoardList.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import MyTown from '../MyTown/MyTown';
 import axios from 'axios';
 
-const BoardList = ({ category }) => {
+const BoardList = () => {
   const [posts, setPosts] = useState(); // 게시글 목록을 저장
   const [filteredPosts, setFilteredPosts] = useState([]); // 필터링된 게시글 목록을 저장
   const [selectedSi, setSelectedSi] = useState('');
   const [selectedGu, setSelectedGu] = useState('');
   const [selectedDong, setSelectedDong] = useState('');
   const [searchKeyword, setSerchKeyword] = useState('');
+  const [category, setCategory] = useState();
+
+  const location = useLocation();
 
   const navigate = useNavigate();
 
@@ -90,10 +93,21 @@ const BoardList = ({ category }) => {
   };
 
   useEffect(() => {
+    const pathName = location.pathname;
+    if (pathName.includes('recruit')) {
+      setCategory('JOB_OPENING');
+    } else if (pathName.includes('jobs')) {
+      setCategory('JOB_SEARCH');
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
     const fetchPosts = async () => {
       try {
         // const response = await testApiData();
-        const response = await axios.get('http://localhost:8080/api/v1/boards'); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        if (!category) return; // 카테고리가 없으면 요청하지 않도록 처리
+
+        const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         console.log(response);
         const data = response?.data ?? [];
         // const data = response ?? [];
@@ -104,7 +118,7 @@ const BoardList = ({ category }) => {
     };
 
     fetchPosts();
-  }, []);
+  }, [category]);
 
   useEffect(() => {
     const filterPosts = () => {
