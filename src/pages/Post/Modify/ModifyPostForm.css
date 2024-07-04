@@ -81,8 +81,7 @@
 
 .modify-post-container .price-proposal {
   padding-top: 15px;
-  position: absolute;
-  right: 25%;
+  display: flow-root;
 }
 
 .modify-post-container .price-buttons button.selected {

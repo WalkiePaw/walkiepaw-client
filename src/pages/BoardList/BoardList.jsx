@@ -11,6 +11,7 @@ const BoardList = ({ category }) => {
   const [selectedSi, setSelectedSi] = useState('');
   const [selectedGu, setSelectedGu] = useState('');
   const [selectedDong, setSelectedDong] = useState('');
+  const [searchKeyword, setSerchKeyword] = useState('');
 
   const navigate = useNavigate();
 
@@ -84,7 +85,6 @@ const BoardList = ({ category }) => {
   }
 
   const dongFromLocal = (location) => {
-    // console.log('location값이댜', location); // 지역 값이 잘 들어오는지 확인
     const match = location?.match(/[가-힣]+동/);
     return match ? match[0] : location;
   };
@@ -146,6 +146,10 @@ const BoardList = ({ category }) => {
     });
   };
 
+  const handleSearchChange = (e) => {
+    setSerchKeyword(e.target.value);
+  };
+
   // 카테고리에 따라 다른 페이지 타이틀 출력
   let pageTitle;
   if (category === 'JOB_OPENING') {
@@ -162,7 +166,12 @@ const BoardList = ({ category }) => {
         </h1>
         <img src="img/dog3.jpg" className="listTop-img" alt="반려견 산책" />
       </div>
-      <MyTown onSiChange={setSelectedSi} onGuChange={setSelectedGu} onDongChange={setSelectedDong} />
+      <div className="filter-container">
+        <MyTown onSiChange={setSelectedSi} onGuChange={setSelectedGu} onDongChange={setSelectedDong} />
+        <div className="board-search-container">
+          <input type="text" placeholder="검색어 입력" value={searchKeyword} onChange={handleSearchChange} />
+        </div>
+      </div>
       <div className={`board-list ${filteredPosts?.length === 0 ? 'no-posts-container' : ''}`}>
         {filteredPosts?.length > 0 ? (
           filteredPosts.map((post) => (

@@ -6,18 +6,29 @@ import pawpaw from './../../assets/pawpaw.png';
 import PostReportModal from '../../components/ReportModal/PostReportModal';
 import axios from 'axios';
 
-const SERVER_URL = 'https://192.168.0.45:8080/api/v1/posts';
-
 const PostView = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const [detailedLocation, setDetailedLocation] = useState();
   const post = location.state?.post;
   const [showReportModal, setShowReportModal] = useState(false);
   const [status, setStatus] = useState(post?.status || '구인중');
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const memberNickName = location.memberNickName; // BoardList에서 로그인한 유저의 id를 받아 옴
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/v1/boards/${postId}`);
+        setDetailedLocation(response?.data?.detailedLocation);
+      } catch (error) {
+        console.error('게시글을 가져오는 중 오류 발생', error);
+      }
+    };
+    fetchPost();
+  }, [postId]);
 
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
@@ -176,7 +187,7 @@ const PostView = () => {
           <KakaoWithoutSearch defaultAddress={post.location} />
         </div>
         <div className="post-location-box">지역 : {post.location}</div>
-        <div className="post-ditailLocation-box">상세주소 : {post.ditailLocation}</div>
+        <div className="post-detailedLocation-box">상세주소 : {detailedLocation}</div>
         <div className="report-box">
           <button className="report-button" onClick={() => setShowReportModal(true)}>
             이 게시글 신고하기

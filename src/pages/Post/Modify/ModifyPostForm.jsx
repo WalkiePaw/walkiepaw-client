@@ -82,10 +82,12 @@ const ModifyPostForm = () => {
       startTime: new Date(post.startDate).toISOString(), // IOS 형식으로 변환
       endTime: new Date(post.endDate).toISOString(), // IOS 형식으로 변환
       category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
+      location: post.location,
+      detailedLocation: post.detailedLocation,
     };
 
     try {
-      const response = await axios.patch('http://localhost:8080/api/v1/boards/${post.Id}', modifiedPost, {
+      const response = await axios.patch(`http://localhost:8080/api/v1/boards/${post.id}`, modifiedPost, {
         headers: {
           ContentType: 'application/json',
         },
@@ -93,7 +95,7 @@ const ModifyPostForm = () => {
 
       console.log('서버 응답', response);
 
-      if (response === 201) {
+      if (response?.status === 200 || response?.status === 204) {
         alert('게시글이 수정되었습니다.');
         navigate('/recruit');
       } else {
@@ -117,7 +119,6 @@ const ModifyPostForm = () => {
     setCategory(category);
   };
 
-  // 수정 폼 렌더링
   return (
     <div className="modify-post-container">
       {/* 이미지 업로드 영역 */}
