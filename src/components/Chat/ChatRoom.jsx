@@ -13,30 +13,12 @@ const SidebarContainer = styled.div`
 `;
 
 const StyledConversation = styled(Conversation)`
-  display: flex;
-  align-items: center;
-  padding: 10px;
-
   &:hover {
     background-color: #e8e8e8;
   }
 `;
 
-const AvatarWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 10px;
-`;
-
-const Nickname = styled.div`
-  margin-top: 5px;
-  font-size: 12px;
-  color: #888;
-  text-align: center;
-`;
-
-const ChatRoom = () => {
+const ChatRoom = ({ onChatroomSelect }) => {
   const [chatrooms, setChatrooms] = useState([]);
 
   useEffect(() => {
@@ -58,16 +40,12 @@ const ChatRoom = () => {
           {chatrooms.map(chatroom => (
               <StyledConversation
                   key={chatroom.id}
-                  onClick={() => console.log(`Chatroom ${chatroom.id} clicked`)}
+                  name={chatroom.location}
+                  info={chatroom.lastMessage || '새로운 채팅방입니다.'}
+                  onClick={() => onChatroomSelect(chatroom.id)}
               >
-                <AvatarWrapper>
-                  <Avatar src={default_user} name={chatroom.nickname} />
-                  <Nickname>{chatroom.nickname}</Nickname>
-                </AvatarWrapper>
-                <div>
-                  <div>{chatroom.location}</div>
-                  <div>{chatroom.lastMessage || '새로운 채팅방입니다.'}</div>
-                </div>
+                <Avatar src={default_user} name={chatroom.location} />
+
               </StyledConversation>
           ))}
         </ConversationList>
