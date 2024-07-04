@@ -58,6 +58,7 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange }) => {
   return (
     <div className="flex">
       <h1 className="font-bold text-2xl mb-4">지역 선택</h1>
+      {/* 시/도 선택 옵션 */}
       <div className="mb-4">
         <label className="block mb-1">시/도</label>
         <select
@@ -66,6 +67,7 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange }) => {
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
         >
           <option value="">선택하세요</option>
+          {/* 시/도 옵션들을 맵으로 출력 */}
           {Object.keys(si).map((si) => (
             <option key={si} value={si}>
               {si}
@@ -73,6 +75,7 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange }) => {
           ))}
         </select>
       </div>
+      {/* 시군구 선택 옵션 */}
       {selectedSi && (
         <div className="mb-4">
           <label className="block mb-1">시군구</label>
@@ -82,6 +85,7 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange }) => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
           >
             <option value="">선택하세요</option>
+            {/* 선택된 시/도에 따른 시군구 옵션들을 맵으로 출력 */}
             {Object.keys(si[selectedSi]).map((gu) => (
               <option key={gu} value={gu}>
                 {gu}
@@ -90,6 +94,7 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange }) => {
           </select>
         </div>
       )}
+      {/* 동/읍/면 선택 옵션 */}
       {selectedGu && (
         <div className="mb-4">
           <label className="block mb-1">동/읍/면</label>
@@ -99,6 +104,7 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange }) => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
           >
             <option value="">선택하세요</option>
+            {/* 선택된 시/도, 시군구에 따른 동/읍/면 옵션들을 맵으로 출력 */}
             {si[selectedSi][selectedGu].map((dong) => (
               <option key={dong} value={dong}>
                 {dong}

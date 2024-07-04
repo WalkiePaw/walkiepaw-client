@@ -84,7 +84,7 @@ const BoardList = ({ category }) => {
   }
 
   const dongFromLocal = (location) => {
-    console.log('location값이댜', location);
+    // console.log('location값이댜', location); // 지역 값이 잘 들어오는지 확인
     const match = location?.match(/[가-힣]+동/);
     return match ? match[0] : location;
   };
@@ -119,13 +119,14 @@ const BoardList = ({ category }) => {
 
       // 지역 필터링
       if (selectedSi) {
-        newFilteredPosts = newFilteredPosts.filter((post) => post.si === selectedSi);
+        // location이 Null일 때, includes()를 호출한다.
+        newFilteredPosts = newFilteredPosts.filter((post) => post.location?.includes(selectedSi));
       }
       if (selectedGu) {
-        newFilteredPosts = newFilteredPosts.filter((post) => post.gu === selectedGu);
+        newFilteredPosts = newFilteredPosts.filter((post) => post.location?.includes(selectedGu));
       }
       if (selectedDong) {
-        newFilteredPosts = newFilteredPosts.filter((post) => post.dong === selectedDong);
+        newFilteredPosts = newFilteredPosts.filter((post) => post.location?.includes(selectedDong));
       }
 
       setFilteredPosts(newFilteredPosts);
