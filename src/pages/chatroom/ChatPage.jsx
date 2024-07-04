@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import {
   ChatContainer,
   MessageList,
@@ -38,16 +39,33 @@ const StyledMessageInput = styled(MessageInput)`
   border-top: 1px solid #e0e0e0;
 `;
 
-function ChatPage() {
-  const [messages, setMessages] = useState([
-    {
-      message: "안녕하세요 ~~~~",
-      sentTime: "오후 3:44",
-      sender: "골댕이",
-      direction: "incoming",
-      position: "single"
+const ChatPage = () => {
+  const [messages, setMessages] = useState([]);
+  const [selectedChatroomId, setSelectedChatroomId] = useState(null);
+
+  useEffect(() => {
+    if (selectedChatroomId) {
+      axios.get(`http://localhost:8080/api/v1/chats?chatroomId=${selectedChatroomId}`)
+      .then(response => {
+        console.log(response.data);
+        const formattedMessages = response.data.map(msg => ({
+          message: msg.content,
+          sentTime: new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sender: msg.senderNickname,
+          direction: msg.senderId === 1 ? "outgoing" : "incoming", // 1은 현재 사용자의 ID로 가정
+          position: "single"
+        }));
+        setMessages(formattedMessages);
+      })
+      .catch(error => {
+        console.error('Error fetching chat messages:', error);
+      });
     }
-  ]);
+  }, [selectedChatroomId]);
+
+  const handleChatroomSelect = (chatroomId) => {
+    setSelectedChatroomId(chatroomId);
+  };
 
   const addMessage = (newMessage) => {
     setMessages(prevMessages => [...prevMessages, {
@@ -62,7 +80,7 @@ function ChatPage() {
 
   return (
       <ChatLayout>
-        <ChatRoom />
+        <ChatRoom onChatroomSelect={handleChatroomSelect} />
         <ChatArea>
           <StyledChatContainer>
             <StyledConversationHeader>

@@ -11,7 +11,7 @@ const KakaoLoginCallback = () => {
 
     if (code) {
       axios
-      .post('http://localhost:8080/api/v1/user-info', { code, provider: 'kakao' })
+      .post('http://localhost:8080/api/v1/login/oauth', { code, provider: 'kakao' })
       .then(response => {
         const { email, name } = response.data;
 

@@ -4,6 +4,7 @@ import Picker from 'emoji-picker-react';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
+
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
@@ -43,7 +44,7 @@ const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
 
 
 
-function ChatInput({ onSend }) {
+const ChatInput = ({ onSend }) => {
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -84,7 +85,6 @@ function ChatInput({ onSend }) {
         </SendButton>
       </InputContainer>
   );
-}
-
+};
 
 export default ChatInput;
