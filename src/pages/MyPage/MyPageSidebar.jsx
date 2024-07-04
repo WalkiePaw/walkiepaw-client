@@ -9,7 +9,7 @@ import { faGripLines } from "@fortawesome/free-solid-svg-icons";
 // axios 임포트
 import axios from 'axios';
 
-const MyPageSidebar = () => {
+const MyPageSidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const [memberData, setMemberData] = useState(null);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const MyPageSidebar = () => {
   }, []);
 
   return (
-    <aside className="w-1/4 p-4 bg-gray-100">
+      <div className={`w-80 h-screen bg-gray-100 p-4 transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} duration-300 z-40`}>
         <div className="text-center mt-5 mb-3">
           <img
             src={getProfileImage(1)}
@@ -178,13 +178,26 @@ const MyPageSidebar = () => {
                   icon={faGripLines}
                   style={{ marginRight: "0.5rem" }}
                 />
-                내 문의 내역
-              </NavLink>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+                1:1 문의
+            </NavLink>
+          </li>
+          <li className="my-2">
+            <NavLink
+              to="/mypage/qna-list"
+              className="text-black hover:text-orange-300"
+              activeClassName="text-orange-600"
+            >
+              <FontAwesomeIcon
+                icon={faGripLines}
+                style={{ marginRight: "0.5rem" }}
+              />
+              내 문의 내역
+            </NavLink>
+          </li>
+        </ul>
+      </nav>
+    </div>
   );
-}
+};
 
 export default MyPageSidebar;

@@ -25,7 +25,6 @@ const CSManagement = () => {
 
   const handleReply = (qna) => {
     setSelectedQna(qna);
-    
 
     Swal.fire({
       title: '답변 작성',
@@ -36,7 +35,7 @@ const CSManagement = () => {
           <p><strong>회원명:</strong> ${qna.writerName}</p>
           <p><strong>제목:</strong> ${qna.title}</p>
           <p><strong>내용:</strong> ${qna.content}</p>
-          <p><strong>작성일:</strong> ${qna.createdDate}</p>
+          <p><strong>작성일:</strong> ${formatTime(qna.createdDate)}</p>
           <textarea id="replyContent" rows="4" cols="50" placeholder="답변을 작성해주세요" class="swal2-textarea"></textarea>
         </div>
       `,
@@ -78,6 +77,17 @@ const CSManagement = () => {
       });
   };
 
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  };
+  
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-7">1:1 문의 내역 관리 페이지</h1>
@@ -100,7 +110,7 @@ const CSManagement = () => {
               <td className="px-6 py-4 whitespace-nowrap">{qna.memberId}</td>
               <td className="px-6 py-4 whitespace-nowrap">{qna.writerName}</td>
               <td className="px-6 py-4 whitespace-nowrap">{qna.title}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{qna.createdDate}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{formatTime(qna.createdDate)}</td>
               <td className="px-6 py-4 whitespace-nowrap">{qna.status === 'WAITING' ? '미처리' : '답변완료'}</td>
               <td className="px-6 py-4 whitespace-nowrap">
                 {qna.status === 'WAITING' && (

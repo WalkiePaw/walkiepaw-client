@@ -1,6 +1,39 @@
-import React from 'react';
+// g회원 목록 관리
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const MemberList = () => {
+  const [members, setMembers] = useState([]);
+
+  useEffect(() => {
+    // API 호출 함수 정의
+    const fetchMembers = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/v1/members'); // API 엔드포인트 URL 입력
+        setMembers(response.data); // 데이터 설정
+      } catch (error) {
+        console.error('Error fetching members:', error);
+        Swal.fire({
+          icon: 'error',
+          title: '회원 목록 가져오기 실패',
+          text: '회원 목록을 가져오는 중 오류가 발생했습니다.',
+        });
+      }
+    };
+
+    fetchMembers(); // 함수 호출
+
+  }, []); // useEffect는 한 번만 실행되어야 하므로 빈 배열을 두 번째 인자로 전달
+
+  // 상태에 대한 매핑 객체 정의
+  const statusMap = {
+    GENERAL: "일반",
+    WITHDRAWN: "탈퇴",
+    BANNED: "제재 또는 정지된 회원",
+    INACTIVE: "휴면 상태"
+  };
+
   return (
     <div className="p-4 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-5">회원 목록 관리</h2>
@@ -18,16 +51,17 @@ const MemberList = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td className="px-4 py-2 border-b">43</td>
-              <td className="px-4 py-2 border-b">test123@test.com</td>
-              <td className="px-4 py-2 border-b">user</td>
-              <td className="px-4 py-2 border-b">산책왕</td>
-              <td className="px-4 py-2 border-b">2024-03-05</td>
-              <td className="px-4 py-2 border-b">10</td>
-              <td className="px-4 py-2 border-b">정지</td>
+          {members.map((member, index) => (
+            <tr key={index}>
+              <td className="px-4 py-2 border-b">{index + 1}</td>
+              <td className="px-4 py-2 border-b">{member.email}</td>
+              <td className="px-4 py-2 border-b">{member.name}</td>
+              <td className="px-4 py-2 border-b">{member.nickname}</td>
+              <td className="px-4 py-2 border-b">{member.createdDate}</td>
+              <td className="px-4 py-2 border-b">{member.reportedCnt}</td>
+              <td className="px-4 py-2 border-b">{statusMap[member.status]}</td>
             </tr>
-            {/* Add more rows as needed */}
+            ))}
           </tbody>
         </table>
       </div>
