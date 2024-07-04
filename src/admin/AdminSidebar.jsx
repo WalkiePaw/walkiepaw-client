@@ -23,21 +23,12 @@ const AdminSidebar = () => {
           </NavLink>
         </li>
         <li className="mb-2 text-lg">
-          <NavLink to="/admin/member-report" className="text-gray-700">
+          <NavLink to="/admin/report-mngmt" className="text-gray-700">
             <FontAwesomeIcon
               icon={faGripLines}
               style={{ marginRight: "0.5rem" }}
             />
-            회원 신고
-          </NavLink>
-        </li>
-        <li className="mb-2 text-lg">
-          <NavLink to="/admin/board-report" className="text-gray-700">
-            <FontAwesomeIcon
-              icon={faGripLines}
-              style={{ marginRight: "0.5rem" }}
-            />
-            게시판 신고
+            신고 관리
           </NavLink>
         </li>
         <li className="mb-2 text-lg">

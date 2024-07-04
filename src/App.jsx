@@ -29,12 +29,11 @@ import GoogleLoginCallback from "./components/OAuth/GoogleLoginCallback.jsx";
 import Review from "./components/Review.jsx";
 import SignUp from "./pages/OAuth/SignUp.jsx";
 import ChatPage from "./pages/chatroom/ChatPage.jsx";
-import MemberReport from "./admin/MemberReport.jsx";
-import BoardReport from "./admin/BoardReport.jsx";
 import CSManagement from "./admin/CSManagement.jsx";
 import Admin from "./admin/Admin.jsx";
 import MemberList from "./admin/MemberList.jsx";
 import QnaList from './pages/MyPage/QnaList.jsx';
+import ReportManagement from './admin/ReportManagement.jsx';
 
 function App() {
   const nav = useNavigate();
@@ -81,8 +80,7 @@ function App() {
 
           <Route path="/admin" element={<Admin />}>
             <Route path="member-list" element={<MemberList />} />
-            <Route path="member-report" element={<MemberReport />} />
-            <Route path="board-report" element={<BoardReport />} />
+            <Route path="report-mngmt" element={<ReportManagement />} />
             <Route path="cs-mngmt" element={<CSManagement />} />
           </Route>
         </Route>

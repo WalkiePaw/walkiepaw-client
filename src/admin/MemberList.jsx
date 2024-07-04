@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 
 const MemberList = () => {
   const [members, setMembers] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState('');
 
   useEffect(() => {
     // API 호출 함수 정의
@@ -59,7 +60,19 @@ const MemberList = () => {
               <td className="px-4 py-2 border-b">{member.nickname}</td>
               <td className="px-4 py-2 border-b">{member.createdDate}</td>
               <td className="px-4 py-2 border-b">{member.reportedCnt}</td>
-              <td className="px-4 py-2 border-b">{statusMap[member.status]}</td>
+              <td className="px-4 py-2 border-b">{statusMap[member.status]}
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="block w-full bg-white border border-gray-300 rounded-md py-1 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="">상태 선택</option>
+                  <option value="GENERAL">일반</option>
+                  <option value="WITHDRAWN">탈퇴</option>
+                  <option value="BANNED">제재 또는 정지된 회원</option>
+                  <option value="INACTIVE">휴면 상태</option>
+                </select>
+              </td>
             </tr>
             ))}
           </tbody>

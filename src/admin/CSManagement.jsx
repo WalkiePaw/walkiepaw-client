@@ -104,9 +104,9 @@ const CSManagement = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {qnaList.map(qna => (
-            <tr key={qna.id}>
-              <td className="px-6 py-4 whitespace-nowrap">{qna.id}</td>
+          {qnaList.map((qna, index) => (
+            <tr key={index}>
+              <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
               <td className="px-6 py-4 whitespace-nowrap">{qna.memberId}</td>
               <td className="px-6 py-4 whitespace-nowrap">{qna.writerName}</td>
               <td className="px-6 py-4 whitespace-nowrap">{qna.title}</td>
