@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { ConversationList, Conversation, Avatar } from '@chatscope/chat-ui-kit-react';
 import default_user from '../../assets/default_user.png';
+import { format, parse } from 'date-fns';
 
 const SidebarContainer = styled.div`
   width: 300px;
@@ -26,7 +27,7 @@ const ChatRoom = ({ onChatroomSelect }) => {
       params: { id: 1 } // 여기에 실제 memberId를 넣어야 합니다.
     })
     .then(response => {
-      console.log(response.data);
+      console.log('Chatrooms data:', response.data);
       setChatrooms(response.data);
     })
     .catch(error => {
@@ -34,20 +35,28 @@ const ChatRoom = ({ onChatroomSelect }) => {
     });
   }, []);
 
+  const formatTime = (timeString) => {
+    const time = parse(timeString, 'HH:mm:ss', new Date());
+    return format(time, 'HH:mm:ss');
+  };
+
   return (
       <SidebarContainer>
         <ConversationList>
-          {chatrooms.map(chatroom => (
-              <StyledConversation
-                  key={chatroom.id}
-                  name={chatroom.location}
-                  info={chatroom.lastMessage || '새로운 채팅방입니다.'}
-                  onClick={() => onChatroomSelect(chatroom.id)}
-              >
-                <Avatar src={default_user} name={chatroom.location} />
-
-              </StyledConversation>
-          ))}
+          {chatrooms.length > 0 ? (
+              chatrooms.map(chatroom => (
+                  <StyledConversation
+                      key={chatroom.id}
+                      name={`${chatroom.nickname} - ${chatroom.location}`}
+                      info={`${chatroom.latestMessage || '새로운 채팅방입니다.'} (${formatTime(chatroom.latestTime)})`}
+                      onClick={() => onChatroomSelect(chatroom.id)}
+                  >
+                    <Avatar src={default_user} name={chatroom.location} />
+                  </StyledConversation>
+              ))
+          ) : (
+              <div>채팅방이 없습니다.</div>
+          )}
         </ConversationList>
       </SidebarContainer>
   );
