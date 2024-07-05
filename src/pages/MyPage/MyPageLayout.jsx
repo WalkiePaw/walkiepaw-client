@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import MyPageSidebar from './MyPageSidebar';
+// FontAwesome 임포트 - 사이드 바 열고 닫는 기능(보류)
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 

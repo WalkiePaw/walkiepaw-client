@@ -55,7 +55,6 @@ const MyInformation = () => {
         const memberData = response.data;
         setValue('name', memberData.name);
         setValue('nickname', memberData.nickname);
-        setValue('password', memberData.password);
         setValue('phoneNumber', memberData.phoneNumber);
         setValue('address', memberData.address);
         setValue('birth', memberData.birth);

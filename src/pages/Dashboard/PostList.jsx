@@ -53,7 +53,7 @@ const formatTime = (dateString) => {
 
   return (
     <div className="flex flex-col">
-      <h1 className="text-3xl font-bold mb-5 mr-4">작성한 게시글 내역(n)</h1>
+      <h1 className="text-2xl font-bold mb-5 mr-4">작성한 게시글 내역(n)</h1>
       <div className="flex mb-3 dlomb-4">
         <button
           className={`px-8 py-2 rounded-md mr-4 ${
