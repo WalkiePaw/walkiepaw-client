@@ -11,7 +11,7 @@ const NaverLoginCallback = () => {
 
     if (code) {
       axios
-      .post('http://localhost:8080/api/auth/naver', { code })
+      .post('http://localhost:8080/api/v1/user-info', { code, provider: 'naver' })
       .then(response => {
         const { email, name } = response.data;
         console.log('User info:', email, name);

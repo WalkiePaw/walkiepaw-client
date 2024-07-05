@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Picker from 'emoji-picker-react';
+import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
 
 const InputContainer = styled.div`
   display: flex;
@@ -35,7 +38,13 @@ const SendButton = styled.button`
   padding: 0 10px;
 `;
 
-function ChatInput({ onSend }) {
+const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
+  color: #43312A;
+`;
+
+
+
+const ChatInput = ({ onSend }) => {
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -71,9 +80,11 @@ function ChatInput({ onSend }) {
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
         />
-        <SendButton onClick={handleSend}>✈️</SendButton>
+        <SendButton onClick={handleSend}>
+          <StyledFontAwesomeIcon icon={faPaperPlane} />
+        </SendButton>
       </InputContainer>
   );
-}
+};
 
 export default ChatInput;

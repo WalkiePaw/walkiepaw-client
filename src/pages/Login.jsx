@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { Modal } from 'antd';
 import UserInput from '../components/UserInput';
 import UserButton from '../components/UserButton';
 import KakaoLogin from '../components/OAuth/KakaoLogin';
@@ -15,6 +17,8 @@ const Login = () => {
 
 
   const [errors, setErrors] = useState({});
+  const [isModalVisible, setIsModalVisible] = useState(false); // 모달 표시 여부 상태
+  const [modalMessage, setModalMessage] = useState('');
   const navigate = useNavigate();
 
   const handleInputChange = event => {
@@ -42,8 +46,6 @@ const Login = () => {
       case 'password':
         if (!value) {
           newErrors.password = '비밀번호는 필수입니다.';
-        } else if (value.length < 8) {
-          newErrors.password = '비밀번호는 8자 이상이어야 합니다.';
         } else {
           delete newErrors.password;
         }
@@ -68,9 +70,25 @@ const Login = () => {
     console.log('Google login clicked');
   };
 
-  const onSubmit = () => {
-    // 여기에 실제 로그인 로직 구현
-    console.log('Login submit');
+  const onSubmit = async () => {
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
+        email: userInfo.email,
+        password: userInfo.password
+      });
+
+      console.log('Login successful:', response.data);
+      localStorage.setItem('token', response.data.token);
+      navigate('/');
+    } catch (error) {
+      console.error('Login failed:', error.response ? error.response.data : error.message);
+      setModalMessage('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+      setIsModalVisible(true);
+    }
+  };
+
+  const handleModalOk = () => {
+    setIsModalVisible(false);
   };
 
   return (
@@ -113,9 +131,12 @@ const Login = () => {
               } mb-4 font-semibold shadow-md`}
               onClick={onSubmit}
           />
+          {errors.login && (
+              <span className="text-sm text-red-500">{errors.login}</span>
+          )}
           <div className="flex justify-between w-3/4 mb-6">
             <button className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300">
-              아이디 찾기
+              이메일 찾기
             </button>
             <button className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300">
               비밀번호 찾기
@@ -134,6 +155,19 @@ const Login = () => {
             <GoogleLogin />
           </div>
         </div>
+
+        <Modal
+            title={<span style={{ color: 'red' }}>로그인 오류</span>}
+            open={isModalVisible}
+            onOk={handleModalOk}
+            onCancel={handleModalOk}
+            okText="확인"
+            cancelText="취소"
+            okButtonProps={{ style: { backgroundColor: 'red', borderColor: 'red' } }}
+            cancelButtonProps={{ style: { color: 'red', borderColor: 'red' } }}
+        >
+          <p>{modalMessage}</p>
+        </Modal>
       </div>
   );
 };
