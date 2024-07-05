@@ -35,6 +35,16 @@ const MemberList = () => {
     INACTIVE: "휴면 상태"
   };
 
+
+  // 회원 가입일 설정
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <div className="p-4 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-5">회원 목록 관리</h2>
@@ -58,7 +68,7 @@ const MemberList = () => {
               <td className="px-4 py-2 border-b">{member.email}</td>
               <td className="px-4 py-2 border-b">{member.name}</td>
               <td className="px-4 py-2 border-b">{member.nickname}</td>
-              <td className="px-4 py-2 border-b">{member.createdDate}</td>
+              <td className="px-4 py-2 border-b">{formatTime(member.createdDate)}</td>
               <td className="px-4 py-2 border-b">{member.reportedCnt}</td>
               <td className="px-4 py-2 border-b">{statusMap[member.status]}
                 <select

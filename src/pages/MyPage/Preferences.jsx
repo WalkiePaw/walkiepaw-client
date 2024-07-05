@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// 내가 좋아요한 게시글 목록
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const Preferences = () => {
   const [likes, setLikes] = useState([]);
   const memberId = 1;
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/v1/members/${memberId}/likes`)
-      .then(response => {
+    axios
+      .get(`http://localhost:8080/api/v1/boards-like/${memberId}?page=0`)
+      .then((response) => {
         setLikes(response.data);
       })
-      .catch(error => {
-        console.error('Failed to fetch likes', error);
+      .catch((error) => {
+        console.error("좋아요한 게시글 목록 받아오기 실패", error);
       });
   }, []);
 

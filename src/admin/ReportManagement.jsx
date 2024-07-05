@@ -54,7 +54,7 @@ const ReportManagement = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="flex flex-col p-6">
+    <div className="p-4 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-6">신고 내역 관리</h1>
       <div className="mb-5">
         <select 
