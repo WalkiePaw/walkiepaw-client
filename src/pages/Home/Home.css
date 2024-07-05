@@ -1,42 +1,140 @@
 .root {
-	width: 100%;
+  width: 100%;
 }
 
 .homebox1,
 .homebox2,
-.homebox3,
-.homebox4 {
-	border: 1px solid violet;
-	width: 100%;
-	height: 150px; /* 원하는 높이로 변경 */
-	margin: 0;
-	padding-bottom: 20px; /* 원하는 패딩으로 변경 */
-	display: flex;
-	/* flex-direction: column; */
-	justify-content: center; /* 내용을 센텉로 */
-	align-items: center; /* 좌우로 늘어나는 것을 센터로 맞춤 */
+.homebox3 {
+  width: 100%;
+  height: auto; /* 높이를 자동으로 맞춤 */
+  padding: 20px; /* 원하는 패딩으로 변경 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center; /* 좌우로 늘어나는 것을 센터로 맞춤 */
+  text-align: center;
 }
 
 .homebox1 {
-	background-color: #e8c5a5;
+  background-color: #e8c5a5;
 }
+
 .homebox2 {
-	background-color: #f0e8e0;
+  background-color: #f0e8e0;
 }
+
 .homebox3 {
-	background-color: #ebffed;
+  background-color: #ebffed;
 }
 
 .homebox1-img,
 .homebox2-img,
 .homebox3-img {
-	max-height: 100%; /* 부모의 높이에 맞춤 */
-	width: auto; /* 비율을 유지 */
-	padding-left: 40px;
+  max-width: 100%; /* 부모의 너비에 맞춤 */
+  height: auto; /* 비율을 유지 */
+}
+
+.text-box1,
+.text-box2 {
+  padding: 20px;
 }
 
 .button1,
 .button2 {
-	border: 1px solid gray;
-	background-color: silver;
+  border: none;
+  display: block;
+  text-align: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  outline: none;
+  overflow: hidden;
+  position: relative;
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  background-color: #222;
+  padding: 17px 60px;
+  margin: 20px auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.button1 span,
+.button2 span {
+  position: relative;
+  z-index: 1;
+}
+
+.button1:after,
+.button2:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 490%;
+  width: 140%;
+  background: #78c7d2;
+  transition: all 0.5s ease-in-out;
+  transform: translateX(-98%) translateY(-25%) rotate(45deg);
+}
+
+.button1:hover:after,
+.button2:hover:after {
+  transform: translateX(-9%) translateY(-25%) rotate(45deg);
+}
+
+@media (min-width: 768px) {
+  .homebox1,
+  .homebox2,
+  .homebox3 {
+    flex-direction: row;
+    text-align: center;
+  }
+
+  .homebox1-img,
+  .homebox2-img,
+  .homebox3-img {
+    max-width: 50%; /* 부모의 너비에 맞춤 */
+  }
+
+  .homebox1 h2,
+  .homebox2 h2,
+  .homebox3 h2 {
+    flex: 1;
+    padding: 0 20px;
+  }
+
+  .button1,
+  .button2 {
+    margin: 0;
+  }
+}
+
+/* 추가된 스타일링 */
+.homebox1 h2,
+.homebox2 h2,
+.homebox3 h2 {
+  font-size: 24px;
+  color: #333;
+}
+
+.homebox1 p,
+.homebox2 p,
+.homebox3 p {
+  font-size: 16px;
+  color: #666;
+}
+
+.top-box1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.homebox1 h2 {
+  margin-bottom: 10px;
+}
+
+.homebox1 p {
+  margin-top: 0;
+  font-style: italic;
 }

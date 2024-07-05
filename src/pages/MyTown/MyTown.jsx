@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import './MyTown.css';
 
-const MyTown = ({ onRegionChange, onDistrictChange, onNeighborhoodChange }) => {
-  const [selectedRegion, setSelectedRegion] = useState('');
-  const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
+const MyTown = ({ onSiChange, onGuChange, onDongChange }) => {
+  const [selectedSi, setSelectedSi] = useState('');
+  const [selectedGu, setSelectedGu] = useState('');
+  const [selectedDong, setSelectedDong] = useState('');
 
-  const regions = {
+  const si = {
     서울: {
       강남구: ['역삼동', '개포동', '청담동'],
       강동구: ['천호동', '성내동', '암사동'],
@@ -31,77 +31,83 @@ const MyTown = ({ onRegionChange, onDistrictChange, onNeighborhoodChange }) => {
       동구: ['좌천동', '초량동'],
       남구: ['대연동', '용호동'],
     },
-    // Add more regions, districts, and neighborhoods as needed
+    // 시, 구, 동을 더 추가 할 수 있음
   };
 
-  const handleRegionChange = (e) => {
-    const region = e.target.value;
-    setSelectedRegion(region);
-    setSelectedDistrict(''); // 구 리셋하기
-    setSelectedNeighborhood(''); // 동 리셋하기
-    onRegionChange(region);
+  const handleSiChange = (e) => {
+    const si = e.target.value;
+    setSelectedSi(si);
+    setSelectedGu(''); // 구 리셋하기
+    setSelectedDong(''); // 동 리셋하기
+    onSiChange(si);
   };
 
-  const handleDistrictChange = (e) => {
-    const district = e.target.value;
-    setSelectedDistrict(district);
-    setSelectedNeighborhood(''); // 동 리셋하기
-    onDistrictChange(district);
+  const handleGuChange = (e) => {
+    const gu = e.target.value;
+    setSelectedGu(gu);
+    setSelectedDong(''); // 동 리셋하기
+    onGuChange(gu);
   };
 
-  const handleNeighborhoodChange = (e) => {
-    const neighborhood = e.target.value;
-    setSelectedNeighborhood(neighborhood);
-    onNeighborhoodChange(neighborhood);
+  const handleDongChange = (e) => {
+    const dong = e.target.value;
+    setSelectedDong(dong);
+    onDongChange(dong);
   };
 
   return (
     <div className="flex">
       <h1 className="font-bold text-2xl mb-4">지역 선택</h1>
+      {/* 시/도 선택 옵션 */}
       <div className="mb-4">
         <label className="block mb-1">시/도</label>
         <select
-          value={selectedRegion}
-          onChange={handleRegionChange}
+          value={selectedSi}
+          onChange={handleSiChange}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
         >
           <option value="">선택하세요</option>
-          {Object.keys(regions).map((region) => (
-            <option key={region} value={region}>
-              {region}
+          {/* 시/도 옵션들을 맵으로 출력 */}
+          {Object.keys(si).map((si) => (
+            <option key={si} value={si}>
+              {si}
             </option>
           ))}
         </select>
       </div>
-      {selectedRegion && (
+      {/* 시군구 선택 옵션 */}
+      {selectedSi && (
         <div className="mb-4">
           <label className="block mb-1">시군구</label>
           <select
-            value={selectedDistrict}
-            onChange={handleDistrictChange}
+            value={selectedGu}
+            onChange={handleGuChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
           >
             <option value="">선택하세요</option>
-            {Object.keys(regions[selectedRegion]).map((district) => (
-              <option key={district} value={district}>
-                {district}
+            {/* 선택된 시/도에 따른 시군구 옵션들을 맵으로 출력 */}
+            {Object.keys(si[selectedSi]).map((gu) => (
+              <option key={gu} value={gu}>
+                {gu}
               </option>
             ))}
           </select>
         </div>
       )}
-      {selectedDistrict && (
+      {/* 동/읍/면 선택 옵션 */}
+      {selectedGu && (
         <div className="mb-4">
           <label className="block mb-1">동/읍/면</label>
           <select
-            value={selectedNeighborhood}
-            onChange={handleNeighborhoodChange}
+            value={selectedDong}
+            onChange={handleDongChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
           >
             <option value="">선택하세요</option>
-            {regions[selectedRegion][selectedDistrict].map((neighborhood) => (
-              <option key={neighborhood} value={neighborhood}>
-                {neighborhood}
+            {/* 선택된 시/도, 시군구에 따른 동/읍/면 옵션들을 맵으로 출력 */}
+            {si[selectedSi][selectedGu].map((dong) => (
+              <option key={dong} value={dong}>
+                {dong}
               </option>
             ))}
           </select>
