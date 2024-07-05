@@ -10,6 +10,7 @@ const NewPostForm = () => {
   const [title, setTitle] = useState('');
   const [priceType, setPriceType] = useState('시급');
   const [price, setPrice] = useState('');
+  const [priceProposal, setPriceProposal] = useState('불가');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [content, setContent] = useState('');
@@ -63,6 +64,7 @@ const NewPostForm = () => {
       // images,
       memberId,
       category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
+      priceProposal,
     };
 
     try {
@@ -171,6 +173,13 @@ const NewPostForm = () => {
           >
             일급
           </button>
+          <div className="price-proposal">
+            <lable htmlFor="priceProposal">가격 협의:</lable>
+            <select id="priceProposal" value={priceProposal} onChange={(e) => setPriceProposal(e.target.value)}>
+              <option value="가능">가능</option>
+              <option value="불가">불가</option>
+            </select>
+          </div>
         </div>
         <label htmlFor="price">금액:</label>
         <input

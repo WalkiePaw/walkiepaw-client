@@ -9,10 +9,10 @@ import axios from 'axios';
 const ModifyPostForm = () => {
   const location = useLocation(); // 현재 위치 정보를 가져옵니다.
   const navigate = useNavigate(); // 페이지 이동을 위한 함수입니다.
-  const initialPost = location.state?.post; // 수정할 게시글의 초기 데이터를 가져옵니다.
-  const [images, setImages] = useState(initialPost.images || []); // 게시글의 이미지를 상태로 관리합니다.
+  const initialPost = location?.state?.post; // 수정할 게시글의 초기 데이터를 가져옵니다.
+  const [images, setImages] = useState(initialPost?.images || []); // 게시글의 이미지를 상태로 관리합니다.
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 슬라이드 인덱스를 상태로 관리합니다.
-  const [category, setCategory] = useState(initialPost.category === 'JOB_OPENING' ? '산책' : '알바'); // 게시글의 카테고리 값을 가져온다.
+  const [category, setCategory] = useState(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바'); // 게시글의 카테고리 값을 가져온다.
 
   const formatDateTimeLocal = (dateTimeString) => {
     const date = new Date(dateTimeString);
@@ -26,19 +26,23 @@ const ModifyPostForm = () => {
 
   const [post, setPost] = useState({
     ...initialPost,
-    startDate: formatDateTimeLocal(initialPost.startTime),
-    endDate: formatDateTimeLocal(initialPost.endTime),
+    startDate: formatDateTimeLocal(initialPost?.startTime),
+    endDate: formatDateTimeLocal(initialPost?.endTime),
+    priceType: initialPost?.priceType === 'HOURLY' ? '시급' : '일급',
+    priceProposal: initialPost?.priceProposal || '불가',
   }); // 게시글 정보 상태를 관리
 
   // 게시글 정보가 변경 업데이트
   useEffect(() => {
     setPost({
       ...initialPost,
-      startDate: formatDateTimeLocal(initialPost.startTime),
-      endDate: formatDateTimeLocal(initialPost.endTime),
+      startDate: formatDateTimeLocal(initialPost?.startTime),
+      endDate: formatDateTimeLocal(initialPost?.endTime),
+      priceType: initialPost?.priceType === 'HOURLY' ? '시급' : '일급',
+      priceProposal: initialPost?.priceProposal || '불가',
     });
-    setImages(initialPost.images || []);
-    setCategory(initialPost.category === 'JOB_OPENING' ? '산책' : '알바');
+    setImages(initialPost?.images || []);
+    setCategory(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바');
   }, [initialPost]);
 
   // 이미지 업로드 처리 함수
@@ -196,14 +200,15 @@ const ModifyPostForm = () => {
             일급
           </button>
           <div className="price-proposal">
-            <label>
-              <input
-                type="checkbox"
-                checked={post.priceProposal}
-                onChange={(e) => setPost({ ...post, priceProposal: e.target.checked })}
-              />
-              가격 제안 받기
-            </label>
+            <lable htmlFor="priceProposal">가격 협의:</lable>
+            <select
+              id="priceProposal"
+              value={post.priceProposal}
+              onChange={(e) => setPost({ ...post, priceProposal: e.target.value })}
+            >
+              <option value="가능">가능</option>
+              <option value="불가">불가</option>
+            </select>
           </div>
         </div>
         <label htmlFor="price">금액:</label>

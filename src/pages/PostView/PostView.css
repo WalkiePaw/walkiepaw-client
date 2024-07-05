@@ -161,7 +161,7 @@ select.completed {
   margin-top: 5%;
 }
 
-.massge-button {
+.message-button {
   width: 40%;
   background-color: #ff7f50;
   color: white;
@@ -212,19 +212,21 @@ select.completed {
   flex-direction: column;
 }
 
-.massge-box {
-  text-align: center;
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
 .report-box {
   font-size: large;
   margin: 10% 0;
-  border-top: 2px solid #0000003d;
-  border-bottom: 2px solid #0000003d;
+  border-top: 1px solid #0000003d;
+  border-bottom: 1px solid #0000003d;
 }
 
 .report-button {
   text-align: left;
   width: 100%;
-  padding: 12px 0;
+  padding: 8px 4px;
 }

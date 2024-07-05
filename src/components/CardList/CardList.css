@@ -93,6 +93,10 @@
   }
 }
 
+.Price {
+  margin: 12px 0;
+}
+
 .Icons {
   position: absolute;
   bottom: 10px; /* Adjust as needed */

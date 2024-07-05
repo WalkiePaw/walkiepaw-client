@@ -19,13 +19,12 @@
   display: flex;
   align-items: center;
   margin-bottom: 20px;
-  padding: 0 20px;
+  padding: 0 7%;
 }
 .board-search-container {
   flex: 1 0 auto; /* 검색창의 크기를 고정 */
   display: flex;
   justify-content: end;
-  margin-right: 5%;
 }
 
 .board-search-container input {

@@ -7,28 +7,40 @@ import PostReportModal from '../../components/ReportModal/PostReportModal';
 import axios from 'axios';
 
 const PostView = () => {
-  const { postId } = useParams();
+  const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
   const navigate = useNavigate();
   const location = useLocation();
   const [detailedLocation, setDetailedLocation] = useState();
-  const post = location.state?.post;
-  const [showReportModal, setShowReportModal] = useState(false);
+  const [post, setPost] = useState(location.state?.post); // 게시글 상태
+  const [showReportModal, setShowReportModal] = useState(false); // 신고 모달 표시 상태
   const [status, setStatus] = useState(post?.status || '구인중');
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0); // 현재 이미지 슬라이드 인덱스
+  const [priceProposal, setPriceProposal] = useState(post?.priceProposal); // 가격 협의 상태
 
-  const memberNickName = location.memberNickName; // BoardList에서 로그인한 유저의 id를 받아 옴
+  // BoardList에서 로그인한 유저의 id와 nickname을 가져옴
+  // const memberNickName = location.status?.memberNickName;
+
+  const [memberNickName, setMemberNickname] = useState(location.state?.memberNickName);
+
+  useEffect(() => {
+    console.log('맴버닉네임!!!', memberNickName);
+  }, [memberNickName]);
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/v1/boards/${postId}`);
         setDetailedLocation(response?.data?.detailedLocation);
+        setPost(response?.data);
+        setStatus(response?.data?.status);
       } catch (error) {
         console.error('게시글을 가져오는 중 오류 발생', error);
       }
     };
-    fetchPost();
-  }, [postId]);
+    if (!post) {
+      fetchPost();
+    }
+  }, [postId, post]);
 
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
@@ -46,10 +58,10 @@ const PostView = () => {
         status: newStatus,
       });
       console.log('상태 변경 됐니?!', response);
-      // setPost((prevPost) => ({
-      //   ...prevPost,
-      //   status: newStatus,
-      // }));
+      setPost((prevPost) => ({
+        ...prevPost,
+        status: newStatus,
+      }));
     } catch (error) {
       console.error('상태 변경 안됨!', error);
       alert('상태를 변경 오류!');
@@ -58,7 +70,16 @@ const PostView = () => {
 
   const handleEdit = () => {
     // 수정 페이지로 이동하는 로직
-    navigate(`/modify-post/${postId}`, { state: { post } });
+    navigate(`/modify-post/${postId}`, {
+      state: {
+        post: {
+          ...post,
+          priceType: post.priceType === 'HOURLY' ? '시급' : '일급',
+          detailedLocation: detailedLocation,
+          memberNickName: memberNickName,
+        },
+      },
+    });
   };
 
   const handleDelete = async () => {
@@ -146,7 +167,7 @@ const PostView = () => {
             </div>
           </div>
         )}
-        {memberNickName === post.memberId && (
+        {memberNickName === post.memberNickName && (
           <div className="post-status">
             <select value={status} onChange={handleStatusChange} className={getStatusClass(status)}>
               <option value="RECRUITING" className="post-status-option recruiting">
@@ -191,7 +212,7 @@ const PostView = () => {
             </div>
             <div className="post-info-item post-priceType">
               {post.priceType === 'HOURLY' && '시급'} {post.priceType === 'DAILY' && '일급'} : {formatToKRW(post.price)}
-              원
+              원<div>{priceProposal}</div>
             </div>
             <div className="post-info-item post-content-box">{post.content}</div>
           </div>
@@ -207,7 +228,7 @@ const PostView = () => {
           </button>
         </div>
 
-        {memberNickName === post.memberId && (
+        {memberNickName === post.memberNickName && (
           <div className="post-management">
             <button className="edit-button" onClick={handleEdit}>
               수정하기
@@ -217,8 +238,8 @@ const PostView = () => {
             </button>
           </div>
         )}
-        <div className="massge-box">
-          <button className="massge-button">채팅 하기</button>
+        <div className="button-container">
+          <button className="message-button">채팅 하기</button>
         </div>
       </div>
       {showReportModal && (

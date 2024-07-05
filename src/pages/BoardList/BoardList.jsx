@@ -11,14 +11,14 @@ const BoardList = () => {
   const [selectedSi, setSelectedSi] = useState('');
   const [selectedGu, setSelectedGu] = useState('');
   const [selectedDong, setSelectedDong] = useState('');
-  const [searchKeyword, setSerchKeyword] = useState('');
-  const [category, setCategory] = useState();
+  const [searchKeyword, setSerchKeyword] = useState(''); // 검색어를 저장
+  const [category, setCategory] = useState(); // 게시글 카테고리를 저장
 
-  const location = useLocation();
+  const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // 페이지 이동을 위한 함수
 
-  const memberId = 1; // 로그인 유저의 임시 id 나중에 바꿔야 함
+  const memberNickName = 'im'; // 로그인 유저의 임시 id 나중에 바꿔야 함
 
   const testData = [
     {
@@ -87,11 +87,13 @@ const BoardList = () => {
     });
   }
 
+  // location의 값에서 '동'이 포함된 값만 추출
   const dongFromLocal = (location) => {
     const match = location?.match(/[가-힣]+동/);
     return match ? match[0] : location;
   };
 
+  // 페이지 경로에 따라 카테고리를 설정
   useEffect(() => {
     const pathName = location.pathname;
     if (pathName.includes('recruit')) {
@@ -101,6 +103,7 @@ const BoardList = () => {
     }
   }, [location.pathname]);
 
+  // 카테고리가 변경되면 해당 게시글의 정보를 가져와 게시글의 정보를 다시 저장
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -122,7 +125,7 @@ const BoardList = () => {
 
   useEffect(() => {
     const filterPosts = () => {
-      if (!posts) return;
+      if (!posts) return; // 게시글이 없으면 필터링을 하지 않음
 
       let newFilteredPosts = posts;
 
@@ -149,8 +152,10 @@ const BoardList = () => {
     filterPosts();
   }, [category, selectedSi, selectedGu, selectedDong, posts]);
 
+  // 게시글을 클릭하면 해당 게시글의 정보과 로그인한 맴버의 정보를 전달하면서 이동
   const handlePostClick = (post) => {
-    navigate(`/post/${post.id}`, { state: { post, memberId } });
+    // navigate(`/post/${post.id}`, { state: { post, memberNickName: memberNickName } });
+    navigate(`/post/${post.id}`, { state: { post, memberNickName } });
   };
 
   const scrollToTop = () => {
@@ -175,9 +180,7 @@ const BoardList = () => {
   return (
     <>
       <div className="listTop">
-        <h1>
-          <p>{pageTitle}</p>
-        </h1>
+        <h1>{pageTitle}</h1>
         <img src="img/dog3.jpg" className="listTop-img" alt="반려견 산책" />
       </div>
       <div className="filter-container">
@@ -201,7 +204,6 @@ const BoardList = () => {
                 memberNickName={post.memberNickName}
                 status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
                 category={post.category} // 카테고리 정보 전달
-                onCardClick={() => handlePostClick(post)}
               />
             </div>
           ))
