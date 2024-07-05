@@ -20,7 +20,6 @@ const HeaderContainer = styled.header`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1rem;
     margin: 0 auto;
     max-width: 1200px;
   }
@@ -112,7 +111,12 @@ const Menus = styled.ul`
   }
 `;
 
-const Header = ({ children }) => {
+const UserIcon = styled.span`
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+`;
+
+const Header = () => {
   const { isLoggedIn, logout } = 0;
   // useAuth();
 
@@ -160,8 +164,5 @@ const Header = ({ children }) => {
   );
 };
 
-Header.propTypes = {
-  children: PropTypes.node.isRequired,
-};
 
 export default Header;

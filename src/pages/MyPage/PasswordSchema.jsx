@@ -38,7 +38,7 @@ export const handleChangePassword = async () => {
       await passwordSchema.validate(formValues, { abortEarly: false });
       // 비밀번호 변경 API 호출
       const memberId = 1; // 혹은 다른 방식으로 회원 ID 가져오기
-      const response = await axios.patch(`http://localhost:8080/api/v1/members/${memberId}`, {
+      const response = await axios.patch(`http://localhost:8080/api/v1/members/${memberId}/passwordUpdate`, {
         password: formValues.password
       });
       // 유효성 검사 통과 시 SweetAlert2로 성공 메시지 표시

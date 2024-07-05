@@ -51,17 +51,16 @@ const ReportManagement = () => {
     }
   };
 
-  if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="flex flex-col p-6">
+    <div className="p-4 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-6">신고 내역 관리</h1>
       <div className="mb-5">
         <select 
           value={reportType} 
           onChange={(e) => setReportType(e.target.value)}
-          className="border p-2 rounded"
+          className="border p-3 pr-8 rounded w-48 appearance-none"
         >
           <option value="board">게시글 신고</option>
           <option value="member">회원 신고</option>
@@ -72,7 +71,7 @@ const ReportManagement = () => {
           <thead>
             <tr className="border-b">
               <th className="py-2 px-4 text-left">ID</th>
-              <th className="py-2 px-4 text-left">신고한 유저</th>
+              <th className="py-2 px-4 text-left">신고한 회원</th>
               <th className="py-2 px-4 text-left">{reportType === 'board' ? '게시글 제목' : '신고 대상 회원'}</th>
               <th className="py-2 px-4 text-left">신고 내용</th>
               <th className="py-2 px-4 text-left">신고일</th>
