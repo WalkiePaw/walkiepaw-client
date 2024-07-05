@@ -12,6 +12,8 @@ import { faFaceSadTear } from "@fortawesome/free-solid-svg-icons";
 // 유효성 검사: yup 적용
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+// axios 임포트
+import axios from 'axios';
 
 const schema = yup.object().shape({
   password: yup
@@ -31,20 +33,42 @@ const MembershipWithdrawal = () => {
 
   const MySwal = withReactContent(Swal);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     MySwal.fire({
       title: "정말 탈퇴하시겠습니까?",
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "회원 탈퇴하기",
       cancelButtonText: "취소",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        MySwal.fire({
-          title: "탈퇴되었습니다",
-          icon: "success",
-          confirmButtonText: "확인",
-        });
+        try {
+          const memberId = 1; // 테스트용 하드코딩 
+          if (!memberId) {
+            throw new Error("사용자 ID를 찾을 수 없습니다.");
+          }
+
+          // 회원 상태를 WITHDRAWN으로 업데이트하는 API 호출
+          await axios.patch(`http://localhost:8080/api/v1/members/${memberId}`, {
+            status: "WITHDRAWN"
+          });
+
+          MySwal.fire({
+            title: "탈퇴되었습니다",
+            icon: "success",
+            confirmButtonText: "확인",
+          }).then(() => {
+            // 홈 화면으로 리다이렉트
+            window.location.href = "/";
+          });
+        } catch (error) {
+          MySwal.fire({
+            title: "탈퇴 실패",
+            text: error.message || "다시 시도해 주세요.",
+            icon: "error",
+            confirmButtonText: "확인",
+          });
+        }
       }
     });
   };

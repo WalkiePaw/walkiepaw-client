@@ -1,15 +1,16 @@
 // 고객센터
 // src/pages/CustomerService.jsx
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
+// axios 임포트
+import axios from "axios";
 // 팝업창, 모달: sweetalert 적용
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 // 아이콘: font-awesome 적용
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-// 기존 고객센터 문의 내역 목록 임포트
-import QnaList from "./QnaList";
+
 
 const MySwal = withReactContent(Swal);
 
@@ -17,22 +18,39 @@ const CustomerService = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // 문의사항 제출 시 SweetAlert2 팝업창
-    MySwal.fire({
-      title: "제출이 완료되었습니다",
-      icon: "success",
-      confirmButtonText: "확인",
-    }).then(() => {
-      // Reset form fields after alert is confirmed
-      setTitle("");
-      setContent("");
-    });
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/qna', {
+        title,
+        content,
+        memberId: 1, // 멤버 ID를 적절히 설정하세요
+      });
+
+      if (response.status === 201) {
+        MySwal.fire({
+          title: "제출이 완료되었습니다",
+          icon: "success",
+          confirmButtonText: "확인",
+        }).then(() => {
+          setTitle("");
+          setContent("");
+        });
+      }
+    } catch (error) {
+      MySwal.fire({
+        title: "오류가 발생했습니다",
+        text: "다시 시도해 주세요.",
+        icon: "error",
+        confirmButtonText: "확인",
+      });
+      console.error("There was an error adding the QnA!", error);
+    }
   };
 
+
   return (
-    <di className="max-h-screen overflow-y-auto">
+    <div className="max-h-screen overflow-y-auto">
       <h1 className="text-3xl font-bold mb-6">고객센터</h1>
       <h2 className="text-2xl font-bold mb-3">🔔 1:1 문의</h2>
 
@@ -88,13 +106,7 @@ const CustomerService = () => {
           </button>
         </div>
       </form>
-      <hr className="my-8 border-t-2 border-gray-300" />
-            {/* QnaList 컴포넌트 추가 */}
-            <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-3">내 문의 내역 💬</h2>
-        <QnaList />
-        </div>
-    </di>
+    </div>
   );
 };
 

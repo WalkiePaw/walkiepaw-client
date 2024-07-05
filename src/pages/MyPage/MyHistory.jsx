@@ -1,54 +1,45 @@
 // 내 작성글 보기
 // src/pages/MyHistory.jsx
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+// sweetalert2 임포트
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+// fontawesome 임포트
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+// axios 임포트
+import axios from 'axios';
 
 const MyHistory = () => {
   const [activeTab, setActiveTab] = useState("walk"); // 기본 선택 탭 설정
+  // 게시글 데이터 가져오기
+  const [posts, setPosts] = useState([]);
   const MySwal = withReactContent(Swal);
+  const id= 1;
 
-  // 게시글 데이터 예시
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: "산책",
-      content: "산책 게시글 내용",
-      date: "2024-06-21 10:00",
-    },
-    {
-      id: 2,
-      title: "알바",
-      content: "알바 게시글 내용",
-      date: "2024-06-20 15:30",
-    },
-  ]);
+  useEffect(() => {
+    fetchPosts("JOB_SEARCH"); // 기본 탭 설정을 "구직"으로 변경
+  }, []);
+
+  const fetchPosts = async (category) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`);
+      setPosts(response.data);
+    } catch (error) {
+      console.error("Failed to fetch posts", error);
+      MySwal.fire({
+        title: "Error",
+        text: "게시글 불러오기 실패",
+        icon: "error",
+        confirmButtonText: "OK"
+      });
+    }
+  };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    // 각 탭에 따른 게시글 설정
-    if (tab === "walk") {
-      setPosts([
-        {
-          id: 1,
-          title: "산책",
-          content: "산책 게시글 내용",
-          date: "2024-06-21 10:00",
-        },
-      ]);
-    } else if (tab === "partTimeJob") {
-      setPosts([
-        {
-          id: 2,
-          title: "알바",
-          content: "알바 게시글 내용",
-          date: "2024-06-20 15:30",
-        },
-      ]);
-    }
+    fetchPosts(tab); // 탭에 따른 게시글 데이터 가져오기
   };
 
   const handleDelete = (id) => {
@@ -58,14 +49,25 @@ const MyHistory = () => {
       showCancelButton: true,
       confirmButtonText: "삭제",
       cancelButtonText: "취소",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        setPosts(posts.filter((post) => post.id !== id));
-        MySwal.fire({
-          title: "삭제 완료",
-          icon: "success",
-          confirmButtonText: "확인",
-        });
+        try {
+          await axios.delete(`http://localhost:8080/api/v1/boards/${id}`);
+          setPosts(posts.filter((post) => post.id !== id));
+          MySwal.fire({
+            title: "삭제 완료",
+            icon: "success",
+            confirmButtonText: "확인",
+          });
+        } catch (error) {
+          console.error("Failed to delete post", error);
+          MySwal.fire({
+            title: "Error",
+            text: "게시글 삭제 실패",
+            icon: "error",
+            confirmButtonText: "OK"
+          });
+        }
       }
     });
   };
@@ -76,29 +78,35 @@ const MyHistory = () => {
       <div className="flex mb-3 dlomb-4">
         <button
           className={`px-8 py-2 rounded-md mr-4 ${
-            activeTab === "walk"
+            activeTab === "JOB_SEARCH"
               ? "bg-[#43312A] text-white"
               : "bg-[#E8C5A5] text-gray-800"
           }`}
-          onClick={() => handleTabClick("walk")}
+          onClick={() => handleTabClick("JOB_SEARCH")} // 백엔드와 동일한 탭 값으로 설정: 구직
         >
-          산책
+          산책인 모집글
         </button>
         <button
           className={`px-8 py-2 rounded-md ${
-            activeTab === "partTimeJob"
+            activeTab === "JOB_OPENING"
               ? "bg-[#43312A] text-white"
               : "bg-[#E8C5A5] text-gray-800"
           }`}
-          onClick={() => handleTabClick("partTimeJob")}
+          onClick={() => handleTabClick("JOB_OPENING")} // 백엔드와 동일한 탭 값으로 설정: 구인
         >
-          알바
+          알바 구직글
         </button>
       </div>
       <div className="w-full overflow-hidden rounded-lg border border-gray-300">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              <th 
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                번호
+              </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -126,11 +134,12 @@ const MyHistory = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {posts.map((post) => (
-              <tr key={post.id}>
+            {posts.map((post, index) => (
+              <tr key={index}>
+                <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{post.content}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{post.date}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{post.createdDate}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     className="w-12 h-12 flex justify-center items-center text-white rounded-md bg-orange-500 hover:bg-orange-500"

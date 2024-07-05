@@ -1,8 +1,13 @@
-const Admin = () => {
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import AdminLayout from "./AdminLayout";
 
+const Admin = () => {
   return (
-    <div>관리자 페이지</div>
+    <AdminLayout>
+      <Outlet />
+    </AdminLayout>
   );
-}
+};
 
 export default Admin;
