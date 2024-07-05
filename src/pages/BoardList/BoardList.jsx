@@ -6,16 +6,15 @@ import MyTown from '../MyTown/MyTown';
 import axios from 'axios';
 
 const BoardList = () => {
-  const [posts, setPosts] = useState(); // 게시글 목록을 저장
+  const [posts, setPosts] = useState([]); // 게시글 목록을 저장
   const [filteredPosts, setFilteredPosts] = useState([]); // 필터링된 게시글 목록을 저장
   const [selectedSi, setSelectedSi] = useState('');
   const [selectedGu, setSelectedGu] = useState('');
   const [selectedDong, setSelectedDong] = useState('');
-  const [searchKeyword, setSerchKeyword] = useState(''); // 검색어를 저장
-  const [category, setCategory] = useState(); // 게시글 카테고리를 저장
+  const [searchKeyword, setSearchKeyword] = useState(''); // 검색어를 저장
+  const [category, setCategory] = useState(''); // 게시글 카테고리를 저장
 
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
-
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
 
   const memberNickName = 'im'; // 로그인 유저의 임시 id 나중에 바꿔야 함
@@ -101,6 +100,8 @@ const BoardList = () => {
     } else if (pathName.includes('jobs')) {
       setCategory('JOB_SEARCH');
     }
+    // 페이지의 카테고리가 변경 될 때 마다 검색 키워드 초기화
+    setSearchKeyword('');
   }, [location.pathname]);
 
   // 카테고리가 변경되면 해당 게시글의 정보를 가져와 게시글의 정보를 다시 저장
@@ -123,6 +124,7 @@ const BoardList = () => {
     fetchPosts();
   }, [category]);
 
+  // 카테고리, 지역, 검색어 필터링
   useEffect(() => {
     const filterPosts = () => {
       if (!posts) return; // 게시글이 없으면 필터링을 하지 않음
@@ -146,11 +148,17 @@ const BoardList = () => {
         newFilteredPosts = newFilteredPosts.filter((post) => post.location?.includes(selectedDong));
       }
 
+      if (searchKeyword && searchKeyword.length >= 1) {
+        newFilteredPosts = newFilteredPosts.filter(
+          (post) => post.title?.includes(searchKeyword) || post.content?.includes(searchKeyword)
+        );
+      }
+
       setFilteredPosts(newFilteredPosts);
     };
 
     filterPosts();
-  }, [category, selectedSi, selectedGu, selectedDong, posts]);
+  }, [category, selectedSi, selectedGu, selectedDong, searchKeyword, posts]);
 
   // 게시글을 클릭하면 해당 게시글의 정보과 로그인한 맴버의 정보를 전달하면서 이동
   const handlePostClick = (post) => {
@@ -166,7 +174,7 @@ const BoardList = () => {
   };
 
   const handleSearchChange = (e) => {
-    setSerchKeyword(e.target.value);
+    setSearchKeyword(e.target.value);
   };
 
   // 카테고리에 따라 다른 페이지 타이틀 출력
