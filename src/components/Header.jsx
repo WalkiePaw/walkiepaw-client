@@ -116,9 +116,6 @@ const UserIcon = styled.span`
   margin-right: 0.5rem;
 `;
 
-const Header = ({ children }) => {
-
-
 const Header = () => {
   const { isLoggedIn, logout } = 0;
   // useAuth();
