@@ -11,7 +11,7 @@ const MemberList = () => {
     // API 호출 함수 정의
     const fetchMembers = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/v1/members'); // API 엔드포인트 URL 입력
+        const response = await axios.get('http://localhost:8080/api/v1/members'); 
         setMembers(response.data); // 데이터 설정
       } catch (error) {
         console.error('Error fetching members:', error);
