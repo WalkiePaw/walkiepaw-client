@@ -4,7 +4,8 @@
   margin: auto;
   border-radius: 18px;
   text-align: start;
-  box-shadow: 0 0 20px #e8c5a5;
+  /* box-shadow: 0 0 20px #e8c5a5; */
+  border: 1px solid tomato;
   justify-content: center;
   overflow: hidden;
   background-color: #fff;

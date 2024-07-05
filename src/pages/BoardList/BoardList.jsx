@@ -102,6 +102,7 @@ const BoardList = () => {
     }
     // 페이지의 카테고리가 변경 될 때 마다 검색 키워드 초기화
     setSearchKeyword('');
+    setFilteredPosts('');
   }, [location.pathname]);
 
   // 카테고리가 변경되면 해당 게시글의 정보를 가져와 게시글의 정보를 다시 저장
