@@ -149,7 +149,6 @@ const Login = () => {
               회원가입
             </button>
           </div>
-
           <div className="flex justify-between w-3/4 mb-4">
             <KakaoLogin />
             <NaverLogin />

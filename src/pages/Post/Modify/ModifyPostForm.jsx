@@ -3,25 +3,46 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './ModifyPostForm.css';
 import KakaoMap from '../../../modules/Kakao';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCamera,
-  faChevronLeft,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 const ModifyPostForm = () => {
   const location = useLocation(); // 현재 위치 정보를 가져옵니다.
   const navigate = useNavigate(); // 페이지 이동을 위한 함수입니다.
-  const initialPost = location.state?.post; // 수정할 게시글의 초기 데이터를 가져옵니다.
-  const [post, setPost] = useState(initialPost); // 게시글 정보를 상태로 관리합니다.
-  const [images, setImages] = useState(post.images || []); // 게시글의 이미지를 상태로 관리합니다.
+  const initialPost = location?.state?.post; // 수정할 게시글의 초기 데이터를 가져옵니다.
+  const [images, setImages] = useState(initialPost?.images || []); // 게시글의 이미지를 상태로 관리합니다.
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 슬라이드 인덱스를 상태로 관리합니다.
+  const [category, setCategory] = useState(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바'); // 게시글의 카테고리 값을 가져온다.
+
+  const formatDateTimeLocal = (dateTimeString) => {
+    const date = new Date(dateTimeString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const [post, setPost] = useState({
+    ...initialPost,
+    startDate: formatDateTimeLocal(initialPost?.startTime),
+    endDate: formatDateTimeLocal(initialPost?.endTime),
+    priceType: initialPost?.priceType === 'HOURLY' ? '시급' : '일급',
+    priceProposal: initialPost?.priceProposal || '불가',
+  }); // 게시글 정보 상태를 관리
 
   // 게시글 정보가 변경 업데이트
   useEffect(() => {
-    setPost(initialPost);
-    setImages(initialPost.images || []);
+    setPost({
+      ...initialPost,
+      startDate: formatDateTimeLocal(initialPost?.startTime),
+      endDate: formatDateTimeLocal(initialPost?.endTime),
+      priceType: initialPost?.priceType === 'HOURLY' ? '시급' : '일급',
+      priceProposal: initialPost?.priceProposal || '불가',
+    });
+    setImages(initialPost?.images || []);
+    setCategory(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바');
   }, [initialPost]);
 
   // 이미지 업로드 처리 함수
@@ -44,16 +65,12 @@ const ModifyPostForm = () => {
 
   // 다음 사진 슬라이드를 표시하는 함수
   const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) =>
-      prevSlide === Math.floor((images.length - 1) / 4) ? 0 : prevSlide + 1
-    );
+    setCurrentSlide((prevSlide) => (prevSlide === Math.floor((images.length - 1) / 4) ? 0 : prevSlide + 1));
   };
 
   // 이전 사진 슬라이드를 표시하는 함수
   const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) =>
-      prevSlide === 0 ? Math.floor((images.length - 1) / 4) : prevSlide - 1
-    );
+    setCurrentSlide((prevSlide) => (prevSlide === 0 ? Math.floor((images.length - 1) / 4) : prevSlide - 1));
   };
 
   // 폼 제출 처리 함수
@@ -68,24 +85,25 @@ const ModifyPostForm = () => {
       price: parseInt(post.price),
       startTime: new Date(post.startDate).toISOString(), // IOS 형식으로 변환
       endTime: new Date(post.endDate).toISOString(), // IOS 형식으로 변환
+      category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
+      location: post.location,
+      detailedLocation: post.detailedLocation,
     };
 
     try {
-      const response = await axios.patch(
-        'http://localhost:8080/api/v1/boards/${post.Id}',
-        modifiedPost,
-        {
-          headers: {
-            ContentType: 'application/json',
-          },
-        }
-      );
+      const response = await axios.patch(`http://localhost:8080/api/v1/boards/${post.id}`, modifiedPost, {
+        headers: {
+          ContentType: 'application/json',
+        },
+      });
 
       console.log('서버 응답', response);
 
-      if (response === 201) {
+      if (response?.status === 200 || response?.status === 204) {
         alert('게시글이 수정되었습니다.');
-        navigate('/board-list');
+        // 카테고리 기반 경로 설정
+        const categoryPath = category === '산책' ? '/recruit' : '/jobs';
+        navigate(categoryPath);
       } else {
         throw new Error('게시글 수정 실패!');
       }
@@ -103,7 +121,10 @@ const ModifyPostForm = () => {
     });
   };
 
-  // 수정 폼 렌더링
+  const handleCategoryClick = (category) => {
+    setCategory(category);
+  };
+
   return (
     <div className="modify-post-container">
       {/* 이미지 업로드 영역 */}
@@ -126,22 +147,31 @@ const ModifyPostForm = () => {
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
             <div className="image-preview-container">
-              {images
-                .slice(currentSlide * 4, currentSlide * 4 + 4)
-                .map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    alt={`Uploaded Preview ${index}`}
-                    className="image-preview"
-                  />
-                ))}
+              {images.slice(currentSlide * 4, currentSlide * 4 + 4).map((image, index) => (
+                <img key={index} src={image} alt={`Uploaded Preview ${index}`} className="image-preview" />
+              ))}
             </div>
             <button className="next-button" onClick={handleNextSlide}>
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>
         )}
+      </div>
+      <div className="category-buttons">
+        <button
+          type="button"
+          className={`btn-category ${category === '산책' ? 'selected' : ''}`}
+          onClick={() => handleCategoryClick('산책')}
+        >
+          산책
+        </button>
+        <button
+          type="button"
+          className={`btn-category ${category === '알바' ? 'selected' : ''}`}
+          onClick={() => handleCategoryClick('알바')}
+        >
+          알바
+        </button>
       </div>
       {/* 게시글 수정 폼 */}
       <form onSubmit={handleSubmit} className="modify-post-form">
@@ -157,32 +187,29 @@ const ModifyPostForm = () => {
         <div className="price-buttons">
           <button
             type="button"
-            className={`btn-price ${
-              post.priceType === '시급' ? 'selected' : ''
-            }`}
+            className={`btn-price ${post.priceType === '시급' ? 'selected' : ''}`}
             onClick={() => setPost({ ...post, priceType: '시급' })}
           >
             시급
           </button>
           <button
             type="button"
-            className={`btn-price ${
-              post.priceType === '일급' ? 'selected' : ''
-            }`}
+            className={`btn-price ${post.priceType === '일급' ? 'selected' : ''}`}
             onClick={() => setPost({ ...post, priceType: '일급' })}
           >
             일급
           </button>
-          <label>
-            <input
-              type="checkbox"
-              checked={post.priceProposal}
-              onChange={(e) =>
-                setPost({ ...post, priceProposal: e.target.checked })
-              }
-            />
-            가격 제안 받기
-          </label>
+          <div className="price-proposal">
+            <lable htmlFor="priceProposal">가격 협의:</lable>
+            <select
+              id="priceProposal"
+              value={post.priceProposal}
+              onChange={(e) => setPost({ ...post, priceProposal: e.target.value })}
+            >
+              <option value="가능">가능</option>
+              <option value="불가">불가</option>
+            </select>
+          </div>
         </div>
         <label htmlFor="price">금액:</label>
         <input
@@ -229,9 +256,7 @@ const ModifyPostForm = () => {
             type="text"
             placeholder="상세주소를 입력하세요."
             value={post.detailedLocation}
-            onChange={(e) =>
-              setPost({ ...post, detailedLocation: e.target.value })
-            }
+            onChange={(e) => setPost({ ...post, detailedLocation: e.target.value })}
           />
         </div>
         <div className="button-container">
@@ -241,7 +266,7 @@ const ModifyPostForm = () => {
           <button
             type="button"
             className="cancel-button"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(-1)} // 현재 페이지에서 이전 페이지로 이동합니다.
           >
             취소
           </button>
