@@ -168,19 +168,6 @@ const MyPageSidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 1:1 문의
               </NavLink>
             </li>
-            <li className="my-2">
-              <NavLink
-                to="/mypage/qna-list"
-                className="text-black hover:text-orange-300"
-                activeClassName="text-orange-600"
-              >
-                <FontAwesomeIcon
-                  icon={faGripLines}
-                  style={{ marginRight: "0.5rem" }}
-                />
-                1:1 문의
-            </NavLink>
-          </li>
           <li className="my-2">
             <NavLink
               to="/mypage/qna-list"

@@ -131,10 +131,20 @@ const MyInformation = () => {
       }
     };
 
-    // handleInputChange 함수 수정
     const handleInputChange = (e) => {
       const { name, value } = e.target;
       setValue(name, value); // react-hook-form의 setValue로 입력 필드 상태 업데이트
+
+      if (name === 'phoneNumber') {
+        let formattedValue = value.replace(/[^0-9]/g, '');
+        if (formattedValue.length > 3 && formattedValue.length <= 7) {
+          formattedValue = formattedValue.replace(/(\d{3})(\d+)/, '$1-$2');
+        } else if (formattedValue.length > 7) {
+          formattedValue = formattedValue.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3');
+        }
+        setValue('phoneNumber', formattedValue);
+        setPhoneNumber(formattedValue);
+      }
 
       // 모든 필수 입력 필드에 값이 있는지 확인
       const formData = getValues(); // useForm 훅에서 추출한 getValues 함수 사용
@@ -253,8 +263,8 @@ const MyInformation = () => {
           <div className="mb-3">
             <label className="block mb-1">전화번호</label>
             <input
-              type="phoneNumber"
-              name="phone"
+              type="text"
+              name="phoneNumber"
               {...register("phoneNumber")}
               onChange={handleInputChange}
               placeholder="전화번호는 숫자로만 입력해주세요('-'제외)"
