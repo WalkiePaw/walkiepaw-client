@@ -2,21 +2,15 @@ import React, { useState } from 'react';
 import KakaoMap from '../../../modules/Kakao';
 import './NewPostForm.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCamera,
-  faChevronLeft,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// 유효성 검사: yup 적용
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
   const [priceType, setPriceType] = useState('시급');
   const [price, setPrice] = useState('');
+  const [priceProposal, setPriceProposal] = useState('불가');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [content, setContent] = useState('');
@@ -24,6 +18,11 @@ const NewPostForm = () => {
   const [images, setImages] = useState([]);
   const [detailedLocation, setDetailedLocation] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [category, setCategory] = useState('JOB_OPENING');
+
+  // const memberId = parseInt(localStorage.getItem('memberId')); // 로그인한 사용자의 ID를 가져옵니다.
+  const memberId = 1;
+
   const navigate = useNavigate();
 
   const handleImageUpload = (e) => {
@@ -43,22 +42,15 @@ const NewPostForm = () => {
   };
 
   const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) =>
-      prevSlide === Math.floor((images.length - 1) / 4) ? 0 : prevSlide + 1
-    );
+    setCurrentSlide((prevSlide) => (prevSlide === Math.floor((images.length - 1) / 4) ? 0 : prevSlide + 1));
   };
 
   const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) =>
-      prevSlide === 0 ? Math.floor((images.length - 1) / 4) : prevSlide - 1
-    );
+    setCurrentSlide((prevSlide) => (prevSlide === 0 ? Math.floor((images.length - 1) / 4) : prevSlide - 1));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // const memberId = parseInt(localStorage.getItem('memberId')); // 로그인한 사용자의 ID를 가져옵니다.
-    const memberId = 1;
 
     const newPost = {
       title,
@@ -67,28 +59,28 @@ const NewPostForm = () => {
       startTime: new Date(startTime).toISOString(), // ISO 형식으로 변환
       endTime: new Date(endTime).toISOString(), // ISO 형식으로 변환
       content,
-      // location,
-      // detailedLocation,
+      location,
+      detailedLocation,
       // images,
       memberId,
+      category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
+      priceProposal,
     };
 
     try {
-      const response = await axios.post(
-        'http://localhost:8080/api/v1/boards',
-        newPost,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await axios.post('http://localhost:8080/api/v1/boards', newPost, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       console.log('서버 응답:', response);
 
       if (response?.status === 201) {
         alert('게시글 저장 완료!');
-        navigate('/board-list');
+        // 카테고리 기반 경로 설정
+        const categoryPath = category === '산책' ? '/recruit' : '/jobs';
+        navigate(categoryPath);
       } else {
         throw new Error('게시글 저장 실패!');
       }
@@ -104,6 +96,10 @@ const NewPostForm = () => {
 
   const handlePriceTypeClick = (type) => {
     setPriceType(type);
+  };
+
+  const handleCategoryClick = (category) => {
+    setCategory(category);
   };
 
   return (
@@ -126,22 +122,31 @@ const NewPostForm = () => {
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
             <div className="image-preview-container">
-              {images
-                .slice(currentSlide * 4, currentSlide * 4 + 4)
-                .map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    alt={`Uploaded Preview ${index}`}
-                    className="image-preview"
-                  />
-                ))}
+              {images.slice(currentSlide * 4, currentSlide * 4 + 4).map((image, index) => (
+                <img key={index} src={image} alt={`Uploaded Preview ${index}`} className="image-preview" />
+              ))}
             </div>
             <button className="next-button" onClick={handleNextSlide}>
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>
         )}
+      </div>
+      <div className="category-buttons">
+        <button
+          type="button"
+          className={`btn-category ${category === '산책' ? 'selected' : ''}`}
+          onClick={() => handleCategoryClick('산책')}
+        >
+          산책
+        </button>
+        <button
+          type="button"
+          className={`btn-category ${category === '알바' ? 'selected' : ''}`}
+          onClick={() => handleCategoryClick('알바')}
+        >
+          알바
+        </button>
       </div>
       <form onSubmit={handleSubmit} className="new-post-form">
         <label htmlFor="title">제목:</label>
@@ -168,10 +173,17 @@ const NewPostForm = () => {
           >
             일급
           </button>
+          <div className="price-proposal">
+            <lable htmlFor="priceProposal">가격 협의:</lable>
+            <select id="priceProposal" value={priceProposal} onChange={(e) => setPriceProposal(e.target.value)}>
+              <option value="가능">가능</option>
+              <option value="불가">불가</option>
+            </select>
+          </div>
         </div>
         <label htmlFor="price">금액:</label>
         <input
-          type="number"
+          type="text"
           className="price"
           placeholder="금액을 입력하세요."
           value={price}

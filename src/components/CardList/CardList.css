@@ -1,9 +1,9 @@
 .CardStyled {
-  width: 240px;
-  height: 360px;
+  width: 250px;
+  height: 460px;
   margin: auto;
   border-radius: 18px;
-  text-align: center;
+  text-align: start;
   box-shadow: 0 0 20px #e8c5a5;
   justify-content: center;
   overflow: hidden;
@@ -26,42 +26,14 @@
   }
 }
 
-.CardImageBox {
-  width: 100%;
-  height: 200px;
+.MemberNickName {
+  margin: 5px auto;
+  display: block;
+  width: 50%;
+  white-space: nowrap;
   overflow: hidden;
-  position: relative;
-  border-radius: 18px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-@media (max-width: 639px) {
-  .CardImageBox {
-    width: 150px;
-    height: 150px;
-  }
-}
-
-.CardImage {
-  width: 90%;
-  height: 90%;
-  object-fit: cover;
-  border-radius: 18px;
-  transition: transform 0.5s ease;
-}
-
-.CardImage:hover {
-  cursor: pointer;
-  transform: scale(1.2);
-  transform-origin: center center;
-}
-
-@media (max-width: 639px) {
-  .CardImage {
-    padding: 10px;
-    flex: 1;
-  }
+  text-overflow: ellipsis;
+  font-size: 1rem;
 }
 
 .Locals {
@@ -78,15 +50,16 @@
   }
 }
 
-.MemberId,
 .Local {
   margin: 5px auto;
   display: block;
-  width: 45%;
+  width: 25%;
+  height: -webkit-fill-available; /* fierFox에서는 적용안됨 */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 1rem;
+  text-align: center;
 }
 
 @media (max-width: 639px) {
@@ -120,6 +93,10 @@
   }
 }
 
+.Price {
+  margin: 12px 0;
+}
+
 .Icons {
   position: absolute;
   bottom: 10px; /* Adjust as needed */
@@ -129,6 +106,7 @@
 }
 
 .Icon {
+  padding-left: 10px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -152,4 +130,42 @@
 
 .post-status.구인-완료 {
   color: red;
+}
+
+.CardImageBox {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 18px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+@media (max-width: 639px) {
+  .CardImageBox {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+.CardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+  transition: transform 0.5s ease;
+}
+
+.CardImage:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+  transform-origin: center center;
+}
+
+@media (max-width: 639px) {
+  .CardImage {
+    padding: 10px;
+    flex: 1;
+  }
 }
