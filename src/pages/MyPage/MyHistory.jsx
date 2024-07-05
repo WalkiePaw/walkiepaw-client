@@ -17,6 +17,7 @@ const MyHistory = () => {
   const [posts, setPosts] = useState([]);
   const MySwal = withReactContent(Swal);
   const id= 1;
+  const memberId = 1;
 
   useEffect(() => {
     fetchPosts("JOB_SEARCH"); // 기본 탭 설정을 "구직"으로 변경
@@ -24,7 +25,7 @@ const MyHistory = () => {
 
   const fetchPosts = async (category) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`);
+      const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}`);
       setPosts(response.data);
     } catch (error) {
       console.error("Failed to fetch posts", error);
@@ -70,6 +71,17 @@ const MyHistory = () => {
         }
       }
     });
+  };
+
+  // 날짜 설정
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${year}-${month}-${day} / ${hours}:${minutes}`;
   };
 
   return (
@@ -134,16 +146,16 @@ const MyHistory = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {posts.map((post, index) => (
-              <tr key={index}>
-                <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+            {posts.map((post) => (
+              <tr key={post.boardId}>
+                <td className="px-6 py-4 whitespace-nowrap">{post.boardId}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{post.content}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{post.createdDate}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{formatTime(post.createdDate)}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     className="w-12 h-12 flex justify-center items-center text-white rounded-md bg-orange-500 hover:bg-orange-500"
-                    onClick={() => handleDelete(post.id)}
+                    onClick={() => handleDelete(post.boardId)}
                   >
                     <FontAwesomeIcon icon={faTrashCan} />
                   </button>

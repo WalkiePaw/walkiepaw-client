@@ -14,6 +14,7 @@ const [activeTab, setActiveTab] = useState("walk"); // 기본 선택 탭 설정
 const [posts, setPosts] = useState([]);
 const MySwal = withReactContent(Swal);
 const id= 1;
+const memberId = 1;
 
 useEffect(() => {
   fetchPosts("JOB_SEARCH"); // 기본 탭 설정을 "구직"으로 변경
@@ -21,7 +22,7 @@ useEffect(() => {
 
 const fetchPosts = async (category) => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`);
+    const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}`);
     setPosts(response.data);
   } catch (error) {
     console.error("Failed to fetch posts", error);
@@ -39,9 +40,20 @@ const handleTabClick = (tab) => {
   fetchPosts(tab); // 탭에 따른 게시글 데이터 가져오기
 };
 
+// 날짜 설정
+const formatTime = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${year}-${month}-${day} / ${hours}:${minutes}`;
+};
+
   return (
     <div className="flex flex-col">
-      <h1 className="text-3xl font-bold mb-5 mr-4">작성글 내역</h1>
+      <h1 className="text-3xl font-bold mb-5 mr-4">작성한 게시글 내역(n)</h1>
       <div className="flex mb-3 dlomb-4">
         <button
           className={`px-8 py-2 rounded-md mr-4 ${
@@ -94,12 +106,12 @@ const handleTabClick = (tab) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {posts.map((post, index) => (
-              <tr key={index}>
-                <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+            {posts.map((post) => (
+              <tr key={post.boardId}>
+                <td className="px-6 py-4 whitespace-nowrap">{post.boardId}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{post.content}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{post.createdDate}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{formatTime(post.createdDate)}</td>
               </tr>
             ))}
           </tbody>

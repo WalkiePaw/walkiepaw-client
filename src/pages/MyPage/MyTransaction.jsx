@@ -8,8 +8,8 @@ const MyTransaction = () => {
 
   // 게시글 데이터 예시
   const [posts, setPosts] = useState([
-    { id: 1, title: "산책", member: "상대 회원 닉네임", review: "작성 완료", date: "2024-06-21 10:00" },
-    { id: 2, title: "알바", member: "상대 회원 닉네임", review: "리뷰 남기기", date: "2024-06-20 15:30" },
+    { id: 1, title: "산책", member: "상대 회원 닉네임", review: "작성 완료", createdDate: "2024-06-21 10:00" },
+    { id: 2, title: "알바", member: "상대 회원 닉네임", review: "리뷰 남기기", createdDate: "2024-06-20 15:30" },
   ]);
 
   const handleTabClick = (tab) => {
@@ -17,14 +17,25 @@ const MyTransaction = () => {
     // 각 탭에 따른 게시글 설정
     if (tab === "walk") {
       setPosts([
-        { id: 1, title: "산책", member: "상대 회원 닉네임", review: "작성 완료", date: "2024-06-21 10:00" },
+        { id: 1, title: "산책", member: "상대 회원 닉네임", review: "작성 완료", createdDate: "2024-06-21 10:00" },
       ]);
     } else if (tab === "partTimeJob") {
       setPosts([
-        { id: 2, title: "알바", member: "상대 회원 닉네임", review: "리뷰 남기기", date: "2024-06-20 15:30" },
+        { id: 2, title: "알바", member: "상대 회원 닉네임", review: "리뷰 남기기", createdDate: "2024-06-20 15:30" },
       ]);
     }
   };
+
+  // 날짜 설정
+const formatTime = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${year}-${month}-${day} / ${hours}:${minutes}`;
+};
 
   return (
       <div className="flex flex-col">
@@ -75,7 +86,7 @@ const MyTransaction = () => {
                   <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{post.member}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{post.review}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{post.date}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{formatTime(post.createdDate)}</td>
                 </tr>
               ))}
             </tbody>
