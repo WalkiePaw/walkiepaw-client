@@ -10,7 +10,7 @@ const NewPostForm = () => {
   const [title, setTitle] = useState('');
   const [priceType, setPriceType] = useState('시급');
   const [price, setPrice] = useState('');
-  const [priceProposal, setPriceProposal] = useState('불가');
+  const [priceProposal, setPriceProposal] = useState(false); //  초기 값을 flase로 설정
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [content, setContent] = useState('');
@@ -176,8 +176,8 @@ const NewPostForm = () => {
           <div className="price-proposal">
             <lable htmlFor="priceProposal">가격 협의:</lable>
             <select id="priceProposal" value={priceProposal} onChange={(e) => setPriceProposal(e.target.value)}>
-              <option value="가능">가능</option>
-              <option value="불가">불가</option>
+              <option value="true">가능</option>
+              <option value="false">불가</option>
             </select>
           </div>
         </div>

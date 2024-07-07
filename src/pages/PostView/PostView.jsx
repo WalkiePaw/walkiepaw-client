@@ -23,10 +23,6 @@ const PostView = () => {
   const [memberNickName, setMemberNickname] = useState(location.state?.memberNickName);
 
   useEffect(() => {
-    console.log('맴버닉네임!!!', memberNickName);
-  }, [memberNickName]);
-
-  useEffect(() => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/v1/boards/${postId}`);
@@ -54,14 +50,15 @@ const PostView = () => {
     const newStatus = e.target.value;
     setStatus(newStatus); // 게시글 상태 변경 즉시 반영
     try {
-      const response = await axios.patch(`http://localhost:8080/api/v1/boards/${postId}`, {
+      // console.log(`게시글 상태 변경 확인!?!: ${newStatus}`);
+      await axios.patch(`http://localhost:8080/api/v1/boards/status/${postId}`, {
+        boardId: postId,
         status: newStatus,
       });
-      console.log('상태 변경 됐니?!', response);
-      setPost((prevPost) => ({
-        ...prevPost,
-        status: newStatus,
-      }));
+      const response = await axios.get(`http://localhost:8080/api/v1/boards/${postId}`);
+      // console.log('상태 변경 됐니?!', response);
+      setPost(response?.data);
+      setStatus(response?.data?.status);
     } catch (error) {
       console.error('상태 변경 안됨!', error);
       alert('상태를 변경 오류!');
@@ -171,10 +168,10 @@ const PostView = () => {
           <div className="post-status">
             <select value={status} onChange={handleStatusChange} className={getStatusClass(status)}>
               <option value="RECRUITING" className="post-status-option recruiting">
-                구인중
+                모집중
               </option>
               <option value="RESERVED" className="post-status-option reserved">
-                구인 대기중
+                예약
               </option>
               <option value="COMPLETED" className="post-status-option completed">
                 구인 완료
@@ -198,8 +195,8 @@ const PostView = () => {
         </div>
         <div className="post-title">
           <span className={`post-status ${status.toLowerCase().replace(' ', '-')} ${getStatusClass(status)}`}>
-            {status === 'RECRUITING' && '구인중'}
-            {status === 'RESERVED' && '구인 대기중'}
+            {status === 'RECRUITING' && '모집중'}
+            {status === 'RESERVED' && '예약'}
             {status === 'COMPLETED' && '구인 완료'}
           </span>{' '}
           - {post.title}
@@ -212,7 +209,7 @@ const PostView = () => {
             </div>
             <div className="post-info-item post-priceType">
               {post.priceType === 'HOURLY' && '시급'} {post.priceType === 'DAILY' && '일급'} : {formatToKRW(post.price)}
-              원<div>{priceProposal}</div>
+              원<div>가격 협의 : {priceProposal}</div>
             </div>
             <div className="post-info-item post-content-box">{post.content}</div>
           </div>
