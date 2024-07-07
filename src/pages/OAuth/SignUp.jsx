@@ -79,10 +79,10 @@ const SignUp = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [address, setAddress] = useState('');
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [profileImageUrl, setProfileImageUrl] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
   const isSocialSignUp = location.state?.isSocialSignUp || false;
-
 
   useEffect(() => {
     if (location.state) {
@@ -94,7 +94,8 @@ const SignUp = () => {
 
   const submitSignUp = async (data) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/members', data);
+      const signUpData = { ...data, profileImageUrl };
+      const response = await axios.post('http://localhost:8080/api/v1/members', signUpData);
       console.log('회원가입 성공:', response.data);
       setIsSuccessModalVisible(true);
     } catch (error) {
@@ -111,21 +112,15 @@ const SignUp = () => {
     if (result) {
       const formData = watch();
       await submitSignUp(formData);
-    } else {
-      Object.keys(register).forEach(fieldName => {
-        trigger(fieldName);
-      });
     }
   };
 
   const handleSuccessModalOk = () => {
     setIsSuccessModalVisible(false);
-    navigate('/');  // 홈페이지로 이동
+    navigate('/');
   };
 
-  const handleAddressSearch = () => {
-    setIsModalOpen(true);
-  };
+  const handleAddressSearch = () => setIsModalOpen(true);
 
   const handleAddressComplete = (newAddress) => {
     setValue('address', newAddress);
@@ -134,20 +129,7 @@ const SignUp = () => {
     setIsModalOpen(false);
   };
 
-  // 이미지 변경
-  const [imagePreview, setImagePreview] = useState(null);
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-      console.log('Selected image:', file);
-    }
-  };
 
   useEffect(() => {
     const subscription = watch((value, { name }) => {
@@ -155,7 +137,6 @@ const SignUp = () => {
         trigger("passwordConfirm");
       }
     });
-
     return () => subscription.unsubscribe();
   }, [watch, trigger]);
 
@@ -264,7 +245,11 @@ const SignUp = () => {
           />
 
           <Label htmlFor="profilePicture">프로필 사진</Label>
-          <ImageUpload onImageChange={handleImageChange} />
+          <ImageUpload onImageUpload={(url) => {
+            setProfileImageUrl(url);
+            setValue('profileImageUrl', url);
+          }} />
+          {profileImageUrl && <img src={profileImageUrl} alt="Profile Preview" style={{width: '100px', height: '100px', objectFit: 'cover'}} />}
 
           <ButtonContainer>
             <UserButton
