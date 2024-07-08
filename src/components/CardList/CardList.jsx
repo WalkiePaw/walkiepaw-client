@@ -86,8 +86,8 @@ const CardList = ({
       </div>
       <div className="Title">
         <span className={`post-status ${status?.toLowerCase()?.replace(' ', '-')}`}>
-          {status === 'RECRUITING' && '구인중'}
-          {status === 'RESERVED' && '구인 대기중'}
+          {status === 'RECRUITING' && '모집중'}
+          {status === 'RESERVED' && '예약'}
           {status === 'COMPLETED' && '구인 완료'}
         </span>
         {` - ${title}`}

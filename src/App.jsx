@@ -34,6 +34,7 @@ import Admin from './admin/Admin.jsx';
 import MemberList from './admin/MemberList.jsx';
 import QnaList from './pages/MyPage/QnaList.jsx';
 import ReportManagement from './admin/ReportManagement.jsx';
+import ParticleCursor from './components/ParticleCursor.jsx';
 
 function App() {
   const nav = useNavigate();
@@ -42,6 +43,7 @@ function App() {
   };
   return (
     <>
+      <ParticleCursor />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="*" element={<Notfound />} />
