@@ -1,4 +1,9 @@
+// 신고 관리 
+
 import React, { useState, useEffect, useCallback } from 'react';
+// 팝업창 
+import Swal from 'sweetalert2';
+// axios 
 import axios from 'axios';
 
 const BoardReportCategory = {
@@ -16,6 +21,16 @@ const MemberReportCategory = {
   NO_SHOW: '약속 장소에 나타나지 않은 경우',
   SCAMMER: '사기 사용자인 경우',
   DISPUTE: '거래/환불 분쟁이 있는 경우'
+};
+
+// 팝업으로 신고 내용 확인하기
+const showReportDetails = (title, description) => {
+  Swal.fire({
+    title: title,
+    text: description,
+    icon: 'info',
+    confirmButtonText: '확인',
+  });
 };
 
 const ReportManagement = () => {
@@ -104,11 +119,15 @@ const ReportManagement = () => {
             <tr className="border-b">
               <th className="py-2 px-4 text-left">번호</th>
               <th className="py-2 px-4 text-left">신고한 회원명</th>
-              <th className="py-2 px-4 text-left">닉네임</th>
+              <th className="py-2 px-4 text-left">
+                {reportType === 'board'
+                  ? '닉네임'
+                  : '신고 대상 회원명'}
+              </th>
               <th className="py-2 px-4 text-left">
                 {reportType === 'board' 
                   ? '게시글 제목' 
-                  : '신고 대상 회원'}
+                  : '신고 제목'}
               </th>
               <th className="py-2 px-4 text-left">신고일</th>
               <th className="py-2 px-4 text-left">신고사유</th>
@@ -119,19 +138,27 @@ const ReportManagement = () => {
             {reports.map((report, index) => (
               <tr key={index} className="border-b">
                 <td className="py-2 px-4">{index + 1}</td>
-                <td className="py-2 px-4">{report.writerName}</td>
+                <td className="py-2 px-4">
+                  {reportType === 'board' 
+                    ? report.writerName
+                    : report.reportingMemberName}
+                  </td>
                 <td className='py-2 px-4'>
                   {reportType === 'board' 
                     ? report.boardWriterNickname
-                    : report.reportingMemberName}
-                </td>
-                <td className="py-2 px-4">
-                  {reportType === 'board' 
-                    ? report.boardTitle 
                     : report.reportedMemberName}
                 </td>
+                <td 
+                  onClick={() => showReportDetails(report.title, report.description)}
+                  className="py-2 px-4 cursor-pointer">
+                  {reportType === 'board' 
+                    ? report.boardTitle 
+                    : report.memberTitle}
+                </td>            
                 <td className="py-2 px-4">
-                  {formatTime(report.boardWriterCreatedDate)}
+                  {reportType === 'board' 
+                    ? formatTime(report.boardWriterCreatedDate)
+                    : formatTime(report.memberCreatedDate)}
                 </td>
                 <td className="py-2 px-4">
                   {reportType === 'board' 
@@ -139,16 +166,25 @@ const ReportManagement = () => {
                     : MemberReportCategory[report.reason]}
                 </td>
                 <td className="py-2 px-4">
-                  <select 
-                    onChange={(e) => handleAction(report.id, e.target.value)}
-                    className="border rounded px-2 py-1"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>선택</option>
-                    <option value="warn">경고</option>
-                    <option value="ban">영구정지</option>
-                    <option value="ignore">신고 삭제(무시)</option>
-                  </select>
+                <select 
+            onChange={(e) => handleAction(report.id, e.target.value)}
+            className="border rounded px-2 py-1"
+            defaultValue=""
+          >
+            <option value="" disabled>선택</option>
+            {reportType === 'board'  ? (
+              <>
+                <option value="restrict">제한된 게시글 처리</option>
+                <option value="ignore">신고 삭제</option>
+              </>
+            ) : (
+              <>
+                <option value="warn">경고</option>
+                <option value="ban">영구정지</option>
+                <option value="ignore">신고 삭제</option>
+              </>
+            )}
+          </select>
                 </td>
               </tr>
             ))}
