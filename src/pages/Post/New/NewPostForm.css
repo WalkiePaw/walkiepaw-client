@@ -144,6 +144,7 @@
   flex-wrap: nowrap;
   overflow: hidden;
   width: 100%;
+  margin: 0 32px;
 }
 
 .image-preview {
