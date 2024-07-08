@@ -5,7 +5,8 @@ import Swal from 'sweetalert2';
 
 const MemberList = () => {
   const [members, setMembers] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [searchField, setSearchField] = useState('name');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     // API 호출 함수 정의
@@ -35,7 +36,6 @@ const MemberList = () => {
     INACTIVE: "휴면 상태"
   };
 
-
   // 회원 가입일 설정
   const formatTime = (dateString) => {
     const date = new Date(dateString);
@@ -45,9 +45,42 @@ const MemberList = () => {
     return `${year}-${month}-${day}`;
   };
 
+    // 필터링된 회원 목록을 반환하는 함수: 이름, 닉네임, 누적 신고 횟수, 이메일로 검색 가능
+    const filteredMembers = members.filter((member) => {
+      if (searchField === 'name') {
+        return member.name.toLowerCase().includes(searchTerm.toLowerCase());
+      } else if (searchField === 'nickname') {
+        return member.nickname.toLowerCase().includes(searchTerm.toLowerCase());
+      } else if (searchField === 'reportedCnt') {
+        return member.reportedCnt.toString().includes(searchTerm);
+      } else if (searchField === 'email') {
+        return member.email.toLowerCase().includes(searchTerm.toLowerCase());
+      }
+      return true;
+    });
+
   return (
     <div className="p-4 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-5">회원 목록 관리</h2>
+      <div className="mb-4 flex">
+        <select
+          value={searchField}
+          onChange={(e) => setSearchField(e.target.value)}
+          className="mr-2 p-2 border border-gray-300 rounded"
+        >
+          <option value="name">이름</option>
+          <option value="nickname">닉네임</option>
+          <option value="reportedCnt">신고 횟수</option>
+          <option value="email">이메일</option>
+        </select>
+        <input
+          type="text"
+          placeholder="검색어 입력"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="p-2 border border-gray-300 rounded"
+        />
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
@@ -57,32 +90,20 @@ const MemberList = () => {
               <th className="px-4 py-2 border-b">이름</th>
               <th className="px-4 py-2 border-b">닉네임</th>
               <th className="px-4 py-2 border-b">가입일자</th>
-              <th className="px-4 py-2 border-b">신고횟수</th>
+              <th className="px-4 py-2 border-b">누적 신고횟수</th>
               <th className="px-4 py-2 border-b">상태</th>
             </tr>
           </thead>
           <tbody>
-          {members.map((member, index) => (
-            <tr key={index}>
+          {filteredMembers.map((member, index) => (
+            <tr key={member.id}>
               <td className="px-4 py-2 border-b">{index + 1}</td>
               <td className="px-4 py-2 border-b">{member.email}</td>
               <td className="px-4 py-2 border-b">{member.name}</td>
               <td className="px-4 py-2 border-b">{member.nickname}</td>
               <td className="px-4 py-2 border-b">{formatTime(member.createdDate)}</td>
               <td className="px-4 py-2 border-b">{member.reportedCnt}</td>
-              <td className="px-4 py-2 border-b">{statusMap[member.status]}
-                <select
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="block w-full bg-white border border-gray-300 rounded-md py-1 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                >
-                  <option value="">상태 선택</option>
-                  <option value="GENERAL">일반</option>
-                  <option value="WITHDRAWN">탈퇴</option>
-                  <option value="BANNED">제재 또는 정지된 회원</option>
-                  <option value="INACTIVE">휴면 상태</option>
-                </select>
-              </td>
+              <td className="px-4 py-2 border-b">{statusMap[member.status]}</td>
             </tr>
             ))}
           </tbody>
