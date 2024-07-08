@@ -46,15 +46,12 @@ const ReportModal = ({ onClose, boardId, memberId, onSubmit }) => {
     console.log('reportContent:', reportContent);
 
     try {
-      const response = await axios.post(
-        'http://localhost:8080/api/v1/boardReports',
-        {
-          boardId: boardId,
-          reason: reasonMap[selectedReason], // 신고 이유
-          content: reportContent, // 기타 유형일 경우 content에 입력값 전달
-          memberId: memberId, // 신고한 유저 Id
-        }
-      );
+      const response = await axios.post('http://localhost:8080/api/v1/boardReports', {
+        boardId: boardId,
+        reason: reasonMap[selectedReason], // 신고 이유
+        content: reportContent, // 기타 유형일 경우 content에 입력값 전달
+        memberId: memberId, // 신고한 유저 Id
+      });
 
       if (response.status === 201) {
         alert('신고가 정상적으로 접수되었습니다.');
@@ -74,21 +71,14 @@ const ReportModal = ({ onClose, boardId, memberId, onSubmit }) => {
         <h2>게시글 신고하기</h2>
         <p>신고하시는 이유를 선택해주세요.</p>
         <div className="reason-selector">
-          <div
-            className="selected-reason"
-            onClick={() => setShowReasons(!showReasons)}
-          >
+          <div className="selected-reason" onClick={() => setShowReasons(!showReasons)}>
             {selectedReason || '신고 이유를 선택해주세요.'}
             <span className={`arrow ${showReasons ? 'open' : ''}`}>▼</span>
           </div>
           {showReasons && (
             <div className="reason-list">
               {reasons.map((reason, index) => (
-                <div
-                  key={index}
-                  className="reason-option"
-                  onClick={() => handleReasonSelect(reason)}
-                >
+                <div key={index} className="reason-option" onClick={() => handleReasonSelect(reason)}>
                   {reason}
                 </div>
               ))}
@@ -106,11 +96,7 @@ const ReportModal = ({ onClose, boardId, memberId, onSubmit }) => {
           <button className="cancel-button" onClick={onClose}>
             취소
           </button>
-          <button
-            className="submit-button"
-            onClick={handleSubmit}
-            disabled={!selectedReason}
-          >
+          <button className="submit-button" onClick={handleSubmit} disabled={!selectedReason}>
             신고하기
           </button>
         </div>
