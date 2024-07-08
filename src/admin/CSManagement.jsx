@@ -13,6 +13,7 @@ const CSManagement = () => {
     fetchQnaList();
   }, []);
 
+  // 목록 불러오기
   const fetchQnaList = () => {
     axios.get('http://localhost:8080/api/v1/qna')
       .then(response => {
@@ -23,44 +24,67 @@ const CSManagement = () => {
       });
   };
 
+  // 답변하기
   const handleReply = (qna) => {
     setSelectedQna(qna);
-
-    Swal.fire({
-      title: '답변 작성',
-      html: `
-        <div>
-          <p><strong>답변 번호:</strong> ${qna.id}</p>
-          <p><strong>회원 ID:</strong> ${qna.memberId}</p>
-          <p><strong>회원명:</strong> ${qna.writerName}</p>
-          <p><strong>제목:</strong> ${qna.title}</p>
-          <p><strong>내용:</strong> ${qna.content}</p>
-          <p><strong>작성일:</strong> ${formatTime(qna.createdDate)}</p>
-          <textarea id="replyContent" rows="4" cols="50" placeholder="답변을 작성해주세요" class="swal2-textarea"></textarea>
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: '답변 완료',
-      cancelButtonText: '취소',
-      focusConfirm: false,
-      preConfirm: () => {
-        const reply = document.getElementById('replyContent').value;
-        if (!reply) {
-          Swal.showValidationMessage('답변을 작성해주세요');
-        }
-        return reply;
-      }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        handleReplySubmit(result.value);
-      }
-    });
-  };
-
-  const handleReplySubmit = (reply) => {
-    axios.patch(`/api/v1/qna/${selectedQna.id}`, { reply, status: 'COMPLETED' })
+  
+    axios.get(`http://localhost:8080/api/v1/qna/${qna.qnaId}`)
       .then(response => {
-        fetchQnaList();
+        const qnaDetails = response.data;
+        Swal.fire({
+          title: '답변 작성',
+          html: `
+            <div>
+              <p><strong>답변 번호:</strong> ${qnaDetails.qnaId}</p>
+              <p><strong>회원명:</strong> ${qnaDetails.writerName}</p>
+              <p><strong>제목:</strong> ${qnaDetails.title}</p>
+              <p><strong>내용:</strong> ${qnaDetails.content}</p>
+              <p><strong>작성일:</strong> ${formatTime(qnaDetails.createdDate)}</p>
+              <textarea id="replyContent" rows="4" cols="50" placeholder="답변을 작성해주세요" class="swal2-textarea"></textarea>
+            </div>
+          `,
+          showCancelButton: true,
+          confirmButtonText: '답변 완료',
+          cancelButtonText: '취소',
+          focusConfirm: false,
+          preConfirm: () => {
+            const reply = document.getElementById('replyContent').value;
+            if (!reply) {
+              Swal.showValidationMessage('답변을 작성해주세요');
+            }
+            return reply;
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            handleReplySubmit(result.value);
+          }
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching Q&A details:', error);
+        Swal.fire({
+          title: 'Q&A 항목 정보를 가져오는 중 오류가 발생하였습니다',
+          icon: 'error',
+          confirmButtonText: '확인'
+        });
+      });
+  };
+  
+  // 답변 제출
+  const handleReplySubmit = (reply) => {
+    if (!selectedQna || !selectedQna.qnaId) {
+      console.error('Invalid qna object or qnaId is null/undefined:', selectedQna);
+      return;
+    }
+  
+    axios.patch(`http://localhost:8080/api/v1/qna/${selectedQna.qnaId}`, { 
+      reply, 
+      status: 'COMPLETED',
+      title: selectedQna.title, // Q&A 제목 보존
+      content: selectedQna.content, // Q&A 내용 보존
+    })
+      .then(response => {
+        fetchQnaList(); // 답변 성공 후 목록을 다시 불러옴
         Swal.fire({
           title: '답변이 성공적으로 전송되었습니다',
           icon: 'success',
@@ -76,6 +100,7 @@ const CSManagement = () => {
         });
       });
   };
+  
 
   // 날짜 설정
   const formatTime = (dateString) => {
@@ -106,8 +131,8 @@ const CSManagement = () => {
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {qnaList.map((qna, index) => (
-            <tr key={index}>
-              <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+            <tr key={qna.qnaId}>
+              <td className="px-6 py-4 whitespace-nowrap">{qna.qnaId}</td>
               <td className="px-6 py-4 whitespace-nowrap">{qna.memberId}</td>
               <td className="px-6 py-4 whitespace-nowrap">{qna.writerName}</td>
               <td className="px-6 py-4 whitespace-nowrap">{qna.title}</td>
