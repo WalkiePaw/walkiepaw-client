@@ -20,6 +20,7 @@ const PostView = () => {
   // BoardList에서 로그인한 유저의 id와 nickname을 가져옴
 
   const [memberNickName, setMemberNickname] = useState(location?.state?.memberNickName);
+  const [memberId, setMemberId] = useState(location?.state?.memberId);
 
   useEffect(() => {
     console.log('useEffect 실행 되었다!');
@@ -263,7 +264,7 @@ const PostView = () => {
           onClose={() => setShowReportModal(false)}
           onSubmit={handlerReport}
           boardId={postId}
-          memberId={memberNickName}
+          memberId={memberId}
         />
       )}
     </div>

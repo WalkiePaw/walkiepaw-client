@@ -20,6 +20,7 @@ const BoardList = () => {
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
 
   const memberNickName = '헬스유투버'; // 로그인 유저의 임시 id 나중에 바꿔야 함
+  const memberId = 1;
 
   // location의 값에서 '동'이 포함된 값만 추출
   const dongFromLocal = (location) => {
@@ -133,7 +134,13 @@ const BoardList = () => {
   // 게시글을 클릭하면 해당 게시글의 정보과 로그인한 맴버의 정보를 전달하면서 이동
   const handlePostClick = (post) => {
     navigate(`/post/${post.id}`, {
-      state: { post, memberNickName, detailedLocation: post.detailedLocation, priceProposal: post.priceProposal },
+      state: {
+        post,
+        memberNickName,
+        memberId,
+        detailedLocation: post.detailedLocation,
+        priceProposal: post.priceProposal,
+      },
     });
   };
 
