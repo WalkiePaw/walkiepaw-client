@@ -16,6 +16,7 @@ const NewPostForm = () => {
   const [content, setContent] = useState('');
   const [location, setLocation] = useState(''); // 지도의 위치와 주소
   const [images, setImages] = useState([]);
+  const [imageURLs, setImageURLs] = useState([]); // 이미지를 저장한 URL을 저장
   const [detailedLocation, setDetailedLocation] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [category, setCategory] = useState('JOB_OPENING');
@@ -38,7 +39,29 @@ const NewPostForm = () => {
 
     Promise.all(newImages).then((results) => {
       setImages([...images, ...results]);
+      uploadImages(files); // 첨부한 이미지를 서버에 업로드
     });
+  };
+
+  const uploadImages = async (files) => {
+    const urls = await Promise.all(files.map((file) => uploadImage(file)));
+    setImageURLs([...imageURLs, ...urls]);
+  };
+
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post(`http://localhost:8080/api/v1/uploads`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response?.data;
+    } catch (error) {
+      console.error('이미지 업로드 에러!', error);
+    }
   };
 
   const handleNextSlide = () => {
@@ -61,7 +84,7 @@ const NewPostForm = () => {
       content,
       location,
       detailedLocation,
-      // images,
+      images: imageURLs,
       memberId,
       category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
       priceProposal: priceProposal ? 1 : 0, // true이면 1, false이면 0으로 변환하여 전송
