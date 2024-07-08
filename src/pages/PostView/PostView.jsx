@@ -10,33 +10,37 @@ const PostView = () => {
   const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
   const navigate = useNavigate();
   const location = useLocation();
-  const [detailedLocation, setDetailedLocation] = useState();
-  const [post, setPost] = useState(location.state?.post); // 게시글 상태
+  const [detailedLocation, setDetailedLocation] = useState(location.state?.post?.detailedLocation || '');
+  const [post, setPost] = useState(location?.state?.post || {}); // 게시글 상태.  초기 상태를 null로 설정
   const [showReportModal, setShowReportModal] = useState(false); // 신고 모달 표시 상태
-  const [status, setStatus] = useState(post?.status || '구인중');
+  const [status, setStatus] = useState(post?.status || '모집중');
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 이미지 슬라이드 인덱스
-  const [priceProposal, setPriceProposal] = useState(post?.priceProposal); // 가격 협의 상태
+  const [priceProposal, setPriceProposal] = useState(location.state?.post?.priceProposal || false); // 가격 협의 상태
 
   // BoardList에서 로그인한 유저의 id와 nickname을 가져옴
-  // const memberNickName = location.status?.memberNickName;
 
-  const [memberNickName, setMemberNickname] = useState(location.state?.memberNickName);
+  const [memberNickName, setMemberNickname] = useState(location?.state?.memberNickName);
 
   useEffect(() => {
+    console.log('useEffect 실행 되었다!');
     const fetchPost = async () => {
+      console.log('패치포스트 시작!');
       try {
         const response = await axios.get(`http://localhost:8080/api/v1/boards/${postId}`);
-        setDetailedLocation(response?.data?.detailedLocation);
+        console.log(response.data);
         setPost(response?.data);
         setStatus(response?.data?.status);
+        setPriceProposal(response?.data?.priceProposal);
+        setDetailedLocation(response?.data?.detailedLocation);
       } catch (error) {
         console.error('게시글을 가져오는 중 오류 발생', error);
       }
     };
-    if (!post) {
-      fetchPost();
-    }
-  }, [postId, post]);
+
+    fetchPost();
+
+    console.log(fetchPost);
+  }, [postId]);
 
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
@@ -50,15 +54,25 @@ const PostView = () => {
     const newStatus = e.target.value;
     setStatus(newStatus); // 게시글 상태 변경 즉시 반영
     try {
-      // console.log(`게시글 상태 변경 확인!?!: ${newStatus}`);
+      console.log(`게시글 상태 변경 확인!?!: ${newStatus}`);
       await axios.patch(`http://localhost:8080/api/v1/boards/status/${postId}`, {
         boardId: postId,
         status: newStatus,
       });
-      const response = await axios.get(`http://localhost:8080/api/v1/boards/${postId}`);
-      // console.log('상태 변경 됐니?!', response);
-      setPost(response?.data);
-      setStatus(response?.data?.status);
+      if (memberNickName !== post.memberNickName) {
+        const response = await axios.get(`http://localhost:8080/api/v1/boards/${postId}`);
+        console.log('상태 변경 됐니?!', response);
+        setDetailedLocation(response?.data?.detailedLocation);
+        setPost(response?.data);
+        setStatus(response?.data?.status);
+        setPriceProposal(response?.data?.priceProposal);
+      }
+      console.log(memberNickName);
+      console.log(post.memberNickName);
+      console.log(post.detailedLocation);
+      console.log(detailedLocation);
+      console.log(post.priceProposal);
+      console.log(priceProposal);
     } catch (error) {
       console.error('상태 변경 안됨!', error);
       alert('상태를 변경 오류!');
@@ -74,6 +88,7 @@ const PostView = () => {
           priceType: post.priceType === 'HOURLY' ? '시급' : '일급',
           detailedLocation: detailedLocation,
           memberNickName: memberNickName,
+          priceProposal: priceProposal,
         },
       },
     });
@@ -148,6 +163,10 @@ const PostView = () => {
     }).format(value);
   };
 
+  const getPriceProposalText = (priceProposal) => {
+    return priceProposal ? '가능' : '불가능';
+  };
+
   return (
     <div className="post-view">
       <div className="post-content">
@@ -209,7 +228,7 @@ const PostView = () => {
             </div>
             <div className="post-info-item post-priceType">
               {post.priceType === 'HOURLY' && '시급'} {post.priceType === 'DAILY' && '일급'} : {formatToKRW(post.price)}
-              원<div>가격 협의 : {priceProposal}</div>
+              원<div className="post-proposal">가격 협의 : {getPriceProposalText(priceProposal)}</div>
             </div>
             <div className="post-info-item post-content-box">{post.content}</div>
           </div>

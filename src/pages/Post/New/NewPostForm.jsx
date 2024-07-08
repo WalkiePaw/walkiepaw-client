@@ -64,7 +64,7 @@ const NewPostForm = () => {
       // images,
       memberId,
       category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
-      priceProposal,
+      priceProposal: priceProposal ? 1 : 0, // true이면 1, false이면 0으로 변환하여 전송
     };
 
     try {
@@ -102,6 +102,10 @@ const NewPostForm = () => {
     setCategory(category);
   };
 
+  const handlePriceProposalToggle = () => {
+    setPriceProposal(!priceProposal); // 현재 값의 반대로 토글
+  };
+
   return (
     <div className="new-post-container">
       <div className="image-upload">
@@ -116,6 +120,7 @@ const NewPostForm = () => {
           onChange={handleImageUpload}
           style={{ display: 'none' }}
         />
+        {images.length === 0 && <p className="image-required-text">사진을 넣어 주세요.</p>}
         {images.length > 0 && (
           <div className="image-slider">
             <button className="prev-button" onClick={handlePrevSlide}>
@@ -161,24 +166,31 @@ const NewPostForm = () => {
         <div className="price-buttons">
           <button
             type="button"
-            className={`btn-price ${priceType === '시급' ? 'selected' : ''}`}
+            className={`btn-price-hour ${priceType === '시급' ? 'selected' : ''}`}
             onClick={() => handlePriceTypeClick('시급')}
           >
-            시급
+            <span>시급</span>
           </button>
           <button
             type="button"
-            className={`btn-price ${priceType === '일급' ? 'selected' : ''}`}
+            className={`btn-price-day ${priceType === '일급' ? 'selected' : ''}`}
             onClick={() => handlePriceTypeClick('일급')}
           >
-            일급
+            <span>일급</span>
           </button>
           <div className="price-proposal">
-            <lable htmlFor="priceProposal">가격 협의:</lable>
-            <select id="priceProposal" value={priceProposal} onChange={(e) => setPriceProposal(e.target.value)}>
-              <option value="true">가능</option>
-              <option value="false">불가</option>
-            </select>
+            <div className="switch-container">
+              <label htmlFor="priceProposal">가격 협의:</label>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  id="priceProposal"
+                  checked={priceProposal}
+                  onChange={handlePriceProposalToggle}
+                />
+                <span className="price-slider round"></span>
+              </label>
+            </div>
           </div>
         </div>
         <label htmlFor="price">금액:</label>
