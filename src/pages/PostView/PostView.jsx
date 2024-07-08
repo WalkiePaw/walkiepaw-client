@@ -6,6 +6,7 @@ import pawpaw from './../../assets/pawpaw.png';
 import PostReportModal from '../../components/ReportModal/PostReportModal';
 import axios from 'axios';
 
+
 const PostView = () => {
   const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
   const navigate = useNavigate();
