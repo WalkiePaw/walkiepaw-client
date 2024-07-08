@@ -14,11 +14,12 @@ const BoardList = () => {
   const [searchKeyword, setSearchKeyword] = useState(''); // 검색어를 저장
   const [searchOption, setSearchOption] = useState('title'); // 검색 옵션(제목 or 내용) 디폴트 값
   const [category, setCategory] = useState(''); // 게시글 카테고리를 저장
+  const [searchResultMessage, setSearchResultMessage] = useState(''); // 검색 결과 메시지
 
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
 
-  const memberNickName = 'im'; // 로그인 유저의 임시 id 나중에 바꿔야 함
+  const memberNickName = '헬스유투버'; // 로그인 유저의 임시 id 나중에 바꿔야 함
 
   // location의 값에서 '동'이 포함된 값만 추출
   const dongFromLocal = (location) => {
@@ -37,6 +38,7 @@ const BoardList = () => {
     // 페이지의 카테고리가 변경 될 때 마다 검색 키워드 초기화
     setSearchKeyword('');
     setFilteredPosts('');
+    setSearchResultMessage('');
   }, [location.pathname]);
 
   // 카테고리가 변경되면 해당 게시글의 정보를 가져와 게시글의 정보를 다시 저장
@@ -87,7 +89,7 @@ const BoardList = () => {
     };
 
     filterPosts();
-  }, [category, selectedSi, selectedGu, selectedDong, posts]);
+  }, [category, selectedSi, selectedGu, selectedDong, posts, searchKeyword]);
 
   // 검색 옵션 변경 핸들러
   const handleOptionChange = (e) => {
@@ -99,6 +101,7 @@ const BoardList = () => {
     setSearchKeyword(e.target.value);
   };
 
+  // 검색 실행 핸들러
   const handleSearch = async () => {
     try {
       const params = {
@@ -113,7 +116,14 @@ const BoardList = () => {
 
       const response = await axios.get(`http://localhost:8080/api/v1/boards/search`, { params });
       console.log(response.data);
-      setFilteredPosts(response.data);
+
+      // 검색 결과가 없는 경우 처리
+      if (response.data?.length === 0) {
+        alert('검색 결과가 없습니다.');
+        return;
+      }
+
+      setFilteredPosts(response?.data);
     } catch (error) {
       console.error('검색 요청 실패!', error);
       alert('검색에 실패 했습니다.');
@@ -156,7 +166,9 @@ const BoardList = () => {
             <option value="content">내용</option>
           </select>
           <input type="text" placeholder="검색어 입력" value={searchKeyword} onChange={handleSearchChange} />
-          <button onClick={handleSearch}>검색</button>
+          <button type="button" onClick={handleSearch}>
+            검색
+          </button>
         </div>
       </div>
       <div className={`board-list ${filteredPosts?.length === 0 ? 'no-posts-container' : ''}`}>
