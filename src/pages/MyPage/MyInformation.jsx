@@ -15,7 +15,6 @@ import ImageUpload from '../../components/ImageUpload';
 import AddressModal from '../../components/OAuth/AddressModal';
 // axios 임포트
 import axios from 'axios';
-import EmailVerification from '../../components/EmailVerification';
 
 const MySwal = withReactContent(Swal);
 
@@ -23,10 +22,7 @@ const MySwal = withReactContent(Swal);
 const schema = yup.object().shape({
   name: yup.string().required("이름은 필수 입력 사항입니다."),
   nickname: yup.string().required("닉네임은 필수 입력 사항입니다."),
-  email: yup.string().email("올바른 이메일 주소를 입력해주세요.").required("이메일은 필수 입력 사항입니다."),
-  phoneNumber: yup
-    .string()
-    .required("전화번호는 필수 입력 사항입니다."),
+  phoneNumber: yup.string().required("전화번호는 필수 입력 사항입니다."),
   address: yup.string().required("주소는 필수 입력 사항입니다."),
   birth: yup.date().required("생년월일은 필수 입력 사항입니다."),
 });
@@ -100,10 +96,6 @@ const MyInformation = () => {
         .catch(error => {
           console.error('Error updating user information:', error);
         });
-    };
-  
-    const handleEmailChange = (e) => {
-      setEmail(e.target.value);
     };
     
     // 회원 정보 저장(제출)
@@ -263,16 +255,11 @@ const MyInformation = () => {
               <input
                 type="email"
                 name="email"
-                {...register("email")}
-                onChange={handleEmailChange}
-                placeholder="xxxx@xxxx.com"
-                className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                value={email}
+                readOnly
+                className="w-1/2 px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:border-blue-500"
               />
-                <EmailVerification memberId={1} newEmail={email} />
-                </div>
-              {errors.email && (
-                <p className="text-red-500">{errors.email.message}</p>
-              )}
+            </div>
           </div>
           <div className="mb-3">
             <label className="block mb-1">전화번호</label>
