@@ -37,28 +37,33 @@ const ReportManagement = () => {
   const [reportType, setReportType] = useState('board');
   const [reports, setReports] = useState([]);
   const [error, setError] = useState(null);
+  const [unresolvedOnly, setUnresolvedOnly] = useState(true); // 처리되지 않은 항목만 보기 여부
 
   const fetchReports = useCallback(async () => {
     try {
       const endpoint = reportType === 'board' 
         ? 'http://localhost:8080/api/v1/boardReports' 
         : 'http://localhost:8080/api/v1/memberReports';
+
       console.log('Fetching from endpoint:', endpoint);
       const response = await axios.get(endpoint);
       console.log('Response:', response);
-      setReports(response.data);
+      const filteredReports = unresolvedOnly
+        ? response.data.filter(report => !report.resolved) // 처리되지 않은 신고만 필터링
+        : response.data;
+
+      setReports(filteredReports);
       setError(null);
     } catch (err) {
       console.error('Error fetching reports:', err);
       console.error('Error details:', err.response?.data || err.message);
       setError(`${reportType === 'board' ? '게시글' : '회원'} 신고 목록을 불러오는 데 실패했습니다. 오류: ${err.response?.data?.message || err.message}`);
     } 
-  }, [reportType]);
+  }, [reportType, unresolvedOnly]);
 
   useEffect(() => {
     fetchReports();
   }, [fetchReports]);
-
 
   const handleAction = async (id, action) => {
     try {
@@ -67,9 +72,6 @@ const ReportManagement = () => {
         : `http://localhost:8080/api/v1/memberReports/${id}`;
       
       switch(action) {
-        case 'warn':
-          await axios.post(`${endpoint}/warn`);
-          break;
         case 'ban':
           await axios.post(`${endpoint}/ban`);
           break;
@@ -87,7 +89,11 @@ const ReportManagement = () => {
       setError(`처리 중 오류가 발생했습니다: ${err.message}`);
     }
   };
-  if (error) return <div>{error}</div>;
+
+  // 처리되지 않은 항목만 보기
+  let filteredReports = unresolvedOnly
+    ? reports.filter(report => !report.resolved)
+    : reports;
 
     // 날짜 설정
     const formatTime = (dateString) => {
@@ -99,6 +105,8 @@ const ReportManagement = () => {
       const minutes = date.getMinutes().toString().padStart(2, '0');
       return `${year}-${month}-${day} / ${hours}:${minutes}`;
     };
+
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg">
@@ -113,6 +121,20 @@ const ReportManagement = () => {
           <option value="member">회원 신고</option>
         </select>
       </div>
+      <div>
+          <label className="ml-3">
+            <input 
+              type="checkbox"
+              checked={unresolvedOnly}
+              onChange={() => setUnresolvedOnly(!unresolvedOnly)}
+              className="mr-1"
+            />
+            처리되지 않은 항목만 보기
+          </label>
+        </div>
+        {filteredReports.length === 0 ? (
+        <p className="text-center text-gray-500">모든 항목에 대한 답변이 완료되었습니다.</p>
+      ) : (
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse">
           <thead>
@@ -121,7 +143,7 @@ const ReportManagement = () => {
               <th className="py-2 px-4 text-left">신고한 회원명</th>
               <th className="py-2 px-4 text-left">
                 {reportType === 'board'
-                  ? '닉네임'
+                  ? '게시글 작성자'
                   : '신고 대상 회원명'}
               </th>
               <th className="py-2 px-4 text-left">
@@ -145,7 +167,7 @@ const ReportManagement = () => {
                   </td>
                 <td className='py-2 px-4'>
                   {reportType === 'board' 
-                    ? report.boardWriterNickname
+                    ? report.boardWriterName
                     : report.reportedMemberName}
                 </td>
                 <td 
@@ -153,12 +175,12 @@ const ReportManagement = () => {
                   className="py-2 px-4 cursor-pointer">
                   {reportType === 'board' 
                     ? report.boardTitle 
-                    : report.memberTitle}
+                    : report.title}
                 </td>            
                 <td className="py-2 px-4">
                   {reportType === 'board' 
                     ? formatTime(report.boardWriterCreatedDate)
-                    : formatTime(report.memberCreatedDate)}
+                    : formatTime(report.createdDate)}
                 </td>
                 <td className="py-2 px-4">
                   {reportType === 'board' 
@@ -175,13 +197,12 @@ const ReportManagement = () => {
             {reportType === 'board'  ? (
               <>
                 <option value="restrict">제한된 게시글 처리</option>
-                <option value="ignore">신고 삭제</option>
+                <option value="ignore">신고 무시</option>
               </>
             ) : (
               <>
-                <option value="warn">경고</option>
                 <option value="ban">영구정지</option>
-                <option value="ignore">신고 삭제</option>
+                <option value="ignore">신고 무시</option>
               </>
             )}
           </select>
@@ -191,6 +212,7 @@ const ReportManagement = () => {
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 }

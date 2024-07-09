@@ -2,11 +2,82 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import styled from 'styled-components';
+
+// 스타일드 컴포넌트 정의
+const StyledSelect = styled.select`
+  margin-right: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: all 0.3s;
+
+  &:focus {
+    border-color: #48bb78;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    transform: scale(1.02);
+  }
+`;
+
+const StyledInputContainer = styled.div`
+  position: relative;
+  margin-right: 10px;
+`;
+
+const StyledInputLabel = styled.label`
+  position: absolute;
+  left: 10px;
+  top: ${({ hovered }) => (hovered ? '-20px' : '50%')};
+  transform: ${({ hovered }) => (hovered ? 'translateY(0)' : 'translateY(-50%)')};
+  transition: top 0.3s, transform 0.3s;
+  background-color: white;
+  padding: 0 5px;
+  font-size: ${({ hovered }) => (hovered ? '12px' : 'inherit')};
+  color: #999;
+`;
+
+const StyledInput = styled.input`
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  transition: all 0.3s;
+
+  &:focus {
+    border-bottom-color: #48bb78;
+    box-shadow: 0 1px 0 0 #48bb78;
+    outline: none;
+  }
+
+  &:hover {
+    border-bottom-color: #48bb78;
+  }
+
+  &::placeholder {
+    color: transparent; /* placeholder 숨기기 */
+  }
+
+  &:focus ~ ${StyledInputLabel}, &:not(:placeholder-shown) ~ ${StyledInputLabel} {
+    top: -20px;
+    transform: translateY(0);
+    font-size: 12px;
+    color: #48bb78;
+  }
+`;
+
 
 const MemberList = () => {
   const [members, setMembers] = useState([]);
   const [searchField, setSearchField] = useState('name');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isInputHovered, setInputHovered] = useState(false);
+
+  const handleInputHover = () => {
+    setInputHovered(true);
+  };
+
+  const handleInputLeave = () => {
+    setInputHovered(false);
+  };
 
   useEffect(() => {
     // API 호출 함수 정의
@@ -63,24 +134,27 @@ const MemberList = () => {
     <div className="p-4 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-5">회원 목록 관리</h2>
       <div className="mb-4 flex">
-        <select
-          value={searchField}
-          onChange={(e) => setSearchField(e.target.value)}
-          className="mr-2 p-2 border border-gray-300 rounded"
-        >
-          <option value="name">이름</option>
-          <option value="nickname">닉네임</option>
-          <option value="reportedCnt">신고 횟수</option>
-          <option value="email">이메일</option>
-        </select>
-        <input
-          type="text"
-          placeholder="검색어 입력"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 border border-gray-300 rounded"
-        />
-      </div>
+        <StyledSelect
+              value={searchField}
+              onChange={(e) => setSearchField(e.target.value)}
+            >
+              <option value="name">이름</option>
+              <option value="nickname">닉네임</option>
+              <option value="reportedCnt">신고 횟수</option>
+              <option value="email">이메일</option>
+            </StyledSelect>
+            <StyledInputContainer>
+              <StyledInput
+                type="text"
+                placeholder=" "
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onMouseEnter={handleInputHover}
+                onMouseLeave={handleInputLeave}
+              />
+              <StyledInputLabel hovered={isInputHovered}>검색어 입력</StyledInputLabel>
+            </StyledInputContainer>
+          </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>

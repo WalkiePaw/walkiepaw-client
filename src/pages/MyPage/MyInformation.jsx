@@ -22,10 +22,7 @@ const MySwal = withReactContent(Swal);
 const schema = yup.object().shape({
   name: yup.string().required("이름은 필수 입력 사항입니다."),
   nickname: yup.string().required("닉네임은 필수 입력 사항입니다."),
-  email: yup.string().email("올바른 이메일 주소를 입력해주세요.").required("이메일은 필수 입력 사항입니다."),
-  phoneNumber: yup
-    .string()
-    .required("전화번호는 필수 입력 사항입니다."),
+  phoneNumber: yup.string().required("전화번호는 필수 입력 사항입니다."),
   address: yup.string().required("주소는 필수 입력 사항입니다."),
   birth: yup.date().required("생년월일은 필수 입력 사항입니다."),
 });
@@ -53,6 +50,15 @@ const MyInformation = () => {
     axios.get(`http://localhost:8080/api/v1/members/${memberId}`)
       .then(response => {
         const memberData = response.data;
+        setName(memberData.name);
+        setNickname(memberData.nickname);
+        setPhoneNumber(memberData.phoneNumber);
+        setAddress(memberData.address);
+        setBirth(memberData.birth);
+        setEmail(memberData.email);
+        setProfile(memberData.profile);
+
+        // react-hook-form의 setValue로 필드 값 설정
         setValue('name', memberData.name);
         setValue('nickname', memberData.nickname);
         setValue('phoneNumber', memberData.phoneNumber);
@@ -66,6 +72,7 @@ const MyInformation = () => {
       });
   }, [setValue]);
 
+  
     // 업데이트된 정보를 서버로 보내는 함수
     const saveInformation = () => {
       const memberId = localStorage.getItem('memberId');
@@ -90,7 +97,7 @@ const MyInformation = () => {
           console.error('Error updating user information:', error);
         });
     };
-  
+    
     // 회원 정보 저장(제출)
     const [isFormValid, setIsFormValid] = useState(false);
 
@@ -134,6 +141,10 @@ const MyInformation = () => {
       const { name, value } = e.target;
       setValue(name, value); // react-hook-form의 setValue로 입력 필드 상태 업데이트
 
+      if (name === 'email') {
+        setEmail(value); // 이메일 입력 필드와 email 상태 동기화
+      }
+  
       if (name === 'phoneNumber') {
         let formattedValue = value.replace(/[^0-9]/g, '');
         if (formattedValue.length > 3 && formattedValue.length <= 7) {
@@ -244,19 +255,10 @@ const MyInformation = () => {
               <input
                 type="email"
                 name="email"
-                {...register("email")}
-                placeholder="xxxx@xxxx.com"
-                className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                value={email}
+                readOnly
+                className="w-1/2 px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:border-blue-500"
               />
-              {errors.email && (
-                <p className="text-red-500">{errors.email.message}</p>
-              )}
-              <button
-                type="button"
-                className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none"
-              >
-                인증
-              </button>
             </div>
           </div>
           <div className="mb-3">
@@ -269,10 +271,10 @@ const MyInformation = () => {
               placeholder="전화번호는 숫자로만 입력해주세요('-'제외)"
               className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
-            {errors.phoneNumber && (
-              <p className="text-red-500">{errors.phoneNumber.message}</p>
-            )}
           </div>
+          {errors.email && (
+            <p className="text-red-500">{errors.email.message}</p>
+          )}
           <div className="mb-3">
             <label className="block mb-1">주소</label>
             <div className="flex space-x-2">

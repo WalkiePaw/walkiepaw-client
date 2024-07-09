@@ -2,6 +2,7 @@
 // src/pages/MyHistory.jsx
 
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 // sweetalert2 임포트
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -10,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 // axios 임포트
 import axios from 'axios';
+import PostView from "../PostView/PostView";
 
 const MyHistory = () => {
   const [activeTab, setActiveTab] = useState("walk"); // 기본 선택 탭 설정
@@ -18,6 +20,7 @@ const MyHistory = () => {
   const MySwal = withReactContent(Swal);
   const id= 1;
   const memberId = 1;
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPosts("JOB_SEARCH"); // 기본 탭 설정을 "구직"으로 변경
@@ -84,6 +87,10 @@ const MyHistory = () => {
     return `${year}-${month}-${day} / ${hours}:${minutes}`;
   };
 
+  const handleRowClick = (boardId) => {
+    navigate(`/post/${boardId}`);
+  };
+
   return (
     <div className="flex flex-col">
       <h1 className="text-3xl font-bold mb-5 mr-4">작성글 내역</h1>
@@ -147,7 +154,7 @@ const MyHistory = () => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {posts.map((post) => (
-              <tr key={post.boardId}>
+              <tr key={post.boardId} onClick={() => handleRowClick(post.boardId)} className="cursor-pointer">
                 <td className="px-6 py-4 whitespace-nowrap">{post.boardId}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{post.content}</td>
