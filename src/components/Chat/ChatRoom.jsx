@@ -36,7 +36,9 @@ const ChatRoom = ({ onChatroomSelect }) => {
   }, []);
 
   const formatTime = (timeString) => {
-    const time = parse(timeString, 'HH:mm:ss', new Date());
+    // 밀리세컨드를 포함하는 시간 포맷을 파싱합니다.
+    const time = parse(timeString, 'HH:mm:ss.SSSSSS', new Date());
+    // 밀리세컨드를 제외하고 시간을 'HH:mm:ss' 형식으로 포맷팅합니다.
     return format(time, 'HH:mm:ss');
   };
 

@@ -2,6 +2,7 @@ import BoardList from "./pages/BoardList/BoardList";
 import Home from "./pages/Home/Home";
 import Layout from "./Layout";
 import "./App.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Notfound from "./components/Notfound";
 import MyPage from "./pages/MyPage/MyPage";
@@ -34,6 +35,7 @@ import Admin from "./admin/Admin.jsx";
 import MemberList from "./admin/MemberList.jsx";
 import QnaList from "./pages/MyPage/QnaList.jsx";
 import ReportManagement from "./admin/ReportManagement.jsx";
+
 import ParticleCursor from "./components/ParticleCursor.jsx";
 
 function App() {
