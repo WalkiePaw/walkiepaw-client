@@ -24,7 +24,6 @@ const schema = yup.object().shape({
   nickname: yup.string().required("닉네임은 필수 입력 사항입니다."),
   phoneNumber: yup.string().required("전화번호는 필수 입력 사항입니다."),
   address: yup.string().required("주소는 필수 입력 사항입니다."),
-  birth: yup.date().required("생년월일은 필수 입력 사항입니다."),
 });
 
 const MyInformation = () => {
@@ -304,9 +303,9 @@ const MyInformation = () => {
             <input
               type="date"
               name="birth"
-              {...register("birth")}
-              onChange={handleInputChange}
-              className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              value={birth}
+              readOnly
+              className="w-1/2 px-3 py-2 border border-gray-300 rounded-md text-gray-500 focus:outline-none focus:border-blue-500"
             />
           </div>
           <label className="block mb-1">프로필 사진</label>
