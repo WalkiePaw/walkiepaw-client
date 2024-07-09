@@ -17,9 +17,10 @@ const ImageUpload = ({ onImageUpload }) => {
         const response = await axios.post('http://localhost:8080/api/v1/uploads', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        const uploadedImageUrl = response.data;
+        const uploadedImageUrl = response.data.url;
         setImagePreview(uploadedImageUrl);
         onImageUpload(uploadedImageUrl); // 부모 컴포넌트에 URL 전달
+
       } catch (error) {
         console.error('이미지 업로드 실패:', error);
         // 에러 처리 (예: 사용자에게 알림)

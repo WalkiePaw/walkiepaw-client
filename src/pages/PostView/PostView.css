@@ -109,6 +109,8 @@ select.completed {
 }
 
 .post-info-item {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 10px;
 }
 
@@ -155,6 +157,10 @@ select.completed {
 .post-priceType {
   margin: 20px 0;
   font-weight: bold;
+}
+
+.post-proposal {
+  margin-right: 50%;
 }
 
 .post-content-box {

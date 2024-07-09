@@ -57,7 +57,9 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange }) => {
 
   return (
     <div className="flex">
-      <h1 className="font-bold text-2xl mb-4">지역 선택</h1>
+      <h1 className="font-bold text-2xl" style={{ alignContent: 'center' }}>
+        지역 선택
+      </h1>
       {/* 시/도 선택 옵션 */}
       <div className="mb-4">
         <label className="block mb-1">시/도</label>

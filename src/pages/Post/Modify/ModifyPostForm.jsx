@@ -83,6 +83,7 @@ const ModifyPostForm = () => {
       images,
       priceType: post.priceType === '시급' ? 'HOURLY' : 'DAILY',
       price: parseInt(post.price),
+      priceProposal: post.priceProposal === '불가' ? false : true, // 문자열을 boolean 타입으로 변환
       startTime: new Date(post.startDate).toISOString(), // IOS 형식으로 변환
       endTime: new Date(post.endDate).toISOString(), // IOS 형식으로 변환
       category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
@@ -206,8 +207,8 @@ const ModifyPostForm = () => {
               value={post.priceProposal}
               onChange={(e) => setPost({ ...post, priceProposal: e.target.value })}
             >
-              <option value="가능">가능</option>
-              <option value="불가">불가</option>
+              <option value="true">가능</option>
+              <option value="false">불가</option>
             </select>
           </div>
         </div>
