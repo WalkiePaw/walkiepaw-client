@@ -3,6 +3,8 @@ import Home from "./pages/Home/Home";
 import Layout from "./Layout";
 import "./App.css";
 import 'react-datepicker/dist/react-datepicker.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Notfound from "./components/Notfound";
 import MyPage from "./pages/MyPage/MyPage";
@@ -46,6 +48,7 @@ function App() {
   return (
     <>
       {/* <ParticleCursor /> */}
+      <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="*" element={<Notfound />} />

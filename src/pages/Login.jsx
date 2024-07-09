@@ -62,14 +62,6 @@ const Login = () => {
       userInfo.password.length >= 8;
 
 
-  const handleNaverLogin = () => {
-    console.log('Naver login clicked');
-  };
-
-  const handleGoogleLogin = () => {
-    console.log('Google login clicked');
-  };
-
   const onSubmit = async () => {
     try {
       const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
