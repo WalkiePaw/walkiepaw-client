@@ -1,5 +1,4 @@
 // 내 작성글 보기
-// src/pages/MyHistory.jsx
 
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
