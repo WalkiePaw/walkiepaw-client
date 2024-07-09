@@ -1,38 +1,76 @@
-// 내가 좋아요한 게시글 목록
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import CardList from "../../components/CardList/CardList";
 
 const Preferences = () => {
   const [likes, setLikes] = useState([]);
-  const memberId = 1; // 현재 고정된 memberId, 실제 사용할 memberId 로직 필요
+  const [posts, setPosts] = useState([]);
+  const MySwal = withReactContent(Swal);
+  const memberId = 1; // 나중에 바꿀 것
 
   useEffect(() => {
-    // 페이지네이션 처리를 위한 변수
-    const page = 0; // 임시로 첫 페이지로 설정
+    const page = 0; //임시 번호
 
     axios
       .get(`http://localhost:8080/api/v1/boards-like/${memberId}?page=${page}`)
       .then((response) => {
-        // 백엔드에서 반환된 데이터 구조 확인 후 설정
-        setLikes(response.data.content); // content 배열에 있는 데이터로 설정
+        setLikes(response.data.content);
       })
       .catch((error) => {
-        console.error("좋아요한 게시글 목록 받아오기 실패", error);
+        console.error("Failed to fetch liked posts", error);
+        MySwal.fire({
+          title: "Error",
+          text: "게시글 불러오기 실패",
+          icon: "error",
+          confirmButtonText: "OK"
+        });
       });
-  }, [memberId]); // memberId가 변경될 때마다 호출되도록 설정
+  }, [memberId]);
+
+  const fetchPosts = async (category) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}`);
+      setPosts(response.data);
+    } catch (error) {
+      console.error("Failed to fetch posts", error);
+      MySwal.fire({
+        title: "Error",
+        text: "게시글 불러오기 실패",
+        icon: "error",
+        confirmButtonText: "OK"
+      });
+    }
+  };
+
+  const handleLikeClick = (boardId) => {
+    // 좋아요버튼,..............
+    console.log(`Liked post ${boardId}`);
+  };
 
   return (
     <div>
-      <h1 className="font-bold text-3xl mb-3">내 관심 목록</h1>
+      <h1 className="font-bold text-3xl mb-6">내 관심 목록</h1>
       {likes.length > 0 ? (
-        <ul>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {likes.map((like) => (
-            <li key={like.id}>
-              <h2>{like.title}</h2>
-              <p>{like.content}</p>
-            </li>
+            <CardList
+              key={like.id}
+              title={like.title}
+              location={like.location}
+              image={like.image}
+              memberNickName={like.memberNickName}
+              status={like.status}
+              category={like.category}
+              price={like.price}
+              priceType={like.priceType}
+              startTime={like.startTime}
+              endTime={like.endTime}
+              onCardClick={() => handleLikeClick(like.id)}
+            />
           ))}
-        </ul>
+        </div>
       ) : (
         <p>관심 목록이 비어 있습니다.</p>
       )}
