@@ -4,6 +4,9 @@ import './BoardList.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import MyTown from '../MyTown/MyTown';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
+import { faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
 
 const BoardList = () => {
   const [posts, setPosts] = useState([]); // 게시글 목록을 저장
@@ -131,6 +134,13 @@ const BoardList = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSearch();
+    }
+  };
+
   // 게시글을 클릭하면 해당 게시글의 정보과 로그인한 맴버의 정보를 전달하면서 이동
   const handlePostClick = (post) => {
     navigate(`/post/${post.id}`, {
@@ -168,14 +178,17 @@ const BoardList = () => {
       <div className="filter-container">
         <MyTown onSiChange={setSelectedSi} onGuChange={setSelectedGu} onDongChange={setSelectedDong} />
         <div className="board-search-container">
-          <select value={searchOption} onChange={handleOptionChange}>
+          <select className="search-filter" value={searchOption} onChange={handleOptionChange}>
             <option value="title">제목</option>
             <option value="content">내용</option>
           </select>
-          <input type="text" placeholder="검색어 입력" value={searchKeyword} onChange={handleSearchChange} />
-          <button type="button" onClick={handleSearch}>
-            검색
-          </button>
+          <input
+            type="text"
+            placeholder="검색어 입력"
+            value={searchKeyword}
+            onChange={handleSearchChange}
+            onKeyDown={handleKeyDown}
+          />
         </div>
       </div>
       <div className={`board-list ${filteredPosts?.length === 0 ? 'no-posts-container' : ''}`}>
@@ -201,10 +214,12 @@ const BoardList = () => {
         )}
         <div className="bl-button-container">
           <Link to="/new-post">
-            <button className="post-button">글 작성</button>
+            <button className="post-button">
+              <FontAwesomeIcon icon={faPenToSquare} />
+            </button>
           </Link>
           <button className="top-button" onClick={scrollToTop}>
-            Top^
+            <FontAwesomeIcon icon={faCircleArrowUp} />
           </button>
         </div>
       </div>
