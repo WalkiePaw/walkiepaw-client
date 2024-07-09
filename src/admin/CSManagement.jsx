@@ -2,12 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+// 팝업창
 import Swal from "sweetalert2";
 
 const CSManagement = () => {
   const [qnaList, setQnaList] = useState([]);
   const [selectedQna, setSelectedQna] = useState(null);
   const [replyContent, setReplyContent] = useState("");
+  const [unresolvedOnly, setUnresolvedOnly] = useState(true); // 처리되지 않은 항목만 보기 여부
 
   useEffect(() => {
     fetchQnaList();
@@ -29,7 +31,6 @@ const CSManagement = () => {
   const handleReply = (qna) => {
     setSelectedQna(qna);
     console.log(qna);
-
 
     axios
       .get(`http://localhost:8080/api/v1/qna/${qna.qnaId}`)
@@ -108,6 +109,12 @@ const CSManagement = () => {
       });
   };
 
+  // 필터링된 목록만 불러오기 (미처리)
+  const filteredQnaList = unresolvedOnly
+  ? qnaList.filter((qna) => qna.status === "WAITING")
+  : qnaList;
+
+
   // 날짜 설정
   const formatTime = (dateString) => {
     const date = new Date(dateString);
@@ -119,9 +126,24 @@ const CSManagement = () => {
     return `${year}-${month}-${day} / ${hours}:${minutes}`;
   };
 
+
   return (
     <div className="p-4 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-7">1:1 문의 내역 관리</h1>
+      <div>
+          <label className="ml-3">
+            <input 
+              type="checkbox"
+              checked={unresolvedOnly}
+              onChange={() => setUnresolvedOnly(!unresolvedOnly)}
+              className="mr-1"
+            />
+            처리되지 않은 항목만 보기
+          </label>
+        </div>
+        {filteredQnaList.length === 0 ? (
+        <p className="text-center text-gray-500">모든 항목에 대한 답변이 완료되었습니다.</p>
+      ) : (
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -149,7 +171,7 @@ const CSManagement = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {qnaList.map((qna, index) => (
+          {filteredQnaList.map((qna, index) => (
             <tr key={qna.qnaId}>
               <td className="px-6 py-4 whitespace-nowrap">{qna.qnaId}</td>
               <td className="px-6 py-4 whitespace-nowrap">{qna.memberId}</td>
@@ -175,6 +197,7 @@ const CSManagement = () => {
           ))}
         </tbody>
       </table>
+      )}
     </div>
   );
 };
