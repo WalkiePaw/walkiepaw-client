@@ -15,6 +15,7 @@ import ImageUpload from '../../components/ImageUpload';
 import AddressModal from '../../components/OAuth/AddressModal';
 // axios 임포트
 import axios from 'axios';
+import EmailVerification from '../../components/EmailVerification';
 
 const MySwal = withReactContent(Swal);
 
@@ -53,6 +54,15 @@ const MyInformation = () => {
     axios.get(`http://localhost:8080/api/v1/members/${memberId}`)
       .then(response => {
         const memberData = response.data;
+        setName(memberData.name);
+        setNickname(memberData.nickname);
+        setPhoneNumber(memberData.phoneNumber);
+        setAddress(memberData.address);
+        setBirth(memberData.birth);
+        setEmail(memberData.email);
+        setProfile(memberData.profile);
+
+        // react-hook-form의 setValue로 필드 값 설정
         setValue('name', memberData.name);
         setValue('nickname', memberData.nickname);
         setValue('phoneNumber', memberData.phoneNumber);
@@ -66,6 +76,7 @@ const MyInformation = () => {
       });
   }, [setValue]);
 
+  
     // 업데이트된 정보를 서버로 보내는 함수
     const saveInformation = () => {
       const memberId = localStorage.getItem('memberId');
@@ -91,6 +102,10 @@ const MyInformation = () => {
         });
     };
   
+    const handleEmailChange = (e) => {
+      setEmail(e.target.value);
+    };
+    
     // 회원 정보 저장(제출)
     const [isFormValid, setIsFormValid] = useState(false);
 
@@ -134,6 +149,10 @@ const MyInformation = () => {
       const { name, value } = e.target;
       setValue(name, value); // react-hook-form의 setValue로 입력 필드 상태 업데이트
 
+      if (name === 'email') {
+        setEmail(value); // 이메일 입력 필드와 email 상태 동기화
+      }
+  
       if (name === 'phoneNumber') {
         let formattedValue = value.replace(/[^0-9]/g, '');
         if (formattedValue.length > 3 && formattedValue.length <= 7) {
@@ -245,19 +264,15 @@ const MyInformation = () => {
                 type="email"
                 name="email"
                 {...register("email")}
+                onChange={handleEmailChange}
                 placeholder="xxxx@xxxx.com"
                 className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
+                <EmailVerification memberId={1} newEmail={email} />
+                </div>
               {errors.email && (
                 <p className="text-red-500">{errors.email.message}</p>
               )}
-              <button
-                type="button"
-                className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none"
-              >
-                인증
-              </button>
-            </div>
           </div>
           <div className="mb-3">
             <label className="block mb-1">전화번호</label>
@@ -269,10 +284,10 @@ const MyInformation = () => {
               placeholder="전화번호는 숫자로만 입력해주세요('-'제외)"
               className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
             />
-            {errors.phoneNumber && (
-              <p className="text-red-500">{errors.phoneNumber.message}</p>
-            )}
           </div>
+          {errors.email && (
+            <p className="text-red-500">{errors.email.message}</p>
+          )}
           <div className="mb-3">
             <label className="block mb-1">주소</label>
             <div className="flex space-x-2">

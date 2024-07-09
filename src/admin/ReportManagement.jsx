@@ -175,13 +175,12 @@ const ReportManagement = () => {
             {reportType === 'board'  ? (
               <>
                 <option value="restrict">제한된 게시글 처리</option>
-                <option value="ignore">신고 삭제</option>
+                <option value="ignore">신고 무시</option>
               </>
             ) : (
               <>
-                <option value="warn">경고</option>
                 <option value="ban">영구정지</option>
-                <option value="ignore">신고 삭제</option>
+                <option value="ignore">신고 무시</option>
               </>
             )}
           </select>
