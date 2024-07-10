@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import Home from './pages/home/Home.jsx';
 import Layout from './Layout';
 import './App.css';
@@ -34,48 +33,9 @@ import BoardList from './pages/boardlist/BoardList.jsx';
 import NewPostForm from './pages/post/new/NewPostForm.jsx';
 import ModifyPostForm from './pages/post/modify/ModifyPostForm.jsx';
 import PostView from './pages/postView/PostView.jsx';
-=======
-import BoardList from './pages/boardList/BoardList.jsx'
-import Home from "./pages/home/Home.jsx";
-import Layout from "./Layout";
-import "./App.css";
-import 'react-datepicker/dist/react-datepicker.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Routes, Route, useNavigate } from "react-router-dom";
-import Notfound from "./components/Notfound";
-import MyPage from "./pages/myPage/MyPage";
-import MyPageLayout from "./pages/myPage/MyPageLayout";
-import MyHistory from "./pages/myPage/MyHistory";
-import MySettings from "./pages/myPage/MySettings";
-import MembershipWithdrawal from "./pages/myPage/MembershipWithdrawal";
-
-import MyInformation from "./pages/myPage/MyInformation";
-import NewPostForm from "./pages/post/new/NewPostForm";
-import Login from "./pages/Login";
-import Dashboard from "/src/pages/dashboard/Dashboard";
-import PostList from "/src/pages/dashboard/PostList";
-import Introduction from "/src/pages/dashboard/Introduction";
-import Preferences from "./pages/myPage/Preferences";
-import React from "react";
-import ModifyPostForm from "./pages/post/modify/ModifyPostForm";
-import CustomerService from "./pages/myPage/CustomerService";
-
-import MyTransaction from "./pages/myPage/MyTransaction.jsx";
-import KakaoLoginCallback from "./components/auth/KakaoLoginCallback.jsx";
-import NaverLoginCallback from "./components/auth/NaverLoginCallback.jsx";
-import GoogleLoginCallback from "./components/auth/GoogleLoginCallback.jsx";
-import Review from "./components/Review.jsx";
-import SignUp from "./pages/auth/SignUp.jsx";
-import ChatPage from "./pages/chatroom/ChatPage.jsx";
-import CSManagement from "./admin/CSManagement.jsx";
-import Admin from "./admin/Admin.jsx";
-import MemberList from "./admin/MemberList.jsx";
-import QnaList from "./pages/myPage/QnaList.jsx";
-import ReportManagement from "./admin/ReportManagement.jsx";
-
-import ParticleCursor from "./components/ParticleCursor.jsx";
->>>>>>> b3ea9663e51486d274690c9efe22667d2f795b9b
+import ParticleCursor from './components/ParticleCursor.jsx';
 
 function App() {
   const nav = useNavigate();
@@ -114,7 +74,6 @@ function App() {
           <Route path="/login/google" element={<GoogleLoginCallback />} />
           <Route path="signup" element={<SignUp />} />
           <Route path="chatpage" element={<ChatPage />} />
-
 
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<Introduction />} />
