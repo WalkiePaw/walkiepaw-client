@@ -1,11 +1,11 @@
 // 받은 리뷰 목록
-import React, { useState, useEffect } from "react";
-import pawpaw from "./../assets/pawpaw.png";
+import React, { useState, useEffect } from 'react';
+import pawpaw from './../assets/pawpaw.png';
 // axios 임포트
-import axios from "axios";
+import axios from 'axios';
 
 const Review = () => {
-  const [activeTab, setActiveTab] = useState("JOB_OPENING"); // 기본 선택 탭 설정: 산책, 알바
+  const [activeTab, setActiveTab] = useState('JOB_OPENING'); // 기본 선택 탭 설정: 산책, 알바
   const [reviews, setReviews] = useState([]); // 리뷰 데이터를 저장
 
   // 탭 클릭 핸들러
@@ -19,8 +19,8 @@ const Review = () => {
       .get(`http://localhost:8080/api/v1/reviews/1/reviewee`, {
         params: {
           page: 0,
-          category: activeTab
-        }
+          category: activeTab,
+        },
       })
       .then((response) => {
         const reviewsData = response.data.content;
@@ -46,47 +46,34 @@ const Review = () => {
       <div className="flex mb-3">
         <button
           className={`px-8 py-2 rounded-md mr-4 ${
-            activeTab === "JOB_OPENING"
-              ? "bg-[#43312A] text-white"
-              : "bg-[#E8C5A5] text-gray-800"
+            activeTab === 'JOB_OPENING' ? 'bg-[#43312A] text-white' : 'bg-[#E8C5A5] text-gray-800'
           }`}
-          onClick={() => handleTabClick("JOB_OPENING")}
+          onClick={() => handleTabClick('JOB_OPENING')}
         >
           산책인 모집글
         </button>
         <button
           className={`px-8 py-2 rounded-md ${
-            activeTab === "JOB_SEARCH"
-              ? "bg-[#43312A] text-white"
-              : "bg-[#E8C5A5] text-gray-800"
+            activeTab === 'JOB_SEARCH' ? 'bg-[#43312A] text-white' : 'bg-[#E8C5A5] text-gray-800'
           }`}
-          onClick={() => handleTabClick("JOB_SEARCH")}
+          onClick={() => handleTabClick('JOB_SEARCH')}
         >
           알바 구직글
         </button>
       </div>
       <div className="flex flex-col space-y-4">
         {reviews.map((review) => (
-          <div
-            key={review.id}
-            className="p-4 bg-white rounded-lg shadow-md border border-gray-300"
-          >
+          <div key={review.id} className="p-4 bg-white rounded-lg shadow-md border border-gray-300">
             <div className="flex items-center mb-2">
               <span className="font-medium">평점:</span>
               {Array(review.point)
                 .fill()
                 .map((_, i) => (
-                  <img
-                    src={pawpaw}
-                    alt="star"
-                    key={i}
-                    className="inline-block w-8 h-8"
-                  />
+                  <img src={pawpaw} alt="star" key={i} className="inline-block w-8 h-8" />
                 ))}
             </div>
             <div className="mb-2">
-              <span className="font-medium">거래한 회원:</span>{" "}
-              {review.memberName}
+              <span className="font-medium">거래한 회원:</span> {review.memberName}
             </div>
             <div className="mb-2">
               <span className="font-medium">내용:</span> {review.content}

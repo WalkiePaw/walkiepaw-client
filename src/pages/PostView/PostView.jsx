@@ -6,7 +6,6 @@ import pawpaw from './../../assets/pawpaw.png';
 import PostReportModal from '../../components/ReportModal/PostReportModal';
 import axios from 'axios';
 
-
 const PostView = () => {
   const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
   const navigate = useNavigate();
@@ -16,7 +15,7 @@ const PostView = () => {
   const [showReportModal, setShowReportModal] = useState(false); // 신고 모달 표시 상태
   const [status, setStatus] = useState(post?.status || '모집중');
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 이미지 슬라이드 인덱스
-  const [priceProposal, setPriceProposal] = useState(location.state?.post?.priceProposal || false); // 가격 협의 상태
+  const [priceProposal, setPriceProposal] = useState(location.state?.priceProposal || false); // 가격 협의 상태
 
   // BoardList에서 로그인한 유저의 id와 nickname을 가져옴
 
@@ -90,7 +89,7 @@ const PostView = () => {
           priceType: post.priceType === 'HOURLY' ? '시급' : '일급',
           detailedLocation: detailedLocation,
           memberNickName: memberNickName,
-          priceProposal: priceProposal,
+          priceProposal: post.priceProposal,
         },
       },
     });
@@ -166,7 +165,7 @@ const PostView = () => {
   };
 
   const getPriceProposalText = (priceProposal) => {
-    return priceProposal ? '가능' : '불가능';
+    return priceProposal === true ? '가능' : '불가능';
   };
 
   return (
@@ -230,7 +229,7 @@ const PostView = () => {
             </div>
             <div className="post-info-item post-priceType">
               {post.priceType === 'HOURLY' && '시급'} {post.priceType === 'DAILY' && '일급'} : {formatToKRW(post.price)}
-              원<div className="post-proposal">가격 협의 : {getPriceProposalText(priceProposal)}</div>
+              원<div className="post-proposal">가격 협의 : {getPriceProposalText(post.priceProposal)}</div>
             </div>
             <div className="post-info-item post-content-box">{post.content}</div>
           </div>
