@@ -106,7 +106,7 @@ const ModifyPostForm = () => {
     // 수정된 게시글 정보를 생성
     const modifiedPost = {
       ...post, // 기존 게시글의 모든 속성을 복사합니다.
-      photos,
+      imageURLs,
       priceType: post.priceType === '시급' ? 'HOURLY' : 'DAILY',
       price: parseInt(post.price),
       priceProposal: priceProposal,

@@ -54,7 +54,7 @@ const BoardList = () => {
         if (!category || !hasMore) return; // 카테고리가 없으면 요청하지 않도록 처리
 
         const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`, {
-          params: { page, size: 12 },
+          params: { page, size: 4 },
         }); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         console.log(response);
         const data = response?.data?.content ?? [];
