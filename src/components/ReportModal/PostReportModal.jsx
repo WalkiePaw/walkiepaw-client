@@ -1,5 +1,5 @@
 // src/components/ReportModal/ReportModal.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './PostReportModal.css';
 import axios from 'axios';
 
@@ -7,6 +7,10 @@ const ReportModal = ({ onClose, boardId, memberId, onSubmit }) => {
   const [showReasons, setShowReasons] = useState(false); // 신고 이유 선택 여부를 관리
   const [selectedReason, setSelectedReason] = useState(''); // 선택된 신고 이유를 저장
   const [otherReason, setOtherReason] = useState(''); // 기타 이유를 입력하는 경우 사용
+  const [dragging, setDragging] = useState(false); // 신고 모달창 드래그 여부 상태
+
+  const modalRef = useRef(null);
+  const offsetRef = useRef({ x: 0, y: 0 });
 
   const reasons = [
     '스팸홍보/도배글입니다.',
@@ -65,9 +69,30 @@ const ReportModal = ({ onClose, boardId, memberId, onSubmit }) => {
     onClose(); // 신고 모달 닫기
   };
 
+  const handleMouseDown = (e) => {
+    setDragging(true);
+    const modal = modalRef.current;
+    offsetRef.current = {
+      x: e.clientX - modal.getBoundingClientRect().left,
+      y: e.clientY - modal.getBoundingClientRect().top,
+    };
+  };
+
+  const handleMouseMove = (e) => {
+    if (dragging) {
+      const modal = modalRef.current;
+      modal.style.left = `${e.clientX - offsetRef.current.x}px`;
+      modal.style.top = `${e.clientY - offsetRef.current.y}px`;
+    }
+  };
+
+  const handleMouseUp = () => {
+    setDragging(false);
+  };
+
   return (
-    <div className="report-modal-overlay" onClick={onClose}>
-      <div className="report-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="report-modal-overlay" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+      <div className="report-modal" ref={modalRef} onMouseDown={handleMouseDown} onClick={(e) => e.stopPropagation()}>
         <h2>게시글 신고하기</h2>
         <p>신고하시는 이유를 선택해주세요.</p>
         <div className="reason-selector">

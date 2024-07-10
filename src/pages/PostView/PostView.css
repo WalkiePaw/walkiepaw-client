@@ -123,7 +123,7 @@ select.completed {
 }
 
 .post-location-box {
-  margin: 12px 0;
+  margin-top: 32px;
   font-size: 1.2em;
   color: #666;
 }
