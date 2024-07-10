@@ -79,11 +79,6 @@
   border-radius: 3px;
 }
 
-/* .modify-post-container .price-proposal {
-  padding-top: 15px;
-  display: flow-root;
-} */
-
 .modify-post-container .price-buttons button.selected {
   background-color: #007bff;
   color: #fff;
@@ -189,6 +184,14 @@
 
 .modify-post-container .image-slider .next-button {
   right: 0;
+}
+
+.btn-price-hour {
+  margin-left: 40% !important;
+}
+
+.btn-price-day {
+  margin-right: 11% !important;
 }
 
 /* 스위치 토글 버튼 스타일 */

@@ -153,7 +153,7 @@ const NewPostForm = () => {
           onChange={handleImageUpload}
           style={{ display: 'none' }}
         />
-        {images.length === 0 && <p className="image-required-text">사진을 넣어 주세요.</p>}
+        {images.length === 0 && <p className="image-required-text">첨부한 이미지의 첫 번째가 메인 사진입니다.</p>}
         {images.length > 0 && (
           <div className="image-slider">
             <button className="prev-button" onClick={handlePrevSlide}>

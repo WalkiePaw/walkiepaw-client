@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import CardList from "../../components/CardList/CardList";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import CardList from '../../components/cardList/CardList';
 
 const Preferences = () => {
   const [likes, setLikes] = useState([]);
@@ -19,12 +19,12 @@ const Preferences = () => {
         setLikes(response.data.content);
       })
       .catch((error) => {
-        console.error("Failed to fetch liked posts", error);
+        console.error('Failed to fetch liked posts', error);
         MySwal.fire({
-          title: "Error",
-          text: "게시글 불러오기 실패",
-          icon: "error",
-          confirmButtonText: "OK"
+          title: 'Error',
+          text: '게시글 불러오기 실패',
+          icon: 'error',
+          confirmButtonText: 'OK',
         });
       });
   }, [memberId]);
@@ -34,12 +34,12 @@ const Preferences = () => {
       const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}`);
       setPosts(response.data);
     } catch (error) {
-      console.error("Failed to fetch posts", error);
+      console.error('Failed to fetch posts', error);
       MySwal.fire({
-        title: "Error",
-        text: "게시글 불러오기 실패",
-        icon: "error",
-        confirmButtonText: "OK"
+        title: 'Error',
+        text: '게시글 불러오기 실패',
+        icon: 'error',
+        confirmButtonText: 'OK',
       });
     }
   };

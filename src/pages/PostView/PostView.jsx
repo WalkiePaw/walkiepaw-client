@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import './PostView.css';
 import KakaoWithoutSearch from '../../modules/KakaoWithoutSearch';
 import pawpaw from './../../assets/pawpaw.png';
-import PostReportModal from '../../components/ReportModal/PostReportModal';
+import PostReportModal from '../../components/reportModal/PostReportModal';
 import axios from 'axios';
 
 const PostView = () => {
@@ -45,7 +45,7 @@ const PostView = () => {
 
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
-  const images = post.images || []; // 게시글에 이미지가 없으면 빈 배열로 초기화
+  const images = post.photos || []; // 게시글에 이미지가 없으면 빈 배열로 초기화
 
   const handlerReport = (reason) => {
     console.log('신고 이유: ', reason);
@@ -158,6 +158,7 @@ const PostView = () => {
     }
   };
 
+  // price 단위를 한국단위로
   const formatToKRW = (value) => {
     return new Intl.NumberFormat('ko-KR', {
       style: 'decimal',
@@ -177,7 +178,7 @@ const PostView = () => {
               <button className="prev-button" onClick={handlePrevSlide}>
                 &#10094;
               </button>
-              <img src={post.images[currentSlide]} alt="Post" className="post-image" />
+              <img src={images[currentSlide]} alt="Post" className="post-image" />
               <button className="next-button" onClick={handleNextSlide}>
                 &#10095;
               </button>

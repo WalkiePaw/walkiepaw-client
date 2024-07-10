@@ -1,7 +1,8 @@
 .image-required-text {
   text-align: center;
   width: 100%;
-  font-size: 1.7em;
+  font-size: 1.2em;
+  color: gray;
 }
 
 .new-post-container {

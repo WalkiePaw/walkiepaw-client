@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import CardList from '../../components/CardList/CardList';
+import CardList from '../../components/cardList/CardList';
 import './BoardList.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import MyTown from '../MyTown/MyTown';
+import MyTown from '../myTown/MyTown';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
@@ -18,6 +18,8 @@ const BoardList = () => {
   const [searchOption, setSearchOption] = useState('title'); // 검색 옵션(제목 or 내용) 디폴트 값
   const [category, setCategory] = useState(''); // 게시글 카테고리를 저장
   const [searchResultMessage, setSearchResultMessage] = useState(''); // 검색 결과 메시지
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
@@ -49,21 +51,37 @@ const BoardList = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // const response = await testApiData();
-        if (!category) return; // 카테고리가 없으면 요청하지 않도록 처리
+        if (!category || !hasMore) return; // 카테고리가 없으면 요청하지 않도록 처리
 
-        const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`, {
+          params: { page, size: 12 },
+        }); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         console.log(response);
-        const data = response?.data ?? [];
-        // const data = response ?? [];
-        setPosts(data);
+        const data = response?.data?.content ?? [];
+        setPosts((prevPosts) => [...prevPosts, ...data]);
+        setHasMore(response.data?.last === false);
+        setPage((prevPage) => prevPage + 1);
       } catch (error) {
         console.error('Failed to fetch posts', error);
       }
     };
 
     fetchPosts();
-  }, [category]);
+  }, [category, page, hasMore]);
+
+  // 무한 스크롤
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100 &&
+        hasMore
+      ) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hasMore]);
 
   // 카테고리, 지역, 검색어 필터링
   useEffect(() => {
@@ -71,11 +89,6 @@ const BoardList = () => {
       if (!posts) return; // 게시글이 없으면 필터링을 하지 않음
 
       let newFilteredPosts = posts;
-
-      // 카테고리 필터링
-      if (category) {
-        newFilteredPosts = newFilteredPosts.filter((post) => post.category === category);
-      }
 
       // 지역 필터링
       if (selectedSi) {
@@ -93,7 +106,7 @@ const BoardList = () => {
     };
 
     filterPosts();
-  }, [category, selectedSi, selectedGu, selectedDong, posts, searchKeyword]);
+  }, [selectedSi, selectedGu, selectedDong, posts, searchKeyword]);
 
   // 검색 옵션 변경 핸들러
   const handleOptionChange = (e) => {
@@ -110,6 +123,8 @@ const BoardList = () => {
     try {
       const params = {
         category,
+        page: 0,
+        size: 12,
       };
 
       if (searchOption === 'title') {
@@ -127,7 +142,10 @@ const BoardList = () => {
         return;
       }
 
-      setFilteredPosts(response?.data);
+      setPosts(response.data?.content);
+      setFilteredPosts(response?.data?.content);
+      setHasMore(response.data?.last === false);
+      setPage(1);
     } catch (error) {
       console.error('검색 요청 실패!', error);
       alert('검색에 실패 했습니다.');

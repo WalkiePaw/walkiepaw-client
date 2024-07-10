@@ -192,14 +192,14 @@ const ModifyPostForm = () => {
         <div className="price-buttons">
           <button
             type="button"
-            className={`btn-price ${post.priceType === '시급' ? 'selected' : ''}`}
+            className={`btn-price-hour ${post.priceType === '시급' ? 'selected' : ''}`}
             onClick={() => setPost({ ...post, priceType: '시급' })}
           >
             시급
           </button>
           <button
             type="button"
-            className={`btn-price ${post.priceType === '일급' ? 'selected' : ''}`}
+            className={`btn-price-day ${post.priceType === '일급' ? 'selected' : ''}`}
             onClick={() => setPost({ ...post, priceType: '일급' })}
           >
             일급
