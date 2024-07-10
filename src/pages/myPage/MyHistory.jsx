@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 // axios 임포트
 import axios from 'axios';
-import PostView from "../PostView/PostView";
+
 
 const MyHistory = () => {
   const [activeTab, setActiveTab] = useState("walk"); // 기본 선택 탭 설정

@@ -9,8 +9,8 @@ import {
   ConversationHeader,
 } from '@chatscope/chat-ui-kit-react'; // 올바른 컴포넌트만 import
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import ChatRoom from '../../components/Chat/ChatRoom.jsx'; // 경로 확인
-import ChatInput from '../../components/Chat/ChatInput.jsx'; // 경로 확인
+import ChatRoom from '../../components/chat/ChatRoom.jsx'; // 경로 확인
+import ChatInput from '../../components/chat/ChatInput.jsx'; // 경로 확인
 
 const ChatLayout = styled.div`
   display: flex;

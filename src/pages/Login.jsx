@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {useDispatch} from "react-redux";
 import axios from 'axios';
 import { Modal } from 'antd';
 import UserInput from '../components/UserInput';
 import UserButton from '../components/UserButton';
-import KakaoLogin from '../components/OAuth/KakaoLogin';
-import NaverLogin from '../components/OAuth/NaverLogin';
-import GoogleLogin from '../components/OAuth/GoogleLogin';
+import KakaoLogin from '../components/auth/KakaoLogin';
+import NaverLogin from '../components/auth/NaverLogin';
+import GoogleLogin from '../components/auth/GoogleLogin';
 import pawpaw from '../assets/pawpaw.png';
+import {loginSuccess} from "../store/AuthSlice.jsx";
+
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [userInfo, setUserInfo] = useState({
     email: '',
     password: '',
@@ -62,14 +66,6 @@ const Login = () => {
       userInfo.password.length >= 8;
 
 
-  const handleNaverLogin = () => {
-    console.log('Naver login clicked');
-  };
-
-  const handleGoogleLogin = () => {
-    console.log('Google login clicked');
-  };
-
   const onSubmit = async () => {
     try {
       const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
@@ -78,7 +74,9 @@ const Login = () => {
       });
 
       console.log('Login successful:', response.data);
-      localStorage.setItem('token', response.data.token);
+      dispatch(loginSuccess({
+        token: response.data.token
+      }));
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error.response ? error.response.data : error.message);

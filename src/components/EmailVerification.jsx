@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { Input, Space, Modal, Button as AntButton } from "antd";
+import { FaCheck } from 'react-icons/fa';
 import styled from 'styled-components';
-
-const MySwal = withReactContent(Swal);
-
 
 const StyledButton = styled.button`
   padding: 1rem;
@@ -27,7 +25,13 @@ const StyledButton = styled.button`
   }
 `;
 
-const EmailVerificationButton = ({newEmail, children }) => {
+const LargeModal = styled(Modal)`
+  .ant-modal-content {
+    width: 400px;
+  }
+`;
+
+const EmailVerificationButton = ({ newEmail, children }) => {
   const [isEmailVerificationSent, setIsEmailVerificationSent] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,10 +40,8 @@ const EmailVerificationButton = ({newEmail, children }) => {
 
   const handleEmailChangeRequest = async () => {
     if (!newEmail) {
-      MySwal.fire({
-        title: "이메일 주소가 설정되지 않았습니다",
-        icon: "error",
-        confirmButtonText: "확인",
+      toast.error("유효한 이메일 주소를 입력해 주세요.", {
+        style: { background: '#43312A', color: 'white' }
       });
       return;
     }
@@ -51,18 +53,17 @@ const EmailVerificationButton = ({newEmail, children }) => {
         email: newEmail,
       });
       setIsEmailVerificationSent(true);
-      setIsModalVisible(true);
-      MySwal.fire({
-        title: "이메일 인증 메일을 전송했습니다",
-        icon: "success",
-        confirmButtonText: "확인",
+
+      toast.success("이메일 인증 메일을 전송했습니다", {
+        style: { background: '#E8C5A5', color: '#43312A' },
+        icon: <FaCheck style={{ color: '#43312A' }} />
       });
+
+      setIsModalVisible(true);
     } catch (error) {
       console.error('이메일 변경 요청 중 오류 발생:', error);
-      MySwal.fire({
-        title: "이메일 전송 중 오류가 발생했습니다",
-        icon: "error",
-        confirmButtonText: "확인",
+      toast.error("이메일 전송 중 오류가 발생했습니다", {
+        style: { background: '#43312A', color: 'white' }
       });
     } finally {
       setIsLoading(false);
@@ -77,27 +78,23 @@ const EmailVerificationButton = ({newEmail, children }) => {
       });
 
       if (response.status === 200) {
-        setIsEmailVerified(true);
-        MySwal.fire({
-          title: "이메일 인증이 완료되었습니다",
-          icon: "success",
-          confirmButtonText: "확인",
-        });
         setIsModalVisible(false);
+        setIsEmailVerified(true);
+        toast.success("이메일 인증이 완료되었습니다", {
+          style: { background: '#E8C5A5', color: '#43312A' }
+        });
       }
     } catch (error) {
       console.error('이메일 인증 확인 중 오류 발생:', error);
-      MySwal.fire({
-        title: "이메일 인증에 실패했습니다",
-        text: "인증 코드를 다시 확인해주세요",
-        icon: "error",
-        confirmButtonText: "확인",
+      toast.error("이메일 인증에 실패했습니다. 인증 코드를 다시 확인해주세요.", {
+        style: { background: '#43312A', color: 'white' }
       });
     }
   };
 
   return (
       <>
+        <ToastContainer position="top-right" autoClose={3000} />
         <StyledButton
             onClick={handleEmailChangeRequest}
             disabled={isLoading || isEmailVerified}
@@ -108,27 +105,33 @@ const EmailVerificationButton = ({newEmail, children }) => {
                       children}
         </StyledButton>
 
-        <Modal
-            title="이메일 인증"
+        <LargeModal
+            title="이메일 인증코드를 입력해주세요."
             open={isModalVisible}
             onCancel={() => setIsModalVisible(false)}
             footer={[
               <AntButton key="cancel" onClick={() => setIsModalVisible(false)}>
                 취소
               </AntButton>,
-              <AntButton key="submit" type="primary" onClick={handleVerificationSubmit}>
+              <AntButton
+                  key="submit"
+                  type="primary"
+                  onClick={handleVerificationSubmit}
+                  style={{ backgroundColor: '#E8C5A5', borderColor: '#E8C5A5' }}
+              >
                 확인
               </AntButton>,
             ]}
         >
           <Space direction="vertical" style={{ width: '100%' }}>
             <Input
-                placeholder="인증 코드 입력"
+                placeholder="6자리 숫자 코드"
                 value={verificationCode}
                 onChange={(e) => setVerificationCode(e.target.value)}
+                style={{ fontSize: '16px', padding: '10px' }}
             />
           </Space>
-        </Modal>
+        </LargeModal>
       </>
   );
 };

@@ -3,12 +3,12 @@ import axios from 'axios';
 import {useLocation, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import UserButton from "../../components/UserButton.jsx";
-import AuthTemplate from "../../components/OAuth/AuthTemplate";
-import AddressModal from "../../components/OAuth/AddressModal";
-import ImageUpload from '../../components/ImageUpload';
+import AuthTemplate from "../../components/auth/AuthTemplate.jsx";
+import AddressModal from "../../components/auth/AddressModal.jsx";
+import ImageUpload from '../../components/ImageUpload.jsx';
 import EmailVerificationButton from '../../components/EmailVerification.jsx';
 import React, { useState, useEffect } from "react";
-import BirthDatePicker from '../../components/BirthDatePicker';
+import BirthDatePicker from '../../components/BirthDatePicker.jsx';
 import {Modal} from "antd";
 
 const Label = styled.label`
