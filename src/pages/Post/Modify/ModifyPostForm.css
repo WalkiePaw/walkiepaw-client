@@ -79,10 +79,10 @@
   border-radius: 3px;
 }
 
-.modify-post-container .price-proposal {
+/* .modify-post-container .price-proposal {
   padding-top: 15px;
   display: flow-root;
-}
+} */
 
 .modify-post-container .price-buttons button.selected {
   background-color: #007bff;
@@ -189,4 +189,63 @@
 
 .modify-post-container .image-slider .next-button {
   right: 0;
+}
+
+/* 스위치 토글 버튼 스타일 */
+.price-proposal {
+  width: 20%;
+  margin-right: 8%;
+}
+.switch-container {
+  display: flex;
+  align-items: center;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 70px;
+  height: 32px;
+  margin-left: 10px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.price-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: background-color 0.4s;
+  border-radius: 30px; /* 예시: 더 큰 radius */
+  width: 60px; /* 예시: 더 큰 너비 */
+  height: 30px; /* 예시: 더 큰 높이 */
+}
+
+.price-slider:before {
+  position: absolute;
+  content: '불가능';
+  font-family: Arial;
+  font-size: 12px; /* 예시: 더 큰 글자 크기 */
+  color: #666;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 14px; /* 예시: 더 멀리 위치 */
+}
+
+input:checked + .price-slider {
+  background-color: #007bff;
+}
+
+input:checked + .price-slider:before {
+  content: '가능';
+  color: #fff;
+  right: 18px;
 }

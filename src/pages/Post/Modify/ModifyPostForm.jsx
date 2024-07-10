@@ -13,6 +13,7 @@ const ModifyPostForm = () => {
   const [images, setImages] = useState(initialPost?.images || []); // 게시글의 이미지를 상태로 관리합니다.
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 슬라이드 인덱스를 상태로 관리합니다.
   const [category, setCategory] = useState(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바'); // 게시글의 카테고리 값을 가져온다.
+  const [priceProposal, setPriceProposal] = useState(initialPost?.priceProposal || false);
 
   const formatDateTimeLocal = (dateTimeString) => {
     const date = new Date(dateTimeString);
@@ -29,7 +30,7 @@ const ModifyPostForm = () => {
     startDate: formatDateTimeLocal(initialPost?.startTime),
     endDate: formatDateTimeLocal(initialPost?.endTime),
     priceType: initialPost?.priceType === 'HOURLY' ? '시급' : '일급',
-    priceProposal: initialPost?.priceProposal || '불가',
+    priceProposal: initialPost?.priceProposal || false,
   }); // 게시글 정보 상태를 관리
 
   // 게시글 정보가 변경 업데이트
@@ -39,10 +40,11 @@ const ModifyPostForm = () => {
       startDate: formatDateTimeLocal(initialPost?.startTime),
       endDate: formatDateTimeLocal(initialPost?.endTime),
       priceType: initialPost?.priceType === 'HOURLY' ? '시급' : '일급',
-      priceProposal: initialPost?.priceProposal || '불가',
+      priceProposal: initialPost?.priceProposal || false,
     });
     setImages(initialPost?.images || []);
     setCategory(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바');
+    setPriceProposal(initialPost?.priceProposal || false);
   }, [initialPost]);
 
   // 이미지 업로드 처리 함수
@@ -83,9 +85,9 @@ const ModifyPostForm = () => {
       images,
       priceType: post.priceType === '시급' ? 'HOURLY' : 'DAILY',
       price: parseInt(post.price),
-      priceProposal: post.priceProposal === '불가' ? false : true, // 문자열을 boolean 타입으로 변환
-      startTime: new Date(post.startDate).toISOString(), // IOS 형식으로 변환
-      endTime: new Date(post.endDate).toISOString(), // IOS 형식으로 변환
+      priceProposal: priceProposal,
+      startTime: formatDateTimeLocal(post.startDate),
+      endTime: formatDateTimeLocal(post.endDate),
       category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
       location: post.location,
       detailedLocation: post.detailedLocation,
@@ -97,8 +99,6 @@ const ModifyPostForm = () => {
           ContentType: 'application/json',
         },
       });
-
-      console.log('서버 응답', response);
 
       if (response?.status === 200 || response?.status === 204) {
         alert('게시글이 수정되었습니다.');
@@ -124,6 +124,10 @@ const ModifyPostForm = () => {
 
   const handleCategoryClick = (category) => {
     setCategory(category);
+  };
+
+  const handlePriceProposalToggle = () => {
+    setPriceProposal(!priceProposal);
   };
 
   return (
@@ -201,15 +205,18 @@ const ModifyPostForm = () => {
             일급
           </button>
           <div className="price-proposal">
-            <lable htmlFor="priceProposal">가격 협의:</lable>
-            <select
-              id="priceProposal"
-              value={post.priceProposal}
-              onChange={(e) => setPost({ ...post, priceProposal: e.target.value })}
-            >
-              <option value="true">가능</option>
-              <option value="false">불가</option>
-            </select>
+            <div className="switch-container">
+              <label htmlFor="priceProposal">가격 협의:</label>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  id="priceProposal"
+                  checked={priceProposal} // priceProposal 상태를 checked 속성에 바인딩
+                  onChange={handlePriceProposalToggle}
+                />
+                <span className="price-slider round"></span>
+              </label>
+            </div>
           </div>
         </div>
         <label htmlFor="price">금액:</label>
