@@ -12,7 +12,7 @@ import { handleChangePassword } from './PasswordSchema';
 // ImageUpload 컴포넌트 임포트
 import ImageUpload from '../../components/ImageUpload';
 // 도로명 주소 모달 임포트
-import AddressModal from '../../components/oAuth/AddressModal';
+import AddressModal from '../../components/auth/AddressModal';
 // axios 임포트
 import axios from 'axios';
 

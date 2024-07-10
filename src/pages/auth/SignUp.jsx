@@ -3,13 +3,13 @@ import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import UserButton from '../../components/UserButton.jsx';
-import AuthTemplate from '../../components/oAuth/AuthTemplate.jsx';
-import AddressModal from '../../components/oAuth/AddressModal.jsx';
 import ImageUpload from '../../components/ImageUpload.jsx';
 import EmailVerificationButton from '../../components/EmailVerification.jsx';
 import React, { useState, useEffect } from 'react';
 import BirthDatePicker from '../../components/BirthDatePicker.jsx';
 import { Modal } from 'antd';
+import AuthTemplate from '../../components/auth/AuthTemplate.jsx';
+import AddressModal from '../../components/auth/AddressModal.jsx';
 
 const Label = styled.label`
   margin-bottom: 0.1rem;
