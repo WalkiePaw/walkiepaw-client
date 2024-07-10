@@ -1,9 +1,5 @@
-// 신고 관리 
-
 import React, { useState, useEffect, useCallback } from 'react';
-// 팝업창 
 import Swal from 'sweetalert2';
-// axios 
 import axios from 'axios';
 
 const BoardReportCategory = {
@@ -23,21 +19,11 @@ const MemberReportCategory = {
   DISPUTE: '거래/환불 분쟁이 있는 경우'
 };
 
-// 팝업으로 신고 내용 확인하기
-const showReportDetails = (title, description) => {
-  Swal.fire({
-    title: title,
-    text: description,
-    icon: 'info',
-    confirmButtonText: '확인',
-  });
-};
-
 const ReportManagement = () => {
   const [reportType, setReportType] = useState('board');
   const [reports, setReports] = useState([]);
   const [error, setError] = useState(null);
-  const [unresolvedOnly, setUnresolvedOnly] = useState(true); // 처리되지 않은 항목만 보기 여부
+  const [unresolvedOnly, setUnresolvedOnly] = useState(true);
 
   const fetchReports = useCallback(async () => {
     try {
@@ -45,44 +31,39 @@ const ReportManagement = () => {
         ? 'http://localhost:8080/api/v1/boardReports' 
         : 'http://localhost:8080/api/v1/memberReports';
 
-      console.log('Fetching from endpoint:', endpoint);
       const response = await axios.get(endpoint);
       console.log('Response:', response);
-      const filteredReports = unresolvedOnly
-        ? response.data.filter(report => !report.resolved) // 처리되지 않은 신고만 필터링
-        : response.data;
-
-      setReports(filteredReports);
+      setReports(response.data);
       setError(null);
     } catch (err) {
       console.error('Error fetching reports:', err);
       console.error('Error details:', err.response?.data || err.message);
       setError(`${reportType === 'board' ? '게시글' : '회원'} 신고 목록을 불러오는 데 실패했습니다. 오류: ${err.response?.data?.message || err.message}`);
     } 
-  }, [reportType, unresolvedOnly]);
+  }, [reportType]);
 
   useEffect(() => {
     fetchReports();
   }, [fetchReports]);
 
-  const handleAction = async (id, action) => {
+  const handleAction = async (id, action, reportType, currentStatus) => {
     try {
-      const endpoint = reportType === 'board' 
-        ? `http://localhost:8080/api/v1/boardReports/${id}` 
-        : `http://localhost:8080/api/v1/memberReports/${id}`;
-      
-      switch(action) {
-        case 'ban':
-          await axios.post(`${endpoint}/ban`);
-          break;
-        case 'ignore':
-          await axios.delete(endpoint);
-          break;
-        default:
-          throw new Error('Invalid action');
+      let endpoint;
+      let status;
+      const id = 1;
+      if (reportType === 'board') {
+        status = action === 'blind' ? 'blind' : action === 'ignore' ? 'ignore' : 'UNRESOLVED';
+        endpoint = `http://localhost:8080/api/v1/boardReports/${id}/${status}`;
+      } else if (reportType === 'member') {
+        status = action === 'ban' ? 'ban' : action === 'ignore' ? 'ignore' : 'UNRESOLVED';
+        endpoint = `http://localhost:8080/api/v1/memberReports/${id}/${status}`;
       }
       
-      fetchReports();
+      // 현재 상태와 새로운 상태가 다를 때만 API 호출
+      if (currentStatus !== status) {
+        await axios.patch(endpoint);
+        fetchReports();
+      }
       setError(null);
     } catch (err) {
       console.error('Error processing action:', err);
@@ -91,20 +72,29 @@ const ReportManagement = () => {
   };
 
   // 처리되지 않은 항목만 보기
-  let filteredReports = unresolvedOnly
-    ? reports.filter(report => !report.resolved)
+  const filteredReports = unresolvedOnly
+    ? reports.filter(report => report.status === 'UNRESOLVED')
     : reports;
 
-    // 날짜 설정
-    const formatTime = (dateString) => {
-      const date = new Date(dateString);
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      return `${year}-${month}-${day} / ${hours}:${minutes}`;
-    };
+  // 관리 상태 텍스트로 변환
+  const getStatusText = (status, reportType) => {
+    if (status === 'UNRESOLVED') return '미처리';
+    if (reportType === 'board') {
+      return status === 'blind' ? '제한된 게시글' : '신고 무시';
+    } else {
+      return status === 'ban' ? '영구정지' : '신고 무시';
+    }
+  };
+  // 날짜 설정
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${year}-${month}-${day} / ${hours}:${minutes}`;
+  };
 
   if (error) return <div>{error}</div>;
 
@@ -122,96 +112,92 @@ const ReportManagement = () => {
         </select>
       </div>
       <div>
-          <label className="ml-3">
-            <input 
-              type="checkbox"
-              checked={unresolvedOnly}
-              onChange={() => setUnresolvedOnly(!unresolvedOnly)}
-              className="mr-1"
-            />
-            처리되지 않은 항목만 보기
-          </label>
-        </div>
-        {filteredReports.length === 0 ? (
-        <p className="text-center text-gray-500">모든 항목에 대한 답변이 완료되었습니다.</p>
-      ) : (
-      <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse">
-          <thead>
-            <tr className="border-b">
-              <th className="py-2 px-4 text-left">번호</th>
-              <th className="py-2 px-4 text-left">신고한 회원명</th>
-              <th className="py-2 px-4 text-left">
-                {reportType === 'board'
-                  ? '게시글 작성자'
-                  : '신고 대상 회원명'}
-              </th>
-              <th className="py-2 px-4 text-left">
-                {reportType === 'board' 
-                  ? '게시글 제목' 
-                  : '신고 제목'}
-              </th>
-              <th className="py-2 px-4 text-left">신고일</th>
-              <th className="py-2 px-4 text-left">신고사유</th>
-              <th className="py-2 px-4 text-left">처리</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reports.map((report, index) => (
-              <tr key={index} className="border-b">
-                <td className="py-2 px-4">{index + 1}</td>
-                <td className="py-2 px-4">
-                  {reportType === 'board' 
-                    ? report.writerName
-                    : report.reportingMemberName}
-                  </td>
-                <td className='py-2 px-4'>
-                  {reportType === 'board' 
-                    ? report.boardWriterName
-                    : report.reportedMemberName}
-                </td>
-                <td 
-                  onClick={() => showReportDetails(report.title, report.description)}
-                  className="py-2 px-4 cursor-pointer">
-                  {reportType === 'board' 
-                    ? report.boardTitle 
-                    : report.title}
-                </td>            
-                <td className="py-2 px-4">
-                  {reportType === 'board' 
-                    ? formatTime(report.boardWriterCreatedDate)
-                    : formatTime(report.createdDate)}
-                </td>
-                <td className="py-2 px-4">
-                  {reportType === 'board' 
-                    ? BoardReportCategory[report.reason] 
-                    : MemberReportCategory[report.reason]}
-                </td>
-                <td className="py-2 px-4">
-                <select 
-            onChange={(e) => handleAction(report.id, e.target.value)}
-            className="border rounded px-2 py-1"
-            defaultValue=""
-          >
-            <option value="" disabled>선택</option>
-            {reportType === 'board'  ? (
-              <>
-                <option value="restrict">제한된 게시글 처리</option>
-                <option value="ignore">신고 무시</option>
-              </>
-            ) : (
-              <>
-                <option value="ban">영구정지</option>
-                <option value="ignore">신고 무시</option>
-              </>
-            )}
-          </select>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <label className="ml-3">
+          <input 
+            type="checkbox"
+            checked={unresolvedOnly}
+            onChange={() => setUnresolvedOnly(!unresolvedOnly)}
+            className="mr-1"
+          />
+          처리되지 않은 항목만 보기
+        </label>
       </div>
+      {filteredReports.length === 0 ? (
+        <p className="text-center text-gray-500">
+          {unresolvedOnly 
+            ? "처리되지 않은 항목이 없습니다." 
+            : "신고 내역이 없습니다."}
+        </p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-collapse">
+            <thead>
+              <tr className="border-b">
+                <th className="py-2 px-4 text-left">번호</th>
+                <th className="py-2 px-4 text-left">신고한 회원명</th>
+                <th className="py-2 px-4 text-left">
+                  {reportType === 'board' ? '게시글 작성자' : '신고 대상 회원명'}
+                </th>
+                <th className="py-2 px-4 text-left">
+                  {reportType === 'board' ? '게시글 제목' : '신고 제목'}
+                </th>
+                <th className="py-2 px-4 text-left">신고일</th>
+                <th className="py-2 px-4 text-left">신고사유</th>
+                <th className="py-2 px-4 text-left">관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredReports.map((report, index) => (
+                <tr key={index} className="border-b">
+                  <td className="py-2 px-4">{index + 1}</td>
+                  <td className="py-2 px-4">
+                    {reportType === 'board' ? report.writerName : report.reportingMemberName}
+                  </td>
+                  <td className='py-2 px-4'>
+                    {reportType === 'board' ? report.boardWriterName : report.reportedMemberName}
+                  </td>
+                  <td className="py-2 px-4 cursor-pointer">
+                    {reportType === 'board' ? report.boardTitle : report.title}
+                  </td>            
+                  <td className="py-2 px-4">
+                    {reportType === 'board' 
+                      ? formatTime(report.boardWriterCreatedDate)
+                      : formatTime(report.createdDate)}
+                  </td>
+                  <td className="py-2 px-4">
+                    {reportType === 'board' 
+                      ? BoardReportCategory[report.reason] 
+                      : MemberReportCategory[report.reason]}
+                  </td>
+                  <td className="py-2 px-4">
+                    {report.status === 'UNRESOLVED' ? (
+                      <select 
+                        onChange={(e) => handleAction(report.id, e.target.value, reportType, report.status)}
+                        className="border rounded px-2 py-1"
+                        defaultValue=""
+                      >
+                        <option value="" disabled>선택</option>
+                        {reportType === 'board'  ? (
+                          <>
+                            <option value="blind">제한된 게시글 처리</option>
+                            <option value="ignore">신고 무시</option>
+                          </>
+                        ) : (
+                          <>
+                            <option value="ban">영구정지</option>
+                            <option value="ignore">신고 무시</option>
+                          </>
+                        )}
+                      </select>
+                    ) : (
+                      getStatusText(report.status, reportType)
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

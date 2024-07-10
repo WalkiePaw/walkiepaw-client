@@ -150,9 +150,6 @@ const MyTransaction = () => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   {formatTime(transaction.createdDate)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {transaction.category}
-                </td>
               </tr>
             ))}
           </tbody>
