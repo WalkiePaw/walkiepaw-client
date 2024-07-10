@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useDispatch} from "react-redux";
 import axios from 'axios';
-import { Modal } from 'antd';
+import {Button, Modal} from 'antd';
 import UserInput from '../components/UserInput';
 import UserButton from '../components/UserButton';
 import KakaoLogin from '../components/auth/KakaoLogin';
 import NaverLogin from '../components/auth/NaverLogin';
 import GoogleLogin from '../components/auth/GoogleLogin';
+import FindEmail from "../components/auth/FindEmail.jsx";
 import pawpaw from '../assets/pawpaw.png';
 import {loginSuccess} from "../store/AuthSlice.jsx";
 
@@ -84,9 +85,43 @@ const Login = () => {
       setIsModalVisible(true);
     }
   };
+  const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
+
+  const showEmailModal = () => {
+    setIsEmailModalVisible(true);
+  };
+
+  const handleEmailModalCancel = () => {
+    setIsEmailModalVisible(false);
+  };
+
 
   const handleModalOk = () => {
     setIsModalVisible(false);
+  };
+
+  const modalStyle = {
+    content: {
+      backgroundColor: '#E8C5A5',
+      borderRadius: '10px',
+    },
+    header: {
+      backgroundColor: '#43312A',
+      color: '#E8C5A5',
+      borderTopLeftRadius: '10px',
+      borderTopRightRadius: '10px',
+      padding: '10px 20px',
+    },
+    body: {
+      padding: '20px',
+    },
+    footer: {
+      backgroundColor: '#E8C5A5',
+      borderTop: '1px solid #43312A',
+      borderBottomLeftRadius: '10px',
+      borderBottomRightRadius: '10px',
+      padding: '10px 20px',
+    },
   };
 
   return (
@@ -133,9 +168,13 @@ const Login = () => {
               <span className="text-sm text-red-500">{errors.login}</span>
           )}
           <div className="flex justify-between w-3/4 mb-6">
-            <button className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300">
+            <Button
+                onClick={showEmailModal}
+                type="link"
+                style={{ color: '#43312A' }}
+            >
               이메일 찾기
-            </button>
+            </Button>
             <button className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300">
               비밀번호 찾기
             </button>
@@ -153,6 +192,19 @@ const Login = () => {
             <GoogleLogin />
           </div>
         </div>
+
+        <Modal
+            title="이메일 찾기"
+            open={isEmailModalVisible}
+            onCancel={handleEmailModalCancel}
+            footer={null}
+            style={modalStyle.content}
+            bodyStyle={modalStyle.body}
+            maskStyle={{ backgroundColor: 'rgba(67, 49, 42, 0.5)' }}
+            titleStyle={modalStyle.header}
+        >
+          <FindEmail onClose={handleEmailModalCancel} />
+        </Modal>
 
         <Modal
             title={<span style={{ color: 'red' }}>로그인 오류</span>}

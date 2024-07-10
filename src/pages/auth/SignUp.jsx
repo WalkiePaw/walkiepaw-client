@@ -102,7 +102,14 @@ const SignUp = () => {
 
   const submitSignUp = async (data) => {
     try {
-      const signUpData = { ...data, photo };
+      const formattedPhoneNumber = data.phoneNumber.replace(/-/g, '');
+
+      const signUpData = {
+        ...data,
+        photo,
+        phoneNumber: formattedPhoneNumber  // 하이픈이 제거된 전화번호 사용
+      };
+
       const response = await axios.post('http://localhost:8080/api/v1/members', signUpData);
       console.log('회원가입 성공:', response.data);
       setIsSuccessModalVisible(true);
@@ -241,7 +248,7 @@ const SignUp = () => {
               {...register('phoneNumber', {
                 required: '전화번호는 필수 입력 사항입니다.',
                 pattern: {
-                  value: /^010-?([0-9]{4})-?([0-9]{4})$/,
+                  value: /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
                   message: '올바른 전화번호 형식이 아닙니다.'
                 }
               })}
