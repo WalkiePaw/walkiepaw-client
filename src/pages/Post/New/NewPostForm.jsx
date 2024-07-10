@@ -72,6 +72,16 @@ const NewPostForm = () => {
     setCurrentSlide((prevSlide) => (prevSlide === 0 ? Math.floor((images.length - 1) / 4) : prevSlide - 1));
   };
 
+  const formatDateTimeLocal = (dateTimeString) => {
+    const date = new Date(dateTimeString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -79,15 +89,15 @@ const NewPostForm = () => {
       title,
       priceType: priceType === '시급' ? 'HOURLY' : 'DAILY',
       price: parseInt(price), // 금액을 정수로 변환
-      startTime: new Date(startTime).toISOString(), // ISO 형식으로 변환
-      endTime: new Date(endTime).toISOString(), // ISO 형식으로 변환
+      startTime: formatDateTimeLocal(startTime),
+      endTime: formatDateTimeLocal(endTime),
       content,
       location,
       detailedLocation,
       images: imageURLs,
       memberId,
       category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
-      priceProposal: priceProposal ? 1 : 0, // true이면 1, false이면 0으로 변환하여 전송
+      priceProposal,
     };
 
     try {
