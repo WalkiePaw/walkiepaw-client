@@ -10,7 +10,8 @@ const ModifyPostForm = () => {
   const location = useLocation(); // 현재 위치 정보를 가져옵니다.
   const navigate = useNavigate(); // 페이지 이동을 위한 함수입니다.
   const initialPost = location?.state?.post; // 수정할 게시글의 초기 데이터를 가져옵니다.
-  const [images, setImages] = useState(initialPost?.images || []); // 게시글의 이미지를 상태로 관리합니다.
+  const [photos, setPhotos] = useState(initialPost?.photos || []); // 게시글의 이미지를 상태로 관리합니다.
+  const [imageURLs, setImageURLs] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 슬라이드 인덱스를 상태로 관리합니다.
   const [category, setCategory] = useState(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바'); // 게시글의 카테고리 값을 가져온다.
   const [priceProposal, setPriceProposal] = useState(initialPost?.priceProposal || false);
@@ -42,7 +43,7 @@ const ModifyPostForm = () => {
       priceType: initialPost?.priceType === 'HOURLY' ? '시급' : '일급',
       priceProposal: initialPost?.priceProposal || false,
     });
-    setImages(initialPost?.images || []);
+    setPhotos(initialPost?.photos || []);
     setCategory(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바');
     setPriceProposal(initialPost?.priceProposal || false);
   }, [initialPost]);
@@ -61,18 +62,41 @@ const ModifyPostForm = () => {
 
     // 모든 사진 파일을 읽은 후 이미지를 추가
     Promise.all(newImages).then((results) => {
-      setImages([...images, ...results]);
+      uploadImages(files); // 첨부한 이미지를 서버에 업로드
+      setPhotos([...photos, ...results]);
     });
+  };
+
+  const uploadImages = async (files) => {
+    const urls = await Promise.all(files.map((file) => uploadImage(file)));
+    setImageURLs([...imageURLs, ...urls]);
+  };
+
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post(`http://localhost:8080/api/v1/uploads`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response.data);
+      return response?.data;
+    } catch (error) {
+      console.error('이미지 업로드 에러!', error);
+    }
   };
 
   // 다음 사진 슬라이드를 표시하는 함수
   const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === Math.floor((images.length - 1) / 4) ? 0 : prevSlide + 1));
+    setCurrentSlide((prevSlide) => (prevSlide === Math.floor((photos.length - 1) / 4) ? 0 : prevSlide + 1));
   };
 
   // 이전 사진 슬라이드를 표시하는 함수
   const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === 0 ? Math.floor((images.length - 1) / 4) : prevSlide - 1));
+    setCurrentSlide((prevSlide) => (prevSlide === 0 ? Math.floor((photos.length - 1) / 4) : prevSlide - 1));
   };
 
   // 폼 제출 처리 함수
@@ -82,7 +106,7 @@ const ModifyPostForm = () => {
     // 수정된 게시글 정보를 생성
     const modifiedPost = {
       ...post, // 기존 게시글의 모든 속성을 복사합니다.
-      images,
+      imageURLs,
       priceType: post.priceType === '시급' ? 'HOURLY' : 'DAILY',
       price: parseInt(post.price),
       priceProposal: priceProposal,
@@ -146,13 +170,13 @@ const ModifyPostForm = () => {
           onChange={handleImageUpload}
           style={{ display: 'none' }}
         />
-        {images.length > 0 && (
+        {photos.length > 0 && (
           <div className="image-slider">
             <button className="prev-button" onClick={handlePrevSlide}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
             <div className="image-preview-container">
-              {images.slice(currentSlide * 4, currentSlide * 4 + 4).map((image, index) => (
+              {photos.slice(currentSlide * 4, currentSlide * 4 + 4).map((image, index) => (
                 <img key={index} src={image} alt={`Uploaded Preview ${index}`} className="image-preview" />
               ))}
             </div>
@@ -192,14 +216,14 @@ const ModifyPostForm = () => {
         <div className="price-buttons">
           <button
             type="button"
-            className={`btn-price ${post.priceType === '시급' ? 'selected' : ''}`}
+            className={`btn-price-hour ${post.priceType === '시급' ? 'selected' : ''}`}
             onClick={() => setPost({ ...post, priceType: '시급' })}
           >
             시급
           </button>
           <button
             type="button"
-            className={`btn-price ${post.priceType === '일급' ? 'selected' : ''}`}
+            className={`btn-price-day ${post.priceType === '일급' ? 'selected' : ''}`}
             onClick={() => setPost({ ...post, priceType: '일급' })}
           >
             일급

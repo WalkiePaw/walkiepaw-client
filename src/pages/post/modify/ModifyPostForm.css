@@ -79,11 +79,6 @@
   border-radius: 3px;
 }
 
-/* .modify-post-container .price-proposal {
-  padding-top: 15px;
-  display: flow-root;
-} */
-
 .modify-post-container .price-buttons button.selected {
   background-color: #007bff;
   color: #fff;
@@ -131,6 +126,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  border-bottom: 1px solid rgba(115, 114, 114, 0.314);
 }
 
 .modify-post-container .image-upload-button {
@@ -161,6 +157,7 @@
   flex-wrap: nowrap;
   overflow: hidden;
   width: 100%;
+  margin-bottom: 28px;
 }
 
 .modify-post-container .image-preview {
@@ -189,6 +186,14 @@
 
 .modify-post-container .image-slider .next-button {
   right: 0;
+}
+
+.btn-price-hour {
+  margin-left: 40% !important;
+}
+
+.btn-price-day {
+  margin-right: 11% !important;
 }
 
 /* 스위치 토글 버튼 스타일 */
