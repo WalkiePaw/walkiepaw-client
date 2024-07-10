@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import CardList from '../../components/CardList/CardList';
+import CardList from '../../components/cardList/CardList';
 import './BoardList.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import MyTown from '../MyTown/MyTown';
+import MyTown from '../myTown/MyTown';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';

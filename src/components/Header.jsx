@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { NavLink, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import logo from '../assets/logo.png';
-import default_user from '../assets/default_user.png';
+import AuthButton from '../../src/components/auth/AuthButton'; //
+import { useSelector } from 'react-redux';
 
 const HeaderContainer = styled.header`
   position: relative;
@@ -18,12 +19,19 @@ const HeaderContainer = styled.header`
 
   .container {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
     margin: 0 auto;
-    max-width: 1200px;
+    width: 100%;
+    max-width: 1200px; // 또는 원하는 최대 너비
+    padding: 0 1rem; // 작은 화면에서 최소한의 여백 유지
   }
 
+  nav {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: center;
+  }
+  
   img {
     height: 3rem;
     max-width: 100%;
@@ -60,6 +68,7 @@ const HeaderContainer = styled.header`
     .container {
       flex-direction: row;
       align-items: center;
+      max-width: 100%;
       gap: 1rem; /* 요소들 사이 간격 */
     }
 
@@ -111,20 +120,14 @@ const Menus = styled.ul`
   }
 `;
 
-const UserIcon = styled.span`
-  font-size: 1.5rem;
-  margin-right: 0.5rem;
-`;
 
 const Header = () => {
-  const { isLoggedIn, logout } = 0;
-  // useAuth();
 
   return (
     <HeaderContainer>
       <div className="container">
         <NavLink to="/" className="flex-shrink-0">
-          <img src={logo} alt="Logo" />
+          <img src={logo} alt="Logo"/>
         </NavLink>
 
         <nav>
@@ -148,21 +151,11 @@ const Header = () => {
         </nav>
 
         <div className="buttons">
-          {isLoggedIn ? (
-            <>
-              <img src={default_user} alt="user" />
-              <button onClick={logout}>로그아웃</button>
-            </>
-          ) : (
-            <button>
-              <Link to="/login">로그인</Link>
-            </button>
-          )}
+          <AuthButton/>
         </div>
       </div>
     </HeaderContainer>
   );
 };
-
 
 export default Header;
