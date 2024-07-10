@@ -6,7 +6,7 @@ import axios from "axios";
 // 게시글 목록 받아오기
 import PostList from './PostList'; 
 // 리뷰 목록 받아오기
-import Review from './Review';
+import Review from '../../components/Review';
 
 
 const Introduction = () => {
