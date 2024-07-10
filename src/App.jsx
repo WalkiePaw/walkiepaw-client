@@ -1,5 +1,5 @@
-import BoardList from "./pages/boardList/BoardList";
-import Home from "./pages/home/Home";
+import BoardList from './pages/boardList/BoardList.jsx'
+import Home from "./pages/home/Home.jsx";
 import Layout from "./Layout";
 import "./App.css";
 import 'react-datepicker/dist/react-datepicker.css';

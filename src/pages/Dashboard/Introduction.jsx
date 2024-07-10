@@ -52,7 +52,7 @@ const Introduction = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mt-3 mb-5">소개</h1>
+      <h1 className="text-3xl font-bold mt-3 mb-5">소개</h1>
       <p className="p-4 bg-white rounded-lg border border-gray-300">{memberData ? memberData.profile : ''}</p>
       <div className="border-t-2 mt-4 mb-5 border-gray-300" />
 
