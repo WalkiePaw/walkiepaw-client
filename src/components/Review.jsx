@@ -4,7 +4,7 @@ import pawpaw from './../assets/pawpaw.png';
 // axios 임포트
 import axios from 'axios';
 
-const Review = () => {
+const Review = ({reviewCount}) => {
   const [activeTab, setActiveTab] = useState('JOB_OPENING'); // 기본 선택 탭 설정: 산책, 알바
   const [reviews, setReviews] = useState([]); // 리뷰 데이터를 저장
 
@@ -14,7 +14,7 @@ const Review = () => {
   };
 
   // 모든 리뷰 데이터 가져오기
-  const fetchReviews = () => {
+  const fetchReviews = (category, count) => {
     axios
       .get(`http://localhost:8080/api/v1/reviews/1/reviewee`, {
         params: {
@@ -37,8 +37,8 @@ const Review = () => {
 
   // 컴포넌트 마운트 시 리뷰 데이터 가져오기
   useEffect(() => {
-    fetchReviews();
-  }, [activeTab]);
+    fetchReviews(activeTab, reviewCount);
+  }, [activeTab, reviewCount]);
 
   return (
     <div className="flex flex-col">
@@ -61,6 +61,7 @@ const Review = () => {
           알바 구직글
         </button>
       </div>
+      {reviews.length > 0 ? (
       <div className="flex flex-col space-y-4">
         {reviews.map((review) => (
           <div key={review.id} className="p-4 bg-white rounded-lg shadow-md border border-gray-300">
@@ -81,6 +82,9 @@ const Review = () => {
           </div>
         ))}
       </div>
+      ) : (
+        <p className="text-lg font-medium text-gray-500">받은 리뷰가 없습니다.</p>
+      )}
     </div>
   );
 };
