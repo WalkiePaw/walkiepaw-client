@@ -9,22 +9,25 @@ import KakaoLogin from '../components/auth/KakaoLogin';
 import NaverLogin from '../components/auth/NaverLogin';
 import GoogleLogin from '../components/auth/GoogleLogin';
 import FindEmail from "../components/auth/FindEmail.jsx";
+import FindPassword from "../components/auth/FindPassword.jsx";
 import pawpaw from '../assets/pawpaw.png';
-import {loginSuccess} from "../store/AuthSlice.jsx";
+import { loginSuccess, loginFailure, setLoading } from "../store/AuthSlice.jsx";
 
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({
     email: '',
     password: '',
   });
-
-
   const [errors, setErrors] = useState({});
-  const [isModalVisible, setIsModalVisible] = useState(false); // 모달 표시 여부 상태
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const navigate = useNavigate();
+  const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
+  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+
+
 
   const handleInputChange = event => {
     const { name, value } = event.target;
@@ -68,6 +71,7 @@ const Login = () => {
 
 
   const onSubmit = async () => {
+    dispatch(setLoading(true));
     try {
       const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
         email: userInfo.email,
@@ -76,29 +80,25 @@ const Login = () => {
 
       console.log('Login successful:', response.data);
       dispatch(loginSuccess({
-        token: response.data.token
+        token: response.data.token,
+        user: response.data.user // 서버에서 사용자 정보를 반환한다고 가정
       }));
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error.response ? error.response.data : error.message);
+      dispatch(loginFailure(error.response?.data?.message || "로그인에 실패했습니다."));
       setModalMessage('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
       setIsModalVisible(true);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
-  const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
 
-  const showEmailModal = () => {
-    setIsEmailModalVisible(true);
-  };
-
-  const handleEmailModalCancel = () => {
-    setIsEmailModalVisible(false);
-  };
-
-
-  const handleModalOk = () => {
-    setIsModalVisible(false);
-  };
+  const showEmailModal = () => setIsEmailModalVisible(true);
+  const handleEmailModalCancel = () => setIsEmailModalVisible(false);
+  const handleModalOk = () => setIsModalVisible(false);
+  const showPasswordModal = () => setIsPasswordModalVisible(true);
+  const handlePasswordModalCancel = () => setIsPasswordModalVisible(false);
 
   const modalStyle = {
     content: {
@@ -175,16 +175,20 @@ const Login = () => {
             >
               이메일 찾기
             </Button>
-            <button className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300">
+            <Button
+                onClick={showPasswordModal}
+                type="link"
+                style={{ color: '#43312A' }}
+            >
               비밀번호 찾기
-            </button>
-            <button
-                type="button"
-                className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300"
+            </Button>
+            <Button
                 onClick={() => navigate('/signup')}
+                type="link"
+                style={{ color: '#43312A' }}
             >
               회원가입
-            </button>
+            </Button>
           </div>
           <div className="flex justify-between w-3/4 mb-4">
             <KakaoLogin />
@@ -204,6 +208,19 @@ const Login = () => {
             titleStyle={modalStyle.header}
         >
           <FindEmail onClose={handleEmailModalCancel} />
+        </Modal>
+
+        <Modal
+            title="비밀번호 찾기"
+            open={isPasswordModalVisible}
+            onCancel={handlePasswordModalCancel}
+            footer={null}
+            style={modalStyle.content}
+            bodyStyle={modalStyle.body}
+            maskStyle={{ backgroundColor: 'rgba(67, 49, 42, 0.5)' }}
+            titleStyle={modalStyle.header}
+        >
+          <FindPassword onClose={handlePasswordModalCancel} />
         </Modal>
 
         <Modal

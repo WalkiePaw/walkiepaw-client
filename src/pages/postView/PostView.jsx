@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import './PostView.css';
 import KakaoWithoutSearch from '../../modules/KakaoWithoutSearch';
 import pawpaw from './../../assets/pawpaw.png';
-import PostReportModal from '../../components/ReportModal/PostReportModal';
+import PostReportModal from '../../components/reportModal/PostReportModal';
 import axios from 'axios';
 
 const PostView = () => {

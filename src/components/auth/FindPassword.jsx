@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Form, Input, Button, Modal } from 'antd';
 import styled from 'styled-components';
 import { CloseOutlined } from '@ant-design/icons';
+import VerificationCodeModal from './VerificationCodeModal';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const StyledModal = styled(Modal)`
   .ant-modal-content {
@@ -87,67 +90,83 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const EmailResult = styled.p`
-  font-size: 18px;
-  font-weight: bold;
-  color: #43312A;
-  margin-bottom: 20px;
-`;
-
-const FindEmail = ({ onClose }) => {
+const FindPassword = ({ onClose }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [foundEmail, setFoundEmail] = useState('');
-
-  const formatPhoneNumber = (value) => {
-    if (!value) return '';
-    const phoneNumber = value.replace(/[^\d]/g, '');
-    const phoneNumberLength = phoneNumber.length;
-    if (phoneNumberLength <= 3) return phoneNumber;
-    if (phoneNumberLength <= 7) {
-      return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
-    }
-    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
-  };
-
-  const handlePhoneNumberChange = (e) => {
-    const formattedNumber = formatPhoneNumber(e.target.value);
-    form.setFieldsValue({ phoneNumber: formattedNumber });
-  };
+  const [email, setEmail] = useState('');
 
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/members/find-email', {
-        name: values.name,
-        phoneNumber: values.phoneNumber.replace(/-/g, '')
+      const response = await axios.post('http://localhost:8080/api/v1/members/find-passwd', {
+        email: values.email,
+        name: values.name
       });
-      setFoundEmail(response.data.email);
-      setIsModalVisible(true);
+
+      if (response.data.result === 'SUCCESS') {
+        setEmail(values.email);
+        setIsModalVisible(true);
+        toast.success("인증번호가 이메일로 전송되었습니다.", {
+          style: { background: '#E8C5A5', color: '#43312A' }
+        });
+      } else {
+        toast.error("입력한 정보와 일치하는 계정을 찾을 수 없습니다.", {
+          style: { background: '#43312A', color: 'white' }
+        });
+      }
     } catch (error) {
-      Modal.error({
-        title: '이메일 찾기 실패',
-        content: '이메일을 찾을 수 없습니다. 입력한 정보를 확인해 주세요.',
-        okText: '확인',
-        okButtonProps: { style: { backgroundColor: '#43312A', borderColor: '#43312A' } },
-        centered: true,
-        icon: null,
-        maskClosable: true,
+      toast.error("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", {
+        style: { background: '#43312A', color: 'white' }
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleModalOk = () => {
-    setIsModalVisible(false);
-    onClose();
+  const handleVerificationSubmit = async (verificationCode) => {
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/mail/authCheck', {
+        email: email,
+        authNum: verificationCode
+      });
+
+      if (response.status === 200) {
+        setIsModalVisible(false);
+        toast.success(
+            `인증이 완료되었습니다.
+                      새 비밀번호를 설정해주세요.`,
+            {
+              style: { background: '#E8C5A5', color: '#43312A' }
+            }
+        );
+        // 여기에 새 비밀번호 설정 로직 추가
+      } else {
+        toast.error("인증번호가 일치하지 않습니다.", {
+          style: { background: '#43312A', color: 'white' }
+        });
+      }
+    } catch (error) {
+      toast.error("인증 과정에서 오류가 발생했습니다.", {
+        style: { background: '#43312A', color: 'white' }
+      });
+    }
   };
 
   return (
       <>
+        <ToastContainer position="top-right" autoClose={3000} />
         <Form form={form} onFinish={onFinish} layout="vertical">
+          <Form.Item
+              name="email"
+              label="이메일"
+              rules={[
+                { required: true, message: '이메일을 입력해주세요' },
+                { type: 'email', message: '유효한 이메일 주소를 입력해주세요' }
+              ]}
+          >
+            <StyledInput />
+          </Form.Item>
           <Form.Item
               name="name"
               label="이름"
@@ -155,49 +174,24 @@ const FindEmail = ({ onClose }) => {
           >
             <StyledInput />
           </Form.Item>
-          <Form.Item
-              name="phoneNumber"
-              label="전화번호"
-              rules={[{ required: true, message: '전화번호를 입력해주세요' }]}
-          >
-            <StyledInput onChange={handlePhoneNumberChange} />
-          </Form.Item>
           <Form.Item>
             <StyledButton
                 type="primary"
                 htmlType="submit"
                 loading={loading}
             >
-              이메일 찾기
+              비밀번호 찾기
             </StyledButton>
           </Form.Item>
         </Form>
 
-        <StyledModal
-            title="이메일 찾기 결과"
-            open={isModalVisible}
-            onOk={handleModalOk}
-            onCancel={handleModalOk}
-            footer={[
-              <StyledButton
-                  key="submit"
-                  type="primary"
-                  onClick={handleModalOk}
-              >
-                확인
-              </StyledButton>,
-            ]}
-            width={400}
-            closeIcon={<CloseOutlined style={{ color: '#E8C5A5', fontSize: '14px' }} />}
-        >
-          <div style={{ textAlign: 'center' }}>
-            <EmailResult>{foundEmail}</EmailResult>
-            <p style={{ color: '#43312A' }}>다시 로그인 해주세요.</p>
-          </div>
-        </StyledModal>
+        <VerificationCodeModal
+            visible={isModalVisible}
+            onCancel={() => setIsModalVisible(false)}
+            onSubmit={handleVerificationSubmit}
+        />
       </>
   );
 };
 
-
-export default FindEmail;
+export default FindPassword;

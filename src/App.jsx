@@ -1,3 +1,6 @@
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { verifyToken } from './store/AuthSlice';
 import BoardList from "./pages/boardList/BoardList";
 import Home from "./pages/home/Home";
 import Layout from "./Layout";
@@ -6,6 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Routes, Route, useNavigate } from "react-router-dom";
+
 import Notfound from "./components/Notfound";
 import MyPage from "./pages/myPage/MyPage";
 import MyPageLayout from "./pages/myPage/MyPageLayout";
@@ -20,7 +24,6 @@ import Dashboard from "/src/pages/dashboard/Dashboard";
 import PostList from "/src/pages/dashboard/PostList";
 import Introduction from "/src/pages/dashboard/Introduction";
 import Preferences from "./pages/myPage/Preferences";
-import React from "react";
 import ModifyPostForm from "./pages/post/modify/ModifyPostForm";
 import CustomerService from "./pages/myPage/CustomerService";
 
@@ -38,12 +41,21 @@ import QnaList from "./pages/myPage/QnaList.jsx";
 import ReportManagement from "./admin/ReportManagement.jsx";
 
 import ParticleCursor from "./components/ParticleCursor.jsx";
+import PostView from "./pages/postView/PostView.jsx";
 
 function App() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const nav = useNavigate();
   const onClickButton = () => {
     nav("/new");
   };
+
+  useEffect(() => {
+    dispatch(verifyToken());
+  }, [dispatch]);
+
+
   return (
     <>
       {/* <ParticleCursor /> */}
@@ -57,6 +69,7 @@ function App() {
             <Route path="history" element={<MyHistory />} />
             <Route path="transaction" element={<MyTransaction />} />
             <Route path="preferences" element={<Preferences />} />
+
             <Route path="information" element={<MyInformation />} />
             <Route path="customer-service" element={<CustomerService />} />
             <Route path="settings" element={<MySettings />} />
@@ -73,6 +86,7 @@ function App() {
           <Route path="jobs" element={<BoardList category="JOB_SEARCH" />} />
           <Route path="new-post" element={<NewPostForm />}></Route>
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
+          <Route path="post/:postId" element={<PostView />} />
           <Route path="login" element={<Login />} />
           <Route path="/login/kakao" element={<KakaoLoginCallback />} />
           <Route path="/login/naver" element={<NaverLoginCallback />} />

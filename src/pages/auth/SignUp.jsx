@@ -6,9 +6,10 @@ import UserButton from "../../components/UserButton.jsx";
 import AuthTemplate from "../../components/auth/AuthTemplate.jsx";
 import AddressModal from "../../components/auth/AddressModal.jsx";
 import ImageUpload from '../../components/ImageUpload.jsx';
-import EmailVerificationButton from '../../components/EmailVerification.jsx';
+import EmailVerificationButton from '../../components/auth/EmailVerification.jsx';
 import React, { useState, useEffect } from "react";
 import BirthDatePicker from '../../components/BirthDatePicker.jsx';
+import NicknameDoublecheck from "../../components/auth/NicknameDoublechck.jsx";
 import {Modal} from "antd";
 
 const Label = styled.label`
@@ -86,6 +87,7 @@ const SignUp = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [address, setAddress] = useState('');
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
   const [photo, setProfileImageUrl] = useState('');
   const [birthDate, setBirthDate] = useState(null);
   const location = useLocation();
@@ -133,6 +135,15 @@ const SignUp = () => {
   const handleSuccessModalOk = () => {
     setIsSuccessModalVisible(false);
     navigate('/');
+  };
+
+  const handleNicknameCheckComplete = (available) => {
+    setIsNicknameAvailable(available);
+    if (available) {
+      clearErrors('nickname');
+    } else {
+      setValue('nickname', '', { shouldValidate: true });
+    }
   };
 
   const handleAddressSearch = () => setIsModalOpen(true);
@@ -235,9 +246,15 @@ const SignUp = () => {
             <Input
                 type="text"
                 placeholder="닉네임"
-                {...register('nickname', { required: '닉네임은 필수 입력 사항입니다.' })}
+                {...register('nickname', {
+                  required: '닉네임은 필수 입력 사항입니다.',
+                  validate: () => isNicknameAvailable || '닉네임 중복 확인이 필요합니다.'
+                })}
             />
-            <Button type="button">중복확인</Button>
+            <NicknameDoublecheck
+                nickname={watch('nickname')}
+                onCheckComplete={handleNicknameCheckComplete}
+            />
           </InputGroup>
           {errors.nickname && <ErrorMessage>{errors.nickname.message}</ErrorMessage>}
 
