@@ -6,6 +6,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import VerificationCodeModal from './VerificationCodeModal';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import UpdatePassword from "./UpdatePassword.jsx";
 
 const StyledModal = styled(Modal)`
   .ant-modal-content {
@@ -90,10 +91,19 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const CenteredModalWrapper = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+`;
+
 const FindPassword = ({ onClose }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isNewPasswordModalVisible, setIsNewPasswordModalVisible] = useState(false);
   const [email, setEmail] = useState('');
 
   const onFinish = async (values) => {
@@ -124,6 +134,8 @@ const FindPassword = ({ onClose }) => {
     }
   };
 
+  const [memberId, setMemberId] = useState(null);
+
   const handleVerificationSubmit = async (verificationCode) => {
     try {
       const response = await axios.post('http://localhost:8080/api/v1/mail/authCheck', {
@@ -133,6 +145,8 @@ const FindPassword = ({ onClose }) => {
 
       if (response.status === 200) {
         setIsModalVisible(false);
+        setMemberId(response.data.memberId);  // memberId 저장
+        setIsNewPasswordModalVisible(true);  // 새 비밀번호 모달 열기
         toast.success(
             `인증이 완료되었습니다.
                       새 비밀번호를 설정해주세요.`,
@@ -151,6 +165,15 @@ const FindPassword = ({ onClose }) => {
         style: { background: '#43312A', color: 'white' }
       });
     }
+  };
+
+  const handlePasswordChanged = () => {
+    // 토스트 알림이 끝난 후에 모달을 닫도록 설정
+    setTimeout(() => {
+      setIsNewPasswordModalVisible(false);
+      onClose(); // FindPassword 모달 닫기
+      // 추가적인 로직 (예: 로그인 페이지로 리디렉션)
+    }, 1000); // 1초 후에 실행 (토스트 알림의 기본 지속 시간에 따라 조정 가능)
   };
 
   return (
@@ -185,11 +208,22 @@ const FindPassword = ({ onClose }) => {
           </Form.Item>
         </Form>
 
-        <VerificationCodeModal
-            visible={isModalVisible}
-            onCancel={() => setIsModalVisible(false)}
-            onSubmit={handleVerificationSubmit}
-        />
+        <CenteredModalWrapper>
+          <VerificationCodeModal
+              visible={isModalVisible}
+              onCancel={() => setIsModalVisible(false)}
+              onSubmit={handleVerificationSubmit}
+          />
+        </CenteredModalWrapper>
+
+        <CenteredModalWrapper>
+          <UpdatePassword
+              visible={isNewPasswordModalVisible}
+              onCancel={() => setIsNewPasswordModalVisible(false)}
+              memberId={memberId}
+              onPasswordChanged={handlePasswordChanged}
+          />
+        </CenteredModalWrapper>
       </>
   );
 };
