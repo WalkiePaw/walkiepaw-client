@@ -120,7 +120,6 @@ const ReportManagement = () => {
     });
   };
 
-
   // 날짜 설정
   const formatTime = (dateString) => {
     const date = new Date(dateString);
