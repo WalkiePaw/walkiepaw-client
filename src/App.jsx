@@ -18,11 +18,11 @@ import Preferences from './pages/myPage/Preferences';
 import React from 'react';
 import CustomerService from './pages/myPage/CustomerService';
 import MyTransaction from './pages/myPage/MyTransaction.jsx';
-import KakaoLoginCallback from './components/oAuth/KakaoLoginCallback.jsx';
-import NaverLoginCallback from './components/oAuth/NaverLoginCallback.jsx';
-import GoogleLoginCallback from './components/oAuth/GoogleLoginCallback.jsx';
+import KakaoLoginCallback from './components/auth/KakaoLoginCallback.jsx';
+import NaverLoginCallback from './components/auth/NaverLoginCallback.jsx';
+import GoogleLoginCallback from './components/auth/GoogleLoginCallback.jsx';
 import Review from './components/Review.jsx';
-import SignUp from './pages/oAuth/SignUp.jsx';
+import SignUp from './pages/auth/SignUp.jsx';
 import ChatPage from './pages/chatroom/ChatPage.jsx';
 import CSManagement from './admin/CSManagement.jsx';
 import Admin from './admin/Admin.jsx';
@@ -32,10 +32,10 @@ import ReportManagement from './admin/ReportManagement.jsx';
 import BoardList from './pages/boardlist/BoardList.jsx';
 import NewPostForm from './pages/post/new/NewPostForm.jsx';
 import ModifyPostForm from './pages/post/modify/ModifyPostForm.jsx';
-import PostView from './pages/postView/PostView.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ParticleCursor from './components/ParticleCursor.jsx';
+import PostView from './pages/postView/PostView';
 
 function App() {
   const nav = useNavigate();
@@ -68,6 +68,7 @@ function App() {
           <Route path="jobs" element={<BoardList category="JOB_SEARCH" />} />
           <Route path="new-post" element={<NewPostForm />}></Route>
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
+          <Route path="post/:postId" element={<PostView />} />
           <Route path="login" element={<Login />} />
           <Route path="/login/kakao" element={<KakaoLoginCallback />} />
           <Route path="/login/naver" element={<NaverLoginCallback />} />
