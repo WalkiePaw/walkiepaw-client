@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Modal } from 'antd';
 import styled from 'styled-components';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { FaCheck } from 'react-icons/fa';
 
 const Button = styled.button`
   padding: 1rem;
@@ -31,8 +34,9 @@ const NicknameDoublecheck = ({ nickname, onCheckComplete }) => {
   const handleCheck = async () => {
     console.log('checking nickname:' , nickname);
     if (!nickname || nickname.trim() === '') {
-      setCheckResult('닉네임을 입력해주세요.');
-      setIsModalVisible(true);
+      toast.error("닉네임을 입력해주세요.", {
+        style: { background: '#43312A', color: 'white' }
+      });
       return;
     }
 
