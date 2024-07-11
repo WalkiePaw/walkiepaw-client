@@ -1,10 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
+import { initial } from 'lodash';
 
-const ImageUpload = ({ onImageUpload }) => {
+const ImageUpload = ({ onImageUpload, initialImage }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (initialImage) {
+      setImagePreview(initialImage);
+    }
+  }, [initialImage]);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -74,6 +82,11 @@ const ImageUpload = ({ onImageUpload }) => {
         </div>
       </div>
   );
+};
+
+ImageUpload.propTypes = {
+  onImageUpload: PropTypes.func.isRequired,
+  initialImage: PropTypes.string,
 };
 
 export default ImageUpload;
