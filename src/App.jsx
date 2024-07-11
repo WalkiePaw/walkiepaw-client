@@ -68,6 +68,7 @@ function App() {
           <Route path="jobs" element={<BoardList category="JOB_SEARCH" />} />
           <Route path="new-post" element={<NewPostForm />}></Route>
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
+          <Route path="post/:postId" element={<PostView />} />
           <Route path="login" element={<Login />} />
           <Route path="/login/kakao" element={<KakaoLoginCallback />} />
           <Route path="/login/naver" element={<NaverLoginCallback />} />
