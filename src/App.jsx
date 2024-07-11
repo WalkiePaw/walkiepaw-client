@@ -11,23 +11,23 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Routes, Route, useNavigate } from "react-router-dom";
 
 import Notfound from "./components/Notfound";
-import MyPage from "./pages/myPage/MyPage";
-import MyPageLayout from "./pages/myPage/MyPageLayout";
-import MyHistory from "./pages/myPage/MyHistory";
-import MySettings from "./pages/myPage/MySettings";
-import MembershipWithdrawal from "./pages/myPage/MembershipWithdrawal";
+import MyPage from "./pages/mypage/MyPage";
+import MyPageLayout from "./pages/mypage/MyPageLayout";
+import MyHistory from "./pages/mypage/MyHistory";
+import MySettings from "./pages/mypage/MySettings";
+import MembershipWithdrawal from "./pages/mypage/MembershipWithdrawal";
 
-import MyInformation from "./pages/myPage/MyInformation";
+import MyInformation from "./pages/mypage/MyInformation";
 import NewPostForm from "./pages/post/new/NewPostForm";
 import Login from "./pages/Login";
 import Dashboard from "/src/pages/dashboard/Dashboard";
 import PostList from "/src/pages/dashboard/PostList";
 import Introduction from "/src/pages/dashboard/Introduction";
-import Preferences from "./pages/myPage/Preferences";
+import Preferences from "./pages/mypage/Preferences";
 import ModifyPostForm from "./pages/post/modify/ModifyPostForm";
-import CustomerService from "./pages/myPage/CustomerService";
+import CustomerService from "./pages/mypage/CustomerService";
 
-import MyTransaction from "./pages/myPage/MyTransaction.jsx";
+import MyTransaction from "./pages/mypage/MyTransaction.jsx";
 import KakaoLoginCallback from "./components/auth/KakaoLoginCallback.jsx";
 import NaverLoginCallback from "./components/auth/NaverLoginCallback.jsx";
 import GoogleLoginCallback from "./components/auth/GoogleLoginCallback.jsx";
@@ -37,7 +37,7 @@ import ChatPage from "./pages/chatroom/ChatPage.jsx";
 import CSManagement from "./admin/CSManagement.jsx";
 import Admin from "./admin/Admin.jsx";
 import MemberList from "./admin/MemberList.jsx";
-import QnaList from "./pages/myPage/QnaList.jsx";
+import QnaList from "./pages/mypage/QnaList.jsx";
 import ReportManagement from "./admin/ReportManagement.jsx";
 
 import ParticleCursor from "./components/ParticleCursor.jsx";

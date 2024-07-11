@@ -27,7 +27,7 @@ export const verifyToken = createAsyncThunk(
         };
         return userInfo;
       } catch (error) {
-        return rejectWithValue('Token verification failed');
+        return rejectWithValue(error.response?.data?.message || 'Token verification failed');
       }
     }
 );
