@@ -8,7 +8,7 @@ import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 const CardList = ({
   title,
   location,
-  image,
+  photoUrls,
   memberNickName,
   status,
   category,
@@ -104,7 +104,11 @@ const CardList = ({
         {priceType === 'HOURLY' && '시급'} {priceType === 'DAILY' && '일급'} 금액: {formatToKRW(price)}원
       </div>
       <div className="CardImageBox">
-        <img className="CardImage" src={image} alt="card" />
+        {photoUrls && photoUrls.length > 0 ? (
+          <img className="CardImage" src={photoUrls} alt="card" />
+        ) : (
+          <div className="NoImagePlaceholder">No Image Available</div>
+        )}
       </div>
       <div className="Icons">
         <div className="Icon" onClick={handleLike}>

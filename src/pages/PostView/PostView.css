@@ -13,9 +13,13 @@
   flex-direction: column;
 }
 
-.image-slider {
+.carousel-root {
+  margin-bottom: 5%;
+}
+
+.slider-container {
   display: flex;
-  overflow-x: auto;
+  transition: transform 0.3s ease-in-out;
 }
 
 .post-image {
