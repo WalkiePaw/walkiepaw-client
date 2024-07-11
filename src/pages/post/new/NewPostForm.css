@@ -144,18 +144,26 @@
   display: flex;
   flex-wrap: nowrap;
   overflow: hidden;
-  width: 100%;
   margin: 0 32px;
   margin-bottom: 28px;
 }
 
-.image-preview {
+.image-preview-wrapper {
+  position: relative;
   border: 1px solid;
-  width: 30%;
   height: 100px;
   object-fit: cover;
   margin: 0 5px;
 }
+
+.image-preview {
+  width: 122px;
+  height: 98px;
+  max-width: 100%; /* 너비가 최대 이미지 너비를 초과하지 않도록 설정 */
+  max-height: 100%; /* 높이가 최대 이미지 높이를 초과하지 않도록 설정 */
+  object-fit: cover; /* 이미지를 컨테이너에 맞춰 자르기 */
+}
+
 .image-slider button {
   background: none;
   border: none;
@@ -166,6 +174,19 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.remove-image-button {
+  position: absolute;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: #a7a7a7;
+  padding: 10px;
+  position: absolute;
+  top: 50%;
+  transform: translate(175%, -133%);
 }
 
 .image-slider .prev-button {
@@ -182,6 +203,7 @@
   margin-right: 8%;
 }
 .switch-container {
+  width: 100%;
   display: flex;
   align-items: center;
 }
