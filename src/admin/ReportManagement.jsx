@@ -46,23 +46,22 @@ const ReportManagement = () => {
     fetchReports();
   }, [fetchReports]);
 
-  const handleAction = async (id, action, reportType, currentStatus) => {
+  const handleAction = async (reportId, action, reportType, currentStatus) => {
     try {
       let endpoint;
       let status;
-      const id = 1;
       if (reportType === 'board') {
         status = action === 'blind' ? 'blind' : action === 'ignore' ? 'ignore' : 'UNRESOLVED';
-        endpoint = `http://localhost:8080/api/v1/boardReports/${id}/${status}`;
+        endpoint = `http://localhost:8080/api/v1/boardReports/${reportId}/${status}`;
       } else if (reportType === 'member') {
         status = action === 'ban' ? 'ban' : action === 'ignore' ? 'ignore' : 'UNRESOLVED';
-        endpoint = `http://localhost:8080/api/v1/memberReports/${id}/${status}`;
+        endpoint = `http://localhost:8080/api/v1/memberReports/${reportId}/${status}`;
       }
       
       // 현재 상태와 새로운 상태가 다를 때만 API 호출
       if (currentStatus !== status) {
         await axios.patch(endpoint);
-        fetchReports();
+        fetchReports(); // 상태 변경 후 보고서 목록을 다시 불러옵니다.
       }
       setError(null);
     } catch (err) {
@@ -73,18 +72,55 @@ const ReportManagement = () => {
 
   // 처리되지 않은 항목만 보기
   const filteredReports = unresolvedOnly
-    ? reports.filter(report => report.status === 'UNRESOLVED')
-    : reports;
+  ? reports.filter(report => report.status === 'UNRESOLVED' || report.status == null)
+  : reports;
 
   // 관리 상태 텍스트로 변환
   const getStatusText = (status, reportType) => {
-    if (status === 'UNRESOLVED') return '미처리';
+    if (status === 'UNRESOLVED' || status == null) return '미처리';
     if (reportType === 'board') {
       return status === 'blind' ? '제한된 게시글' : '신고 무시';
     } else {
       return status === 'ban' ? '영구정지' : '신고 무시';
     }
   };
+
+  // 게시판 신고 사유가 '기타'일 경우 || 회원 신고일 경우 신고 내용 확인 가능 
+  const fetchReportContent = async (id) => {
+    try {
+      const endpoint = reportType === 'board'
+      ? `http://localhost:8080/api/v1/boardReports/${id}`
+      : `http://localhost:8080/api/v1/memberReports/${id}`;
+      const response = await axios.get(endpoint);
+      return response.data.content;
+    } catch (error) {
+      console.error('Error fetching report content:', error);
+      return '내용을 가져오는 데 실패했습니다.';
+    }
+  };
+
+  const showReportContent = async (id) => {
+    Swal.fire({
+      title: '내용 로딩 중...',
+      text: '잠시만 기다려주세요.',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      willOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    const content = await fetchReportContent(id, reportType);    
+    
+    Swal.fire({
+      title: '신고 내용',
+      text: content,
+      icon: 'info',
+      confirmButtonText: '확인'
+    });
+  };
+
+
   // 날짜 설정
   const formatTime = (dateString) => {
     const date = new Date(dateString);
@@ -156,9 +192,21 @@ const ReportManagement = () => {
                   <td className='py-2 px-4'>
                     {reportType === 'board' ? report.boardWriterName : report.reportedMemberName}
                   </td>
-                  <td className="py-2 px-4 cursor-pointer">
-                    {reportType === 'board' ? report.boardTitle : report.title}
-                  </td>            
+                  <td className="py-2 px-4">
+                    {(reportType === 'board' && report.reason === 'ETC') || reportType === 'member' ? (
+                      <span 
+                        className="cursor-pointer hover:underline"
+                        onClick={() => showReportContent(
+                          reportType === 'board' ? report.boardReportId : report.memberReportId,
+                          reportType
+                        )}
+                      >
+                        {reportType === 'board' ? report.boardTitle : report.title}
+                      </span>
+                    ) : (
+                      reportType === 'board' ? report.boardTitle : report.title
+                    )}
+                  </td>
                   <td className="py-2 px-4">
                     {reportType === 'board' 
                       ? formatTime(report.boardWriterCreatedDate)
@@ -170,11 +218,16 @@ const ReportManagement = () => {
                       : MemberReportCategory[report.reason]}
                   </td>
                   <td className="py-2 px-4">
-                    {report.status === 'UNRESOLVED' ? (
+                    {report.status === 'UNRESOLVED' || report.status == null ? (
                       <select 
-                        onChange={(e) => handleAction(report.id, e.target.value, reportType, report.status)}
+                        onChange={(e) => handleAction(
+                          report.id, 
+                          e.target.value, 
+                          reportType === 'board' ? report.boardReportId : report.memberReportId, 
+                          report.status
+                        )}
                         className="border rounded px-2 py-1"
-                        defaultValue=""
+                        value= {report.status || ""}
                       >
                         <option value="" disabled>선택</option>
                         {reportType === 'board'  ? (

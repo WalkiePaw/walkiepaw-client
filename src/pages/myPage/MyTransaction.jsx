@@ -11,9 +11,9 @@ const MyTransaction = () => {
 
   const fetchTransactions = async () => {
     try {
-      const chatroomId = 1;
+      const memberId = 2;
       const response = await axios.get(
-        `http://localhost:8080/api/v1/chatrooms/${chatroomId}/transaction`,
+        `http://localhost:8080/api/v1/chatrooms/${memberId}/transaction`,
         {
           params: {
             page: 0,
@@ -40,14 +40,18 @@ const MyTransaction = () => {
 
   const handleReviewClick = (transaction) => {
     MySwal.fire({
-      title: '리뷰 작성',
-      html: <ReviewForm onSubmit={(reviewData) => {
-        MySwal.close();
-        saveReview(transaction, reviewData);
-      }} />,
+      title: "리뷰 작성",
+      html: (
+        <ReviewForm
+          onSubmit={(reviewData) => {
+            MySwal.close();
+            saveReview(transaction, reviewData);
+          }}
+        />
+      ),
       showConfirmButton: false,
       showCloseButton: true,
-      width: '500px',
+      width: "500px",
     });
   };
 
@@ -55,8 +59,8 @@ const MyTransaction = () => {
     const reviewSaveRequest = {
       point: reviewData.points,
       content: reviewData.content,
-      chatroomId:transaction.chatroomId,
-      reviewerId: 1, // 현재 로그인한 사용자의 ID
+      chatroomId: transaction.chatroomId,
+      reviewerId: 2, // 현재 로그인한 사용자의 ID
       category: transaction.category,
     };
 
@@ -131,7 +135,9 @@ const MyTransaction = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {transactions.map((transaction) => (
               <tr key={transaction.id}>
-                <td className="px-6 py-4 whitespace-nowrap">{transaction.title}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {transaction.title}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {transaction.memberNickName}
                 </td>
