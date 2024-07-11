@@ -65,12 +65,12 @@ const NewPostForm = () => {
   };
 
   const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === Math.floor((photos.length - 1) / 4) ? 0 : prevSlide + 1));
+    setCurrentSlide((prevSlide) => (prevSlide === photoUrls.length - 1 ? 0 : prevSlide + 1));
   };
 
   const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === 0 ? Math.floor((photos.length - 1) / 4) : prevSlide - 1));
-  };
+    setCurrentSlide((prevSlide) => (prevSlide === 0 ? photoUrls.length - 1 : prevSlide - 1));
+  }; // 이미지 무한 루프
 
   const handleRemovePhoto = (index) => {
     const updatedPhotos = [...photos];

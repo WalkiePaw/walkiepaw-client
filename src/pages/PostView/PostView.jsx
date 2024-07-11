@@ -123,14 +123,6 @@ const PostView = () => {
     }
   };
 
-  const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === photoUrls.length - 1 ? 0 : prevSlide + 1));
-  };
-
-  const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === 0 ? photoUrls.length - 1 : prevSlide - 1));
-  }; // 이미지 무한 루프
-
   const formatTime = (dataTimeString) => {
     const date = new Date(dataTimeString);
     const hours = date.getHours().toString().padStart(2, '0');
@@ -183,7 +175,13 @@ const PostView = () => {
     <div className="post-view">
       <div className="post-content">
         {photoUrls.length > 0 && (
-          <Carousel className="carousel-root" showThumbs={false} selectedItem={currentSlide} onChange={setCurrentSlide}>
+          <Carousel
+            className="carousel-root"
+            showThumbs={false}
+            selectedItem={currentSlide}
+            onChange={setCurrentSlide}
+            infiniteLoop
+          >
             {photoUrls.map((photo, index) => (
               <div key={index}>
                 <img src={photo} alt={`Slide ${index + 1}`} className="post-image" />
