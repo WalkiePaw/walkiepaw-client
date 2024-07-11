@@ -95,15 +95,13 @@ const ModifyPostForm = () => {
     }
   };
 
-  // 다음 사진 슬라이드를 표시하는 함수
   const handleNextSlide = () => {
     setCurrentSlide((prevSlide) => (prevSlide === photoUrls.length - 1 ? 0 : prevSlide + 1));
   };
 
-  // 이전 사진 슬라이드를 표시하는 함수
   const handlePrevSlide = () => {
     setCurrentSlide((prevSlide) => (prevSlide === 0 ? photoUrls.length - 1 : prevSlide - 1));
-  };
+  }; // 이미지 무한 루프
 
   // 폼 제출 처리 함수
   const handleSubmit = async (event) => {
