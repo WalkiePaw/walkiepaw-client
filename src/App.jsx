@@ -30,7 +30,7 @@ import Admin from './admin/Admin.jsx';
 import MemberList from './admin/MemberList.jsx';
 import QnaList from './pages/mypage/QnaList.jsx';
 import ReportManagement from './admin/ReportManagement.jsx';
-import BoardList from './pages/boardList/BoardList.jsx';
+import BoardList from './pages/boardlist/BoardList.jsx';
 import NewPostForm from './pages/post/new/NewPostForm.jsx';
 import ModifyPostForm from './pages/post/modify/ModifyPostForm.jsx';
 import { ToastContainer } from 'react-toastify';
