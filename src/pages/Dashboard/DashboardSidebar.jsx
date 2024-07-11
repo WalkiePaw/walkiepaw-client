@@ -14,7 +14,7 @@ const DashboardSidebar = () => {
   const [counts, setCounts] = useState({ recruitCount: 0, researchCount: 0 });
 
   useEffect(() => {
-    const memberId = 1; // 로그인한 사용자의 ID를 가져옴
+    const memberId = 2; // 로그인한 사용자의 ID를 가져옴
 
     if (memberId) {
       axios.get(`http://localhost:8080/api/v1/members/${memberId}`)

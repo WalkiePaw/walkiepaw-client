@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 const ImageUpload = ({ onImageUpload }) => {
   const [imagePreview, setImagePreview] = useState(null);
@@ -74,6 +75,10 @@ const ImageUpload = ({ onImageUpload }) => {
         </div>
       </div>
   );
+};
+
+ImageUpload.propTypes = {
+  onImageUpload: PropTypes.func.isRequired,
 };
 
 export default ImageUpload;
