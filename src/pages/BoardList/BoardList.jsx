@@ -7,6 +7,8 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 
 const BoardList = () => {
   const [posts, setPosts] = useState([]); // 게시글 목록을 저장
@@ -20,12 +22,24 @@ const BoardList = () => {
   const [searchResultMessage, setSearchResultMessage] = useState(''); // 검색 결과 메시지
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const { user } = useSelector((state) => state.auth); // 로그인한 유저의 정보를 가져온다
 
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
 
-  const memberNickName = '헬스유투버'; // 로그인 유저의 임시 id 나중에 바꿔야 함
-  const memberId = 1;
+  // const memberNickName = '헬스유투버'; // 로그인 유저의 임시 id 나중에 바꿔야 함
+  // const memberId = 1;
+  const [memberId, setMemberId] = useState(null);
+
+  // JWT 토큰을 디코딩하여 사용자 정보를 추출
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      console.log(decodedToken);
+      setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
+    }
+  }, []);
 
   // location의 값에서 '동'이 포함된 값만 추출
   const dongFromLocal = (location) => {
@@ -164,7 +178,7 @@ const BoardList = () => {
     navigate(`/post/${post.id}`, {
       state: {
         post,
-        memberNickName,
+        // memberNickName,
         memberId,
         detailedLocation: post.detailedLocation,
         priceProposal: post.priceProposal,

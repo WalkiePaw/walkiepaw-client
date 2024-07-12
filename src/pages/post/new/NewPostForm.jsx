@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import KakaoMap from '../../../modules/Kakao';
 import './NewPostForm.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faChevronLeft, faChevronRight, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
@@ -21,8 +22,19 @@ const NewPostForm = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [category, setCategory] = useState('JOB_OPENING');
 
+  const [memberId, setMemberId] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      console.log(decodedToken);
+      setMemberId(decodedToken.memberId);
+    }
+  }, []);
+
   // const memberId = parseInt(localStorage.getItem('memberId')); // 로그인한 사용자의 ID를 가져옵니다.
-  const memberId = 1;
+  // const memberId = 1;
 
   const navigate = useNavigate();
 
