@@ -11,7 +11,7 @@ import { faGripLines } from "@fortawesome/free-solid-svg-icons";
 // axios 임포트
 import axios from "axios";
 
-const MyPageSidebar = ({ isSidebarOpen }) => {
+const MyPageSidebar = () => {
   const [memberData, setMemberData] = useState(null);
   const [score, setScore] = useState(0);
   const [counts, setCounts] = useState({ recruitCount: 0, researchCount: 0 });
@@ -62,15 +62,10 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
     }
   }, []);
 
-  // const handleImageUpload = (newImageUrl) => {
-  //   setProfileImage(newImageUrl);
-  // };
-
   return (
     <div className={"w-80 h-screen bg-gray-100 p-4"}>
       <div className="text-center mt-5 mb-3">
         <ImageUpload
-          // onImageUpload={handleImageUpload}
           initialImage={profileImage}
           readOnly={!!profileImage} 
         />

@@ -10,7 +10,6 @@ const QnaList = () => {
   const [qnaList, setQnaList] = useState([]);
 
   useEffect(() => {
-    // 백엔드에서 QnA 리스트를 가져옴
     const fetchQnaList = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/v1/qna');
@@ -29,19 +28,21 @@ const QnaList = () => {
       const qna = response.data;
       Swal.fire({
         title: '답변 상세 정보',
-        html: `
-    <div class="bg-white p-4 rounded-lg shadow-md">
-      <p class="mb-3"><strong>문의 제목:</strong> ${qna.title}</p>
-      <div class="border-t border-gray-200 pt-4">
-        <p class="mb-2"><strong>문의 내용:</strong></p>
-        <textarea class="w-full p-2 rounded resize-none" rows="3" readonly>${qna.content}</textarea>
-      </div>
-      <div class="border-t border-gray-200 pt-4">
-        <p class="mb-2"><strong>관리자 답변:</strong></p>
-        <textarea class="w-full p-2 rounded resize-none" rows="3" readonly>${qna.reply}</textarea>
-      </div>
-    </div>
-        `,
+        html:
+            `
+            <div class="bg-white p-4 rounded-lg shadow-md">
+              <p class="mb-3"><strong>문의 제목:</strong> ${qna.title}</p>
+              <div class="border-t border-gray-200 pt-4">
+                <p class="mb-2"><strong>문의 내용:</strong></p>
+                <textarea class="w-full p-2 rounded resize-none" rows="3" readonly>${qna.content}</textarea>
+              </div>
+              <div class="border-t border-gray-200 pt-4">
+                <p class="mb-2"><strong>관리자 답변:</strong></p>
+                <textarea class="w-full p-2 rounded resize-none" rows="3" readonly>${qna.reply}</textarea>
+              </div>
+            </div>
+            `
+          ,
         showCloseButton: true,
         showConfirmButton: false
       });
