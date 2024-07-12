@@ -7,6 +7,7 @@ import PostReportModal from '../../components/reportModal/PostReportModal';
 import axios from 'axios';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Carousel 스타일 가져오기
+import { jwtDecode } from 'jwt-decode';
 
 const PostView = () => {
   const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
@@ -23,7 +24,18 @@ const PostView = () => {
   // BoardList에서 로그인한 유저의 id와 nickname을 가져옴
 
   const [memberNickName, setMemberNickname] = useState(location?.state?.memberNickName);
-  const [memberId, setMemberId] = useState(location?.state?.memberId);
+  // const [memberId, setMemberId] = useState(location?.state?.memberId);
+  const [memberId, setMemberId] = useState(null);
+
+  // JWT 토큰을 디코딩하여 사용자 정보를 추출
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      console.log(decodedToken);
+      setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
+    }
+  }, []);
 
   useEffect(() => {
     console.log('useEffect 실행 되었다!');
@@ -183,7 +195,7 @@ const PostView = () => {
             infiniteLoop
           >
             {photoUrls.map((photo, index) => (
-              <div key={index}>
+              <div key={index} className="post-image-container">
                 <img src={photo} alt={`Slide ${index + 1}`} className="post-image" />
               </div>
             ))}
