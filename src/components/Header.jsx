@@ -131,17 +131,25 @@ const Header = () => {
         <nav>
           <Menus>
             <li>
-              <NavLink to="/recruit" activeClassName="active">
+              <NavLink to="/recruit" 
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
                 산책인 모집글
               </NavLink>
             </li>
             <li>
-              <NavLink to="/jobs" activeClassName="active">
+              <NavLink 
+                to="/jobs" 
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
                 알바 구직글
               </NavLink>
             </li>
             <li>
-              <NavLink to="/chatpage" activeClassName="active">
+              <NavLink
+                to="/chatpage"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
                 채팅
               </NavLink>
             </li>

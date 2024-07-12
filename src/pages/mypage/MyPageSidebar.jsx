@@ -97,8 +97,9 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/settings"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -110,8 +111,9 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/history"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -123,8 +125,9 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/transaction"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -136,8 +139,9 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/review"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -149,8 +153,9 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/preferences"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -165,8 +170,9 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/information"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -178,8 +184,9 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/withdrawal"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -194,8 +201,9 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/customer-service"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -207,8 +215,9 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/qna-list"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
