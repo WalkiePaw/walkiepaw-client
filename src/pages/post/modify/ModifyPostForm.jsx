@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './ModifyPostForm.css';
 import KakaoMap from '../../../modules/Kakao';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCamera, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faChevronLeft, faChevronRight, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 const ModifyPostForm = () => {
@@ -11,7 +11,7 @@ const ModifyPostForm = () => {
   const navigate = useNavigate(); // 페이지 이동을 위한 함수입니다.
   const initialPost = location?.state?.post; // 수정할 게시글의 초기 데이터를 가져옵니다.
   const [photos, setPhotos] = useState(initialPost?.photos || []); // 게시글의 이미지를 상태로 관리합니다.
-  const [imageURLs, setImageURLs] = useState([]);
+  const [photoUrls, setPhotoUrls] = useState(initialPost?.photoUrls || []);
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 슬라이드 인덱스를 상태로 관리합니다.
   const [category, setCategory] = useState(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바'); // 게시글의 카테고리 값을 가져온다.
   const [priceProposal, setPriceProposal] = useState(initialPost?.priceProposal || false);
@@ -43,7 +43,7 @@ const ModifyPostForm = () => {
       priceType: initialPost?.priceType === 'HOURLY' ? '시급' : '일급',
       priceProposal: initialPost?.priceProposal || false,
     });
-    setPhotos(initialPost?.photos || []);
+    setPhotoUrls(initialPost?.photoUrls || []);
     setCategory(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바');
     setPriceProposal(initialPost?.priceProposal || false);
   }, [initialPost]);
@@ -67,9 +67,15 @@ const ModifyPostForm = () => {
     });
   };
 
+  const handleRemovePhoto = (index) => {
+    const updatedPhotos = [...photos];
+    updatedPhotos.splice(index, 1);
+    setPhotos(updatedPhotos);
+  };
+
   const uploadImages = async (files) => {
     const urls = await Promise.all(files.map((file) => uploadImage(file)));
-    setImageURLs([...imageURLs, ...urls]);
+    setPhotoUrls([...photoUrls, ...urls]);
   };
 
   const uploadImage = async (file) => {
@@ -89,15 +95,13 @@ const ModifyPostForm = () => {
     }
   };
 
-  // 다음 사진 슬라이드를 표시하는 함수
   const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === Math.floor((photos.length - 1) / 4) ? 0 : prevSlide + 1));
+    setCurrentSlide((prevSlide) => (prevSlide === photoUrls.length - 1 ? 0 : prevSlide + 1));
   };
 
-  // 이전 사진 슬라이드를 표시하는 함수
   const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === 0 ? Math.floor((photos.length - 1) / 4) : prevSlide - 1));
-  };
+    setCurrentSlide((prevSlide) => (prevSlide === 0 ? photoUrls.length - 1 : prevSlide - 1));
+  }; // 이미지 무한 루프
 
   // 폼 제출 처리 함수
   const handleSubmit = async (event) => {
@@ -106,7 +110,7 @@ const ModifyPostForm = () => {
     // 수정된 게시글 정보를 생성
     const modifiedPost = {
       ...post, // 기존 게시글의 모든 속성을 복사합니다.
-      imageURLs,
+      photoUrls: photoUrls,
       priceType: post.priceType === '시급' ? 'HOURLY' : 'DAILY',
       price: parseInt(post.price),
       priceProposal: priceProposal,
@@ -170,14 +174,26 @@ const ModifyPostForm = () => {
           onChange={handleImageUpload}
           style={{ display: 'none' }}
         />
-        {photos.length > 0 && (
+        {photoUrls.length === 0 && <p className="image-required-text">첨부한 이미지의 첫 번째가 메인 사진입니다.</p>}
+        {photoUrls.length > 0 && (
           <div className="image-slider">
             <button className="prev-button" onClick={handlePrevSlide}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
             <div className="image-preview-container">
-              {photos.slice(currentSlide * 4, currentSlide * 4 + 4).map((image, index) => (
-                <img key={index} src={image} alt={`Uploaded Preview ${index}`} className="image-preview" />
+              {photoUrls.slice(currentSlide * 4, currentSlide * 4 + 4).map((image, index) => (
+                <div key={index} className="image-preview-wrapper">
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Uploaded Preview ${index}`}
+                    className="image-preview"
+                    style={{ aspectRatio: '1 / 1' }} // 이미지 비율을 1:1로 설정
+                  />
+                  <button onClick={() => handleRemovePhoto(currentSlide * 4 + index)}>
+                    <FontAwesomeIcon className="remove-image-button" icon={faTimesCircle} />
+                  </button>
+                </div>
               ))}
             </div>
             <button className="next-button" onClick={handleNextSlide}>

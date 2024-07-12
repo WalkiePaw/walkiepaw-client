@@ -17,6 +17,7 @@ import Introduction from '/src/pages/dashboard/Introduction';
 import Preferences from './pages/mypage/Preferences';
 import React from 'react';
 import CustomerService from './pages/mypage/CustomerService';
+import MyTransaction from './pages/mypage/MyTransaction.jsx';
 import KakaoLoginCallback from './components/auth/KakaoLoginCallback.jsx';
 import NaverLoginCallback from './components/auth/NaverLoginCallback.jsx';
 import GoogleLoginCallback from './components/auth/GoogleLoginCallback.jsx';
@@ -28,14 +29,13 @@ import Admin from './admin/Admin.jsx';
 import MemberList from './admin/MemberList.jsx';
 import QnaList from './pages/mypage/QnaList.jsx';
 import ReportManagement from './admin/ReportManagement.jsx';
-import BoardList from './pages/boardList/BoardList.jsx';
+import BoardList from './pages/boardlist/BoardList.jsx';
 import NewPostForm from './pages/post/new/NewPostForm.jsx';
 import ModifyPostForm from './pages/post/modify/ModifyPostForm.jsx';
-import PostView from './pages/postView/PostView.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import ParticleCursor from './components/ParticleCursor.jsx';
-import MyTransaction from './pages/mypage/MyTransaction.jsx';
+import PostView from './pages/postView/PostView';
 
 function App() {
   const nav = useNavigate();

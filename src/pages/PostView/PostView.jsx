@@ -5,6 +5,8 @@ import KakaoWithoutSearch from '../../modules/KakaoWithoutSearch';
 import pawpaw from './../../assets/pawpaw.png';
 import PostReportModal from '../../components/reportModal/PostReportModal';
 import axios from 'axios';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Carousel 스타일 가져오기
 
 const PostView = () => {
   const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
@@ -16,6 +18,7 @@ const PostView = () => {
   const [status, setStatus] = useState(post?.status || '모집중');
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 이미지 슬라이드 인덱스
   const [priceProposal, setPriceProposal] = useState(location.state?.priceProposal || false); // 가격 협의 상태
+  const [photoUrls, setPhotoUrls] = useState([]); // 사진을 빈배열로 셋팅
 
   // BoardList에서 로그인한 유저의 id와 nickname을 가져옴
 
@@ -28,11 +31,13 @@ const PostView = () => {
       console.log('패치포스트 시작!');
       try {
         const response = await axios.get(`http://localhost:8080/api/v1/boards/${postId}`);
-        console.log(response.data);
-        setPost(response?.data);
-        setStatus(response?.data?.status);
-        setPriceProposal(response?.data?.priceProposal);
-        setDetailedLocation(response?.data?.detailedLocation);
+        const postData = response?.data;
+        console.log(postData);
+        setPost(postData);
+        setStatus(postData?.status);
+        setPriceProposal(postData?.priceProposal);
+        setDetailedLocation(postData?.detailedLocation);
+        setPhotoUrls(postData?.photoUrls);
       } catch (error) {
         console.error('게시글을 가져오는 중 오류 발생', error);
       }
@@ -45,7 +50,7 @@ const PostView = () => {
 
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
-  const images = post.photos || []; // 게시글에 이미지가 없으면 빈 배열로 초기화
+  // const photoUrls = post.photoUrls || []; // 게시글에 이미지가 없으면 빈 배열로 초기화
 
   const handlerReport = (reason) => {
     console.log('신고 이유: ', reason);
@@ -62,11 +67,13 @@ const PostView = () => {
       });
       if (memberNickName !== post.memberNickName) {
         const response = await axios.get(`http://localhost:8080/api/v1/boards/${postId}`);
+        const updatePostData = response?.data || {};
         console.log('상태 변경 됐니?!', response);
-        setDetailedLocation(response?.data?.detailedLocation);
-        setPost(response?.data);
-        setStatus(response?.data?.status);
-        setPriceProposal(response?.data?.priceProposal);
+        setDetailedLocation(updatePostData?.detailedLocation);
+        setPost(updatePostData);
+        setStatus(updatePostData?.status);
+        setPriceProposal(updatePostData?.priceProposal);
+        setPhotoUrls(updatePostData?.photoUrls || []);
       }
       console.log(memberNickName);
       console.log(post.memberNickName);
@@ -74,9 +81,11 @@ const PostView = () => {
       console.log(detailedLocation);
       console.log(post.priceProposal);
       console.log(priceProposal);
+      console.log(photoUrls);
+      console.log(post.photoUrls);
     } catch (error) {
       console.error('상태 변경 안됨!', error);
-      alert('상태를 변경 오류!');
+      alert('상태를 변경할 수 없습니다.');
     }
   };
 
@@ -90,6 +99,7 @@ const PostView = () => {
           detailedLocation: detailedLocation,
           memberNickName: memberNickName,
           priceProposal: post.priceProposal,
+          photoUrls: post.photoUrls,
         },
       },
     });
@@ -111,14 +121,6 @@ const PostView = () => {
         alert('게시글을 삭제 할 수 없습니다.');
       }
     }
-  };
-
-  const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === post.images.length - 1 ? 0 : prevSlide + 1));
-  };
-
-  const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === post.images.length - 1 ? 0 : prevSlide - 1));
   };
 
   const formatTime = (dataTimeString) => {
@@ -172,18 +174,20 @@ const PostView = () => {
   return (
     <div className="post-view">
       <div className="post-content">
-        {images.length > 0 && (
-          <div className="image-slider">
-            <div className="slider-container">
-              <button className="prev-button" onClick={handlePrevSlide}>
-                &#10094;
-              </button>
-              <img src={images[currentSlide]} alt="Post" className="post-image" />
-              <button className="next-button" onClick={handleNextSlide}>
-                &#10095;
-              </button>
-            </div>
-          </div>
+        {photoUrls.length > 0 && (
+          <Carousel
+            className="carousel-root"
+            showThumbs={false}
+            selectedItem={currentSlide}
+            onChange={setCurrentSlide}
+            infiniteLoop
+          >
+            {photoUrls.map((photo, index) => (
+              <div key={index}>
+                <img src={photo} alt={`Slide ${index + 1}`} className="post-image" />
+              </div>
+            ))}
+          </Carousel>
         )}
         {memberNickName === post.memberNickName && (
           <div className="post-status">
@@ -211,7 +215,8 @@ const PostView = () => {
             </div>
           </div>
           <div className="rating">
-            <img src={pawpaw} alt="Rating" className="Rating-images" /> 5.0 {/* 서버에서 평균값을 받아서 출력해야함 */}
+            <img src={pawpaw} alt="Rating" className="Rating-photoUrls" /> 5.0{' '}
+            {/* 서버에서 평균값을 받아서 출력해야함 */}
           </div>
         </div>
         <div className="post-title">
