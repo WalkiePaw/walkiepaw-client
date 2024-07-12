@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import KakaoMap from '../../../modules/Kakao';
 import './NewPostForm.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCamera, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faChevronLeft, faChevronRight, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -15,8 +15,8 @@ const NewPostForm = () => {
   const [endTime, setEndTime] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState(''); // 지도의 위치와 주소
-  const [images, setImages] = useState([]);
-  const [imageURLs, setImageURLs] = useState([]); // 이미지를 저장한 URL을 저장
+  const [photos, setPhotos] = useState([]);
+  const [photoUrls, setPhotoUrls] = useState([]); // 이미지를 저장한 URL을 저장
   const [detailedLocation, setDetailedLocation] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [category, setCategory] = useState('JOB_OPENING');
@@ -38,14 +38,14 @@ const NewPostForm = () => {
     });
 
     Promise.all(newImages).then((results) => {
-      setImages([...images, ...results]);
+      setPhotos([...photos, ...results]);
       uploadImages(files); // 첨부한 이미지를 서버에 업로드
     });
   };
 
   const uploadImages = async (files) => {
     const urls = await Promise.all(files.map((file) => uploadImage(file)));
-    setImageURLs([...imageURLs, ...urls]);
+    setPhotoUrls([...photoUrls, ...urls]);
   };
 
   const uploadImage = async (file) => {
@@ -65,11 +65,21 @@ const NewPostForm = () => {
   };
 
   const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === Math.floor((images.length - 1) / 4) ? 0 : prevSlide + 1));
+    setCurrentSlide((prevSlide) => (prevSlide === photoUrls.length - 1 ? 0 : prevSlide + 1));
   };
 
   const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === 0 ? Math.floor((images.length - 1) / 4) : prevSlide - 1));
+    setCurrentSlide((prevSlide) => (prevSlide === 0 ? photoUrls.length - 1 : prevSlide - 1));
+  }; // 이미지 무한 루프
+
+  const handleRemovePhoto = (index) => {
+    const updatedPhotos = [...photos];
+    updatedPhotos.splice(index, 1);
+    setPhotos(updatedPhotos);
+
+    const updateUrls = [...photoUrls];
+    updateUrls.splice(index, 1);
+    setPhotoUrls(updateUrls);
   };
 
   const formatDateTimeLocal = (dateTimeString) => {
@@ -94,7 +104,7 @@ const NewPostForm = () => {
       content,
       location,
       detailedLocation,
-      images: imageURLs,
+      photoUrls,
       memberId,
       category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
       priceProposal,
@@ -153,15 +163,26 @@ const NewPostForm = () => {
           onChange={handleImageUpload}
           style={{ display: 'none' }}
         />
-        {images.length === 0 && <p className="image-required-text">첨부한 이미지의 첫 번째가 메인 사진입니다.</p>}
-        {images.length > 0 && (
+        {photos.length === 0 && <p className="image-required-text">첨부한 이미지의 첫 번째가 메인 사진입니다.</p>}
+        {photos.length > 0 && (
           <div className="image-slider">
             <button className="prev-button" onClick={handlePrevSlide}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
             <div className="image-preview-container">
-              {images.slice(currentSlide * 4, currentSlide * 4 + 4).map((image, index) => (
-                <img key={index} src={image} alt={`Uploaded Preview ${index}`} className="image-preview" />
+              {photos.slice(currentSlide * 4, currentSlide * 4 + 4).map((image, index) => (
+                <div key={index} className="image-preview-wrapper">
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Uploaded Preview ${index}`}
+                    className="image-preview"
+                    style={{ aspectRatio: '1 / 1' }} // 이미지 비율을 1:1로 설정
+                  />
+                  <button onClick={() => handleRemovePhoto(currentSlide * 4 + index)}>
+                    <FontAwesomeIcon className="remove-image-button" icon={faTimesCircle} />
+                  </button>
+                </div>
               ))}
             </div>
             <button className="next-button" onClick={handleNextSlide}>

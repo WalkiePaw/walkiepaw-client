@@ -54,7 +54,7 @@ const BoardList = () => {
         if (!category || !hasMore) return; // 카테고리가 없으면 요청하지 않도록 처리
 
         const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`, {
-          params: { page, size: 4 },
+          params: { page, size: 8 },
         }); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         console.log(response);
         const data = response?.data?.content ?? [];
@@ -168,6 +168,7 @@ const BoardList = () => {
         memberId,
         detailedLocation: post.detailedLocation,
         priceProposal: post.priceProposal,
+        photoUrls: post.photoUrls || [],
       },
     });
   };
@@ -220,7 +221,7 @@ const BoardList = () => {
                 priceType={post.priceType}
                 startTime={post.startTime}
                 endTime={post.endTime}
-                image={post.image}
+                photoUrls={post.photoUrls}
                 memberNickName={post.memberNickName}
                 status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
                 category={post.category} // 카테고리 정보 전달
