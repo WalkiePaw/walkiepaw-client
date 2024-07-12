@@ -99,21 +99,15 @@ const UpdatePassword = ({ visible, onCancel, memberId, onPasswordChanged }) => {
       });
 
       if (response.status === 204) {
-        toast.success('비밀번호가 성공적으로 변경되었습니다.', {
-          style: { background: '#E8C5A5', color: '#43312A' }
-        });
+        toast.success('비밀번호가 성공적으로 변경되었습니다.');
         onPasswordChanged();
         onCancel();
       } else {
-        toast.error('비밀번호 변경에 실패했습니다.', {
-          style: { background: '#43312A', color: 'white' }
-        });
+        toast.error('비밀번호 변경에 실패했습니다.');
       }
     } catch (error) {
       console.error('Password update failed:', error);
-      toast.error('비밀번호 변경 중 오류가 발생했습니다.', {
-        style: { background: '#43312A', color: 'white' }
-      });
+      toast.error('비밀번호 변경 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }

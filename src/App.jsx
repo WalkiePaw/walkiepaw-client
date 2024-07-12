@@ -43,6 +43,7 @@ import ReportManagement from "./admin/ReportManagement.jsx";
 
 import ParticleCursor from "./components/ParticleCursor.jsx";
 import PostView from "./pages/postView/PostView.jsx";
+import ProtectedChatRoute from "./store/ProtectedChatRoute.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -93,7 +94,10 @@ function App() {
           <Route path="/login/naver" element={<NaverLoginCallback />} />
           <Route path="/login/google" element={<GoogleLoginCallback />} />
           <Route path="signup" element={<SignUp />} />
-          <Route path="chatpage" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+
+          <Route element={<ProtectedChatRoute />}>
+            <Route path="chatpage" element={<ChatPage />} />
+          </Route>
 
 
 

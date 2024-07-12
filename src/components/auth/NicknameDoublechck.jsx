@@ -34,9 +34,7 @@ const NicknameDoublecheck = ({ nickname, onCheckComplete }) => {
   const handleCheck = async () => {
     console.log('checking nickname:' , nickname);
     if (!nickname || nickname.trim() === '') {
-      toast.error("닉네임을 입력해주세요.", {
-        style: { background: '#43312A', color: 'white' }
-      });
+      toast.error("닉네임을 입력해주세요.");
       return;
     }
 

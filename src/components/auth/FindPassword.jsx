@@ -149,21 +149,14 @@ const FindPassword = ({ onClose }) => {
         setIsNewPasswordModalVisible(true);  // 새 비밀번호 모달 열기
         toast.success(
             `인증이 완료되었습니다.
-                      새 비밀번호를 설정해주세요.`,
-            {
-              style: { background: '#E8C5A5', color: '#43312A' }
-            }
+                      새 비밀번호를 설정해주세요.`
         );
         // 여기에 새 비밀번호 설정 로직 추가
       } else {
-        toast.error("인증번호가 일치하지 않습니다.", {
-          style: { background: '#43312A', color: 'white' }
-        });
+        toast.error("인증번호가 일치하지 않습니다.");
       }
     } catch (error) {
-      toast.error("인증 과정에서 오류가 발생했습니다.", {
-        style: { background: '#43312A', color: 'white' }
-      });
+      toast.error("인증 과정에서 오류가 발생했습니다.");
     }
   };
 

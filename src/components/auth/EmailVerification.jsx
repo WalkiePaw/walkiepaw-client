@@ -33,9 +33,7 @@ const EmailVerificationButton = ({ newEmail, children }) => {
 
   const handleEmailChangeRequest = async () => {
     if (!newEmail) {
-      toast.error("유효한 이메일 주소를 입력해 주세요.", {
-        style: { background: '#43312A', color: 'white' }
-      });
+      toast.error("유효한 이메일 주소를 입력해 주세요.");
       return;
     }
 
@@ -48,16 +46,13 @@ const EmailVerificationButton = ({ newEmail, children }) => {
       setIsEmailVerificationSent(true);
 
       toast.success("이메일 인증 메일을 전송했습니다", {
-        style: { background: '#E8C5A5', color: '#43312A' },
         icon: <FaCheck style={{ color: '#43312A' }} />
       });
 
       setIsModalVisible(true);
     } catch (error) {
       console.error('이메일 변경 요청 중 오류 발생:', error);
-      toast.error("이메일 전송 중 오류가 발생했습니다", {
-        style: { background: '#43312A', color: 'white' }
-      });
+      toast.error("이메일 전송 중 오류가 발생했습니다");
     } finally {
       setIsLoading(false);
     }
@@ -73,18 +68,13 @@ const EmailVerificationButton = ({ newEmail, children }) => {
       if (response.status === 200) {
         setIsModalVisible(false);
         setIsEmailVerified(true);
-        toast.success("이메일 인증이 완료되었습니다", {
-          style: { background: '#E8C5A5', color: '#43312A' }
-        });
+        toast.success("이메일 인증이 완료되었습니다");
       }
     } catch (error) {
       console.error('이메일 인증 확인 중 오류 발생:', error);
       toast.error(
           `이메일 인증에 실패했습니다.
-                    인증 코드를 다시 확인해주세요.`,
-          {
-            style: { background: '#43312A', color: 'white' }
-          }
+                    인증 코드를 다시 확인해주세요.`
       );
     }
   };

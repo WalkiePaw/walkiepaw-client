@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {useDispatch} from "react-redux";
 import axios from 'axios';
 import {Button, Modal} from 'antd';
@@ -17,6 +17,7 @@ import { loginSuccess, loginFailure, setLoading } from "../store/AuthSlice.jsx";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [userInfo, setUserInfo] = useState({
     email: '',
     password: '',
@@ -81,9 +82,12 @@ const Login = () => {
       console.log('Login successful:', response.data);
       dispatch(loginSuccess({
         token: response.data.token,
-        user: response.data.user // 서버에서 사용자 정보를 반환한다고 가정
+        user: response.data.user
       }));
-      navigate('/');
+      // 로그인 성공 후 리다이렉트
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+
     } catch (error) {
       console.error('Login failed:', error.response ? error.response.data : error.message);
       dispatch(loginFailure(error.response?.data?.message || "로그인에 실패했습니다."));
