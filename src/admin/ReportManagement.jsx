@@ -61,7 +61,15 @@ const ReportManagement = () => {
       // 현재 상태와 새로운 상태가 다를 때만 API 호출
       if (currentStatus !== status) {
         await axios.patch(endpoint);
-        fetchReports(); // 상태 변경 후 보고서 목록을 다시 불러옵니다.
+        
+        // 로컬 상태 업데이트
+        setReports(prevReports => 
+          prevReports.map(report => 
+            (reportType === 'board' ? report.boardReportId : report.memberReportId) === reportId 
+              ? { ...report, status } 
+              : report
+          )
+        );
       }
       setError(null);
     } catch (err) {
@@ -220,9 +228,9 @@ const ReportManagement = () => {
                     {report.status === 'UNRESOLVED' || report.status == null ? (
                       <select 
                         onChange={(e) => handleAction(
-                          report.id, 
+                          reportType === 'board' ? report.boardReportId : report.memberReportId,
                           e.target.value, 
-                          reportType === 'board' ? report.boardReportId : report.memberReportId, 
+                          reportType, 
                           report.status
                         )}
                         className="border rounded px-2 py-1"

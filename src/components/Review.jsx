@@ -7,7 +7,7 @@ import axios from 'axios';
 const Review = ({reviewCount}) => {
   const [activeTab, setActiveTab] = useState('JOB_OPENING'); // 기본 선택 탭 설정: 산책, 알바
   const [reviews, setReviews] = useState([]); // 리뷰 데이터를 저장
-  const memberId = 1;
+  const memberId = 2;
 
   // 탭 클릭 핸들러
   const handleTabClick = (tab) => {
@@ -17,7 +17,7 @@ const Review = ({reviewCount}) => {
   // 모든 리뷰 데이터 가져오기
   const fetchReviews = (category, count) => {
     axios
-      .get(`http://localhost:8080/api/v1/reviews/${memberId}/reviewer`, {
+      .get(`http://localhost:8080/api/v1/reviews/${memberId}/reviewee`, {
         params: {
           page: 0,
           category: activeTab,

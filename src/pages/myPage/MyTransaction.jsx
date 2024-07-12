@@ -13,7 +13,7 @@ const MyTransaction = () => {
 
   const fetchTransactions = async (page = 0) => {
     try {
-      const memberId = 1;
+      const memberId = 2;
       const response = await axios.get(
         `http://localhost:8080/api/v1/chatrooms/${memberId}/transaction`,
       {

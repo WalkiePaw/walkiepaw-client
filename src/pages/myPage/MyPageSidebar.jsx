@@ -18,7 +18,7 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
-    const memberId = 1; // 로그인한 사용자의 ID를 가져옴
+    const memberId = 2; // 로그인한 사용자의 ID를 가져옴
 
     if (memberId) {
       axios
