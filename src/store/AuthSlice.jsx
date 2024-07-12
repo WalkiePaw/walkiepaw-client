@@ -14,7 +14,7 @@ export const verifyToken = createAsyncThunk(
         const decodedToken = jwtDecode(token);
         const userInfo = {
           id: decodedToken.id,  // 또는 decodedToken.memberId
-          email: decodedToken.sub,
+          email: decodedToken.email,
           authorities: decodedToken.authorities  // 권한 정보가 필요한 경우
         };
         return { user: userInfo, token };
@@ -57,7 +57,7 @@ const AuthSlice = createSlice({
 
       state.user = {
         id: decodedToken.id,  // 또는 decodedToken.memberId, 토큰에 사용된 키에 따라 다름
-        email: decodedToken.sub,  // JWT에서 일반적으로 'sub'는 subject를 의미하며, 여기서는 이메일로 사용됨
+        email: decodedToken.email,  // JWT에서 일반적으로 'sub'는 subject를 의미하며, 여기서는 이메일로 사용됨
         authorities: decodedToken.authorities  // 권한 정보가 필요한 경우
       };
       state.error = null;
@@ -112,7 +112,7 @@ const AuthSlice = createSlice({
       const decodedToken = jwtDecode(action.payload.token);
       state.user = {
         id: decodedToken.id,  // 또는 decodedToken.memberId
-        email: decodedToken.sub,
+        email: decodedToken.email,
         authorities: decodedToken.authorities  // 권한 정보가 필요한 경우
       };
       state.error = null;
