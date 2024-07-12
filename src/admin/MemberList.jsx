@@ -64,6 +64,38 @@ const StyledInput = styled.input`
   }
 `;
 
+// 회원 목록 표 css
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+`;
+
+const Th = styled.th`
+  background-color: #f8f8f8;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+  font-weight: bold;
+`;
+
+const Td = styled.td`
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+`;
+
+const Tr = styled.tr`
+  &:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  &:hover {
+    background-color: #f0f0f0;
+  }
+`;
 
 const MemberList = () => {
   const [members, setMembers] = useState([]);
@@ -162,32 +194,32 @@ const MemberList = () => {
             </StyledInputContainer>
           </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
+        <Table className="min-w-full bg-white border border-gray-200">
           <thead>
-            <tr>
-              <th className="px-4 py-2 border-b">번호</th>
-              <th className="px-4 py-2 border-b">Email</th>
-              <th className="px-4 py-2 border-b">이름</th>
-              <th className="px-4 py-2 border-b">닉네임</th>
-              <th className="px-4 py-2 border-b">가입일자</th>
-              <th className="px-4 py-2 border-b">누적 신고횟수</th>
-              <th className="px-4 py-2 border-b">상태</th>
-            </tr>
+            <Tr>
+              <Th>번호</Th>
+              <Th>Email</Th>
+              <Th>이름</Th>
+              <Th>닉네임</Th>
+              <Th>가입일자</Th>
+              <Th>누적 신고횟수</Th>
+              <Th>상태</Th>
+            </Tr>
           </thead>
           <tbody>
           {filteredMembers.map((member, index) => (
-            <tr key={member.id}>
-              <td className="px-4 py-2 border-b">{index + 1}</td>
-              <td className="px-4 py-2 border-b">{member.email}</td>
-              <td className="px-4 py-2 border-b">{member.name}</td>
-              <td className="px-4 py-2 border-b">{member.nickname}</td>
-              <td className="px-4 py-2 border-b">{formatTime(member.createdDate)}</td>
-              <td className="px-4 py-2 border-b">{member.reportedCnt}</td>
-              <td className="px-4 py-2 border-b">{statusMap[member.status]}</td>
-            </tr>
+            <Tr key={member.id}>
+              <Td>{index + 1}</Td>
+              <Td>{member.email}</Td>
+              <Td>{member.name}</Td>
+              <Td>{member.nickname}</Td>
+              <Td>{formatTime(member.createdDate)}</Td>
+              <Td style={{ textAlign: 'center' }}>{member.reportedCnt}</Td>
+              <Td>{statusMap[member.status]}</Td>
+            </Tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       </div>
     </div>
   );
