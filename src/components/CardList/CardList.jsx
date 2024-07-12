@@ -1,6 +1,7 @@
 // src/component/CardList/CardList
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import './CardList.css';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
@@ -8,7 +9,7 @@ import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 const CardList = ({
   title,
   location,
-  image,
+  photoUrls,
   memberNickName,
   status,
   category,
@@ -17,20 +18,21 @@ const CardList = ({
   startTime,
   endTime,
   onCardClick,
+  initialLiked,
+  onLikeChange,
+  boardId,
+  likeCount,
 }) => {
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
+  const [liked, setLiked] = useState(initialLiked);
+  const [currentLikeCount, setCurrentLikeCount] = useState(likeCount);  // 좋아요 수 상태 추가
 
-  const handleLike = (e) => {
-    e.stopPropagation(); // 클릭 이벤트 전파 방지
-    if (!liked) {
-      setLiked(true);
-      setLikeCount(likeCount + 1);
-    } else {
-      setLiked(false);
-      setLikeCount(likeCount - 1);
-    }
-  };
+  const handleLike = useCallback((e) => {
+    e.stopPropagation();
+    const newLikedState = !liked;
+    setLiked(newLikedState);
+    setCurrentLikeCount(prev => newLikedState ? prev + 1 : prev - 1);  // 좋아요 수 즉시 업데이트
+    onLikeChange(boardId, newLikedState);
+  }, [liked, onLikeChange, boardId]);
 
   // 시간 계산
   const formatTime = (timeString) => {
@@ -104,16 +106,27 @@ const CardList = ({
         {priceType === 'HOURLY' && '시급'} {priceType === 'DAILY' && '일급'} 금액: {formatToKRW(price)}원
       </div>
       <div className="CardImageBox">
-        <img className="CardImage" src={image} alt="card" />
+        {photoUrls && photoUrls.length > 0 ? (
+          <img className="CardImage" src={photoUrls} alt="card" />
+        ) : (
+          <div className="NoImagePlaceholder">No Image Available</div>
+        )}
       </div>
       <div className="Icons">
         <div className="Icon" onClick={handleLike}>
           <FontAwesomeIcon icon={liked ? solidHeart : regularHeart} color={liked ? 'red' : 'gray'} />
-          <span>{likeCount}</span>
+          <span>{currentLikeCount}</span>
         </div>
       </div>
     </div>
   );
+};
+
+CardList.propTypes = {
+  initialLiked: PropTypes.bool.isRequired,
+  onLikeChange: PropTypes.func.isRequired,
+  boardId: PropTypes.number.isRequired,
+  likeCount: PropTypes.number.isRequired,
 };
 
 export default CardList;

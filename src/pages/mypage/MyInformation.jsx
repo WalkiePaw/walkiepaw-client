@@ -20,15 +20,21 @@ const MySwal = withReactContent(Swal);
 
 // 유효성 검사
 const schema = yup.object().shape({
-  name: yup.string().required("이름은 필수 입력 사항입니다."),
-  nickname: yup.string().required("닉네임은 필수 입력 사항입니다."),
-  phoneNumber: yup.string().required("전화번호는 필수 입력 사항입니다."),
-  address: yup.string().required("주소는 필수 입력 사항입니다."),
+  name: yup.string().required('이름은 필수 입력 사항입니다.'),
+  nickname: yup.string().required('닉네임은 필수 입력 사항입니다.'),
+  phoneNumber: yup.string().required('전화번호는 필수 입력 사항입니다.'),
+  address: yup.string().required('주소는 필수 입력 사항입니다.'),
 });
 
 const MyInformation = () => {
   // 유효성 검사
-  const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    getValues,
+  } = useForm({
     resolver: yupResolver(schema),
   });
   
@@ -40,23 +46,18 @@ const MyInformation = () => {
   const [address, setAddress] = useState("");
   const [profile, setProfile] = useState("");
   const [birth, setBirth] = useState("");
+  const [photo, setPhoto] = useState(""); // 프로필 이미지 URL을 저장하는 상태 추가
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);  // 회원 정보 저장(제출)
 
   // 회원 정보 불러오기
   useEffect(() => {
     const memberId = 1; // 임의로 지정한 ID, 실제로는 로그인 정보에서 가져와야 함
 
-    axios.get(`http://localhost:8080/api/v1/members/${memberId}`)
-      .then(response => {
+    axios
+      .get(`http://localhost:8080/api/v1/members/${memberId}`)
+      .then((response) => {
         const memberData = response.data;
-        setName(memberData.name);
-        setNickname(memberData.nickname);
-        setPhoneNumber(memberData.phoneNumber);
-        setAddress(memberData.address);
-        setBirth(memberData.birth);
-        setEmail(memberData.email);
-        setProfile(memberData.profile);
-
         // react-hook-form의 setValue로 필드 값 설정
         setValue('name', memberData.name);
         setValue('nickname', memberData.nickname);
@@ -65,8 +66,20 @@ const MyInformation = () => {
         setValue('birth', memberData.birth);
         setValue('email', memberData.email);
         setValue('profile', memberData.profile);
+        setValue('photo', memberData.photo);  // 프로필 이미지 URL 설정
+
+        // 컴포넌트 상태 업데이트
+        setName(memberData.name);
+        setNickname(memberData.nickname);
+        setPhoneNumber(memberData.phoneNumber);
+        setAddress(memberData.address);
+        setBirth(memberData.birth);
+        setEmail(memberData.email);
+        setProfile(memberData.profile);
+        setPhoto(memberData.photo); // 프로필 이미지 URL 설정
+
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('There was an error fetching the member data!', error);
       });
   }, [setValue]);
@@ -97,9 +110,6 @@ const MyInformation = () => {
         });
     };
     
-    // 회원 정보 저장(제출)
-    const [isFormValid, setIsFormValid] = useState(false);
-
     const onSubmit = async (data) => {
       try {
         const memberId = 1; // 임의로 지정한 ID
@@ -117,81 +127,72 @@ const MyInformation = () => {
       }
     };
 
-    // 닉네임 중복 검사
-    const handleCheckDuplicate = () => {
-      if (nickname === "existingNickname") {
-        MySwal.fire({
-          title: "중복 확인 결과",
-          text: "이미 사용중인 닉네임입니다.",
-          icon: "warning",
-          confirmButtonText: "확인",
-        });
-      } else {
-        MySwal.fire({
-          title: "중복 확인 결과",
-          text: "사용 가능한 닉네임입니다.",
-          icon: "success",
-          confirmButtonText: "확인",
-        });
+  // 닉네임 중복 검사
+  const handleCheckDuplicate = () => {
+    if (nickname === 'existingNickname') {
+      MySwal.fire({
+        title: '중복 확인 결과',
+        text: '이미 사용중인 닉네임입니다.',
+        icon: 'warning',
+        confirmButtonText: '확인',
+      });
+    } else {
+      MySwal.fire({
+        title: '중복 확인 결과',
+        text: '사용 가능한 닉네임입니다.',
+        icon: 'success',
+        confirmButtonText: '확인',
+      });
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setValue(name, value); // react-hook-form의 setValue로 입력 필드 상태 업데이트
+
+    if (name === 'email') {
+      setEmail(value); // 이메일 입력 필드와 email 상태 동기화
+    }
+
+    if (name === 'phoneNumber') {
+      let formattedValue = value.replace(/[^0-9]/g, '');
+      if (formattedValue.length > 3 && formattedValue.length <= 7) {
+        formattedValue = formattedValue.replace(/(\d{3})(\d+)/, '$1-$2');
+      } else if (formattedValue.length > 7) {
+        formattedValue = formattedValue.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3');
       }
-    };
+      setValue('phoneNumber', formattedValue);
+      setPhoneNumber(formattedValue);
+    }
 
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setValue(name, value); // react-hook-form의 setValue로 입력 필드 상태 업데이트
+    // 모든 필수 입력 필드에 값이 있는지 확인
+    const formData = getValues(); // useForm 훅에서 추출한 getValues 함수 사용
+    setIsFormValid(schema.isValidSync(formData)); // yup 스키마에 따라 유효성 검사 수행
+  };
 
-      if (name === 'email') {
-        setEmail(value); // 이메일 입력 필드와 email 상태 동기화
-      }
-  
-      if (name === 'phoneNumber') {
-        let formattedValue = value.replace(/[^0-9]/g, '');
-        if (formattedValue.length > 3 && formattedValue.length <= 7) {
-          formattedValue = formattedValue.replace(/(\d{3})(\d+)/, '$1-$2');
-        } else if (formattedValue.length > 7) {
-          formattedValue = formattedValue.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3');
-        }
-        setValue('phoneNumber', formattedValue);
-        setPhoneNumber(formattedValue);
-      }
+  // 주소 검색 모달 열기
+  const handleAddressSearch = () => {
+    setIsAddressModalOpen(true);
+  };
 
-      // 모든 필수 입력 필드에 값이 있는지 확인
-      const formData = getValues(); // useForm 훅에서 추출한 getValues 함수 사용
-      setIsFormValid(schema.isValidSync(formData)); // yup 스키마에 따라 유효성 검사 수행
-    };
+  // 주소 선택 처리
+  const handleAddressSelect = (selectedAddress) => {
+    setValue('address', selectedAddress);
+    setAddress(selectedAddress);
+    setIsAddressModalOpen(false);
+  };
 
-    // 주소 검색 모달 열기
-    const handleAddressSearch = () => {
-      setIsAddressModalOpen(true);
-    };
+  const handleAddressComplete = (newAddress) => {
+    setValue('address', newAddress);
+    setAddress(newAddress);
+    setIsAddressModalOpen(false);
+  };
 
-    // 주소 선택 처리
-    const handleAddressSelect = (selectedAddress) => {
-      setValue('address', selectedAddress);
-      setAddress(selectedAddress);
-      setIsAddressModalOpen(false);
-    };
-
-    const handleAddressComplete = (newAddress) => {
-      setValue('address', newAddress);
-      setAddress(newAddress);
-      setIsAddressModalOpen(false);
-    };
-
-    // 이미지 변경 
-    const [imagePreview, setImagePreview] = useState(null);
-
-    const handleImageChange = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreview(reader.result);
-        };
-        reader.readAsDataURL(file);
-        console.log('Selected image:', file);
-      }
-    };
+  // 이미지 업로드 핸들러 추가
+  const handleImageUpload = (uploadedImageUrl) => {
+    setPhoto(uploadedImageUrl); // 업로드된 이미지 URL을 상태에 저장
+    setValue('photo', uploadedImageUrl); // 업로드된 이미지 URL을 react-hook-form 필드에 저장
+  };
 
     return (
       <div className="max-h-screen overflow-y-auto p-4">
@@ -309,7 +310,7 @@ const MyInformation = () => {
             />
           </div>
           <label className="block mb-1">프로필 사진</label>
-          <ImageUpload onImageChange={handleImageChange} />
+          <ImageUpload onImageUpload={handleImageUpload} initialImage={photo}/>
           <div className="mb-3">
             <label className="block mb-1">소개</label>
             <div className="flex space-x-4">

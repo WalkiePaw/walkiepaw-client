@@ -123,7 +123,13 @@ const MemberList = () => {
       } else if (searchField === 'nickname') {
         return member.nickname.toLowerCase().includes(searchTerm.toLowerCase());
       } else if (searchField === 'reportedCnt') {
-        return member.reportedCnt.toString().includes(searchTerm);
+        // 검색어가 숫자인지 확인
+        const searchTermLower = searchTerm.toLowerCase();
+        if (!isNaN(searchTermLower)) {
+          // 신고 횟수가 검색어보다 크거나 같은 경우 필터링
+          return member.reportedCnt >= parseInt(searchTermLower, 10);
+        }
+        return false;
       } else if (searchField === 'email') {
         return member.email.toLowerCase().includes(searchTerm.toLowerCase());
       }

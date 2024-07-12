@@ -7,6 +7,8 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { faCircleArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 
 const BoardList = () => {
   const [posts, setPosts] = useState([]); // 게시글 목록을 저장
@@ -18,12 +20,26 @@ const BoardList = () => {
   const [searchOption, setSearchOption] = useState('title'); // 검색 옵션(제목 or 내용) 디폴트 값
   const [category, setCategory] = useState(''); // 게시글 카테고리를 저장
   const [searchResultMessage, setSearchResultMessage] = useState(''); // 검색 결과 메시지
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const { user } = useSelector((state) => state.auth); // 로그인한 유저의 정보를 가져온다
 
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
 
-  const memberNickName = '헬스유투버'; // 로그인 유저의 임시 id 나중에 바꿔야 함
-  const memberId = 1;
+  // const memberNickName = '헬스유투버'; // 로그인 유저의 임시 id 나중에 바꿔야 함
+  // const memberId = 1;
+  const [memberId, setMemberId] = useState(null);
+
+  // JWT 토큰을 디코딩하여 사용자 정보를 추출
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      console.log(decodedToken);
+      setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
+    }
+  }, []);
 
   // location의 값에서 '동'이 포함된 값만 추출
   const dongFromLocal = (location) => {
@@ -49,21 +65,37 @@ const BoardList = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // const response = await testApiData();
-        if (!category) return; // 카테고리가 없으면 요청하지 않도록 처리
+        if (!category || !hasMore) return; // 카테고리가 없으면 요청하지 않도록 처리
 
-        const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`, {
+          params: { page, size: 8 },
+        }); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         console.log(response);
-        const data = response?.data ?? [];
-        // const data = response ?? [];
-        setPosts(data);
+        const data = response?.data?.content ?? [];
+        setPosts((prevPosts) => [...prevPosts, ...data]);
+        setHasMore(response.data?.last === false);
+        setPage((prevPage) => prevPage + 1);
       } catch (error) {
         console.error('Failed to fetch posts', error);
       }
     };
 
     fetchPosts();
-  }, [category]);
+  }, [category, page, hasMore]);
+
+  // 무한 스크롤
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100 &&
+        hasMore
+      ) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hasMore]);
 
   // 카테고리, 지역, 검색어 필터링
   useEffect(() => {
@@ -71,11 +103,6 @@ const BoardList = () => {
       if (!posts) return; // 게시글이 없으면 필터링을 하지 않음
 
       let newFilteredPosts = posts;
-
-      // 카테고리 필터링
-      if (category) {
-        newFilteredPosts = newFilteredPosts.filter((post) => post.category === category);
-      }
 
       // 지역 필터링
       if (selectedSi) {
@@ -93,7 +120,7 @@ const BoardList = () => {
     };
 
     filterPosts();
-  }, [category, selectedSi, selectedGu, selectedDong, posts, searchKeyword]);
+  }, [selectedSi, selectedGu, selectedDong, posts, searchKeyword]);
 
   // 검색 옵션 변경 핸들러
   const handleOptionChange = (e) => {
@@ -110,6 +137,8 @@ const BoardList = () => {
     try {
       const params = {
         category,
+        page: 0,
+        size: 12,
       };
 
       if (searchOption === 'title') {
@@ -127,7 +156,10 @@ const BoardList = () => {
         return;
       }
 
-      setFilteredPosts(response?.data);
+      setPosts(response.data?.content);
+      setFilteredPosts(response?.data?.content);
+      setHasMore(response.data?.last === false);
+      setPage(1);
     } catch (error) {
       console.error('검색 요청 실패!', error);
       alert('검색에 실패 했습니다.');
@@ -146,10 +178,11 @@ const BoardList = () => {
     navigate(`/post/${post.id}`, {
       state: {
         post,
-        memberNickName,
+        // memberNickName,
         memberId,
         detailedLocation: post.detailedLocation,
         priceProposal: post.priceProposal,
+        photoUrls: post.photoUrls || [],
       },
     });
   };
@@ -202,7 +235,7 @@ const BoardList = () => {
                 priceType={post.priceType}
                 startTime={post.startTime}
                 endTime={post.endTime}
-                image={post.image}
+                photoUrls={post.photoUrls}
                 memberNickName={post.memberNickName}
                 status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
                 category={post.category} // 카테고리 정보 전달

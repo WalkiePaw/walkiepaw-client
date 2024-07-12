@@ -79,11 +79,6 @@
   border-radius: 3px;
 }
 
-/* .modify-post-container .price-proposal {
-  padding-top: 15px;
-  display: flow-root;
-} */
-
 .modify-post-container .price-buttons button.selected {
   background-color: #007bff;
   color: #fff;
@@ -131,6 +126,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  border-bottom: 1px solid rgba(115, 114, 114, 0.314);
 }
 
 .modify-post-container .image-upload-button {
@@ -160,15 +156,23 @@
   display: flex;
   flex-wrap: nowrap;
   overflow: hidden;
-  width: 100%;
+  margin-bottom: 28px;
 }
 
-.modify-post-container .image-preview {
+.modify-post-container .image-preview-wrapper {
+  position: relative;
   border: 1px solid;
-  width: 30%;
   height: 100px;
   object-fit: cover;
   margin: 0 5px;
+}
+
+.image-preview {
+  width: 122px;
+  height: 98px;
+  max-width: 100%; /* 너비가 최대 이미지 너비를 초과하지 않도록 설정 */
+  max-height: 100%; /* 높이가 최대 이미지 높이를 초과하지 않도록 설정 */
+  object-fit: cover; /* 이미지를 컨테이너에 맞춰 자르기 */
 }
 
 .modify-post-container .image-slider button {
@@ -183,12 +187,33 @@
   transform: translateY(-50%);
 }
 
+.modify-post-container .remove-image-button {
+  position: absolute;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: #a7a7a7;
+  padding: 10px;
+  position: absolute;
+  top: 50%;
+  transform: translate(175%, -133%);
+}
+
 .modify-post-container .image-slider .prev-button {
   left: 0;
 }
 
 .modify-post-container .image-slider .next-button {
   right: 0;
+}
+
+.btn-price-hour {
+  margin-left: 40% !important;
+}
+
+.btn-price-day {
+  margin-right: 11% !important;
 }
 
 /* 스위치 토글 버튼 스타일 */
