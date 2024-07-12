@@ -5,12 +5,15 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+import ImageUpload from '../ImageUpload';
+import { getProfileImage } from '../../util/profile-img';
 
 const CardList = ({
   title,
   location,
   photoUrls,
   memberNickName,
+  memberPhoto,
   status,
   category,
   price,
@@ -24,15 +27,18 @@ const CardList = ({
   likeCount,
 }) => {
   const [liked, setLiked] = useState(initialLiked);
-  const [currentLikeCount, setCurrentLikeCount] = useState(likeCount);  // 좋아요 수 상태 추가
+  const [currentLikeCount, setCurrentLikeCount] = useState(likeCount); // 좋아요 수 상태 추가
 
-  const handleLike = useCallback((e) => {
-    e.stopPropagation();
-    const newLikedState = !liked;
-    setLiked(newLikedState);
-    setCurrentLikeCount(prev => newLikedState ? prev + 1 : prev - 1);  // 좋아요 수 즉시 업데이트
-    onLikeChange(boardId, newLikedState);
-  }, [liked, onLikeChange, boardId]);
+  const handleLike = useCallback(
+    (e) => {
+      e.stopPropagation();
+      const newLikedState = !liked;
+      setLiked(newLikedState);
+      setCurrentLikeCount((prev) => (newLikedState ? prev + 1 : prev - 1)); // 좋아요 수 즉시 업데이트
+      onLikeChange(boardId, newLikedState);
+    },
+    [liked, onLikeChange, boardId]
+  );
 
   // 시간 계산
   const formatTime = (timeString) => {
@@ -78,10 +84,8 @@ const CardList = ({
   return (
     <div className="CardStyled" onClick={onCardClick}>
       <div className="Locals">
-        <div className="author-info">
-          {' '}
-          {/* 맴버 사진으로 넣어야함 */}
-          <img src="https://via.placeholder.com/40" alt="Author" className="author-image" />
+        <div className="member-info">
+          <img src={memberPhoto || '/src/assets/default_user.png'} alt="Author" className="author-image" />
         </div>
         <div className="MemberNickName">{memberNickName}</div>
         <div className="Local">{location}</div>
@@ -127,6 +131,7 @@ CardList.propTypes = {
   onLikeChange: PropTypes.func.isRequired,
   boardId: PropTypes.number.isRequired,
   likeCount: PropTypes.number.isRequired,
+  memberPhoto: PropTypes.string,
 };
 
 export default CardList;
