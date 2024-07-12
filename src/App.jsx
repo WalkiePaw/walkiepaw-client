@@ -4,13 +4,12 @@ import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Notfound from './components/Notfound';
-import MyPage from './pages/mypage/MyPage.jsx';
-import MyPageLayout from './pages/mypage/MyPageLayout.jsx';
-import MyHistory from './pages/mypage/MyHistory.jsx';
-import MySettings from './pages/mypage/MySettings.jsx';
-import MembershipWithdrawal from './pages/mypage/MembershipWithdrawal.jsx';
-
-import MyInformation from './pages/mypage/MyInformation.jsx';
+import MyPage from './pages/mypage/MyPage';
+import MyPageLayout from './pages/mypage/MyPageLayout';
+import MyHistory from './pages/mypage/MyHistory';
+import MySettings from './pages/mypage/MySettings';
+import MembershipWithdrawal from './pages/mypage/MembershipWithdrawal';
+import MyInformation from './pages/mypage/MyInformation';
 import Login from './pages/Login';
 import Dashboard from '/src/pages/dashboard/Dashboard';
 import PostList from '/src/pages/dashboard/PostList';
@@ -35,7 +34,7 @@ import NewPostForm from './pages/post/new/NewPostForm.jsx';
 import ModifyPostForm from './pages/post/modify/ModifyPostForm.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ParticleCursor from './components/ParticleCursor.jsx';
+// import ParticleCursor from './components/ParticleCursor.jsx';
 import PostView from './pages/postView/PostView';
 
 function App() {

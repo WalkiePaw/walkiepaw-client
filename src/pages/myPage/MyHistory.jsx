@@ -12,7 +12,7 @@ import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 const MyHistory = () => {
-  const [activeTab, setActiveTab] = useState('walk'); // 기본 선택 탭 설정
+  const [activeTab, setActiveTab] = useState('JOB_OPENING');
   // 게시글 데이터 가져오기
   const [posts, setPosts] = useState([]);
   const MySwal = withReactContent(Swal);
@@ -21,13 +21,14 @@ const MyHistory = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchPosts('JOB_SEARCH'); // 기본 탭 설정을 "구직"으로 변경
+    fetchPosts(activeTab); // 기본 탭 설정을 "구직"으로 변경
   }, []);
 
   const fetchPosts = async (category) => {
     try {
       const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}`);
-      setPosts(response.data);
+
+      setPosts(response.data.content);
     } catch (error) {
       console.error('Failed to fetch posts', error);
       MySwal.fire({
@@ -147,7 +148,7 @@ const MyHistory = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {posts.map((post) => (
+            {Array.isArray(posts) && posts.map((post) => (
               <tr key={post.boardId} onClick={() => handleRowClick(post.boardId)} className="cursor-pointer">
                 <td className="px-6 py-4 whitespace-nowrap">{post.boardId}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
