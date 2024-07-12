@@ -6,7 +6,6 @@ import { faCamera, faChevronLeft, faChevronRight, faTimesCircle } from '@fortawe
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { useSelector } from 'react-redux';
 
 const NewPostForm = () => {
   const [title, setTitle] = useState('');
@@ -22,39 +21,21 @@ const NewPostForm = () => {
   const [detailedLocation, setDetailedLocation] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [category, setCategory] = useState('JOB_OPENING');
-
-  // const [memberId, setMemberId] = useState('');
-  const jwtToken = useSelector((state) => state.auth.jwtToken); // 리덕스에서 token 값을 가져온다
-
-  // useEffect(() => {
-  //   const fetchMemberId = async () => {
-  //     try {
-  //       const response = await axios.get(`http://localhost:8080/api/v1/members/${memberId}`);
-  //       setMemberId(response?.data?.memberId);
-  //       console.log(response.data?.memberId);
-  //       return response?.data?.memberId;
-  //     } catch (error) {
-  //       console.error('사용자 ID 가져오기 오류:', error);
-  //       return null;
-  //     }
-  //   };
-
-  //   const token = localStorage.getItem('jwtToken');
-  //   if (token) {
-  //     const decodedToken = jwtDecode(token);
-  //     const { memberId } = decodedToken;
-  //     console.log(decodedToken);
-
-  //     fetchMemberId(memberId).then((id) => {
-  //       setMemberId(id);
-  //     });
-  //   }
-  // }, [jwtToken]);
-
-  // const memberId = parseInt(localStorage.getItem('memberId')); // 로그인한 사용자의 ID를 가져옵니다.
-  const memberId = 1;
-
   const navigate = useNavigate();
+
+  const [memberId, setMemberId] = useState();
+  // const memberId = 1;
+
+  useEffect(() => {
+    // 페이지가 로드될 때 memberId를 설정
+    const token = localStorage.getItem('token');
+    if (token) {
+      // 토큰이 존재하면 토큰에서 memberId를 추출하여 상태에 설정
+      const decodedToken = jwtDecode(token);
+      setMemberId(decodedToken.id);
+      console.log(memberId);
+    }
+  }, [memberId]);
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);

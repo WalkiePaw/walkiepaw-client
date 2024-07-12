@@ -24,23 +24,24 @@ const BoardList = () => {
   const [hasMore, setHasMore] = useState(true);
   const { user } = useSelector((state) => state.auth); // 로그인한 유저의 정보를 가져온다
 
+  console.log('====>', user);
+
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
   const [memberPhoto, setMemberPhoto] = useState(null);
 
-  // const memberNickName = '헬스유투버'; // 로그인 유저의 임시 id 나중에 바꿔야 함
-  const memberId = 1;
-  // const [memberId, setMemberId] = useState(null);
+  // const memberId = 1;
+  const [memberId, setMemberId] = useState(null);
 
   // JWT 토큰을 디코딩하여 사용자 정보를 추출
-  // useEffect(() => {
-  //   const token = localStorage.getItem('jwtToken');
-  //   if (token) {
-  //     const decodedToken = jwtDecode(token);
-  //     console.log(decodedToken);
-  //     setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
-  //   }
-  // }, []);
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      console.log(decodedToken);
+      setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
+    }
+  }, []);
 
   // location의 값에서 '동'이 포함된 값만 추출
   const dongFromLocal = (location) => {
@@ -250,11 +251,13 @@ const BoardList = () => {
           <div className="no-posts">게시글이 없습니다.</div>
         )}
         <div className="bl-button-container">
-          <Link to="/new-post">
-            <button className="post-button">
-              <FontAwesomeIcon icon={faPenToSquare} />
-            </button>
-          </Link>
+          {user && (
+            <Link to="/new-post">
+              <button className="post-button">
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </button>
+            </Link>
+          )}
           <button className="top-button" onClick={scrollToTop}>
             <FontAwesomeIcon icon={faCircleArrowUp} />
           </button>
