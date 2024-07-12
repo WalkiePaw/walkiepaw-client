@@ -10,9 +10,8 @@ import axios from 'axios';
 const PostList = ( {postCount} ) => {
   const [activeTab, setActiveTab] = useState('JOB_SEARCH');
   const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(0); // 페이지 번호
-  const [hasMore, setHasMore] = useState(true); // 추가 데이터 여부 확인
-  const pageSize = 4; // 한 번에 불러올 게시글 수
+  const [visiblePosts, setVisiblePosts] = useState(); // 처음 보일 게시글 수
+  const [showNoMorePosts, setShowNoMorePosts] = useState(false);
   const MySwal = withReactContent(Swal);
   const memberId = 1;
 
@@ -20,48 +19,46 @@ const PostList = ( {postCount} ) => {
   const CATEGORY_JOB_OPENING = 'JOB_OPENING';
 
   useEffect(() => {
-    setPage(0); // 탭 변경 시 페이지 번호 초기화
-    fetchPosts(activeTab, 0); // 초기 데이터 로드
+    setVisiblePosts(5); // 탭 변경 시 보이는 게시글 수 초기화
+    setShowNoMorePosts(false);
+    fetchPosts(activeTab);
   }, [activeTab]);
 
-  useEffect(() => {
-    if (page > 0) {
-      fetchPosts(activeTab, page); // 페이지 번호가 변경될 때 추가 데이터 로드
-    }
-  }, [page]);
-
-  const fetchPosts = async (category, pageNumber) => {
+  const fetchPosts = async (category) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}?page=${pageNumber}&size=${pageSize}`
-    );
-    const newPosts = response.data.content;
-    console.log(response.data);
-    if (pageNumber === 0) {
-      setPosts(newPosts); // 첫 페이지일 경우 새로운 데이터로 교체
-    } else {
-      setPosts(prevPosts => [...prevPosts, ...newPosts]); // 다음 페이지일 경우 기존 데이터에 추가
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}?page=0&size=100`
+      );
+      const newPosts = response.data.content;
+      setPosts(newPosts);
+      setShowNoMorePosts(newPosts.length <= visiblePosts);
+    } catch (error) {
+      console.error('Failed to fetch posts', error);
+      MySwal.fire({
+        title: 'Error',
+        text: '게시글 불러오기 실패',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
     }
-    setHasMore(response.data.last === false); // 더 불러올 데이터가 있는지 여부 확인
-  } catch (error) {
-    console.error('Failed to fetch posts', error);
-    MySwal.fire({
-      title: 'Error',
-      text: '게시글 불러오기 실패',
-      icon: 'error',
-      confirmButtonText: 'OK',
-    });
-  }
-};
+  };
 
   const handleTabChange = (tab) => {
     if (tab !== activeTab) {
       setActiveTab(tab);
-      setPage(0); // 탭 변경 시 페이지 번호 초기화
+      setPosts([]);
+      setVisiblePosts(5);// 5개까지 보이도록 설정
+      setShowNoMorePosts(false);
     }
   };
 
+  // 페이지 더보기
   const loadMorePosts = () => {
-    setPage(prevPage => prevPage + 1); // 페이지 번호 증가
+    const newVisiblePosts = visiblePosts + 3;
+    setVisiblePosts(newVisiblePosts);
+    if (newVisiblePosts >= posts.length) {
+      setShowNoMorePosts(true);
+    }
   };
 
   // 날짜 설정
@@ -97,54 +94,45 @@ const PostList = ( {postCount} ) => {
         </button>
       </div>
       {posts.length > 0 ? (
-        
-      <div className="w-full overflow-hidden rounded-lg border border-gray-300">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                번호
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                제목
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                내용
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                작성일/시간
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {posts.map((post) => (
-              <tr key={post.boardId}>
-                <td className="px-6 py-4 whitespace-nowrap">{post.boardId}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{post.content}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{formatTime(post.createdDate)}</td>
+        <div className="w-full overflow-hidden rounded-lg border border-gray-300">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">번호</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">제목</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">내용</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작성일/시간</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {posts.slice(0, visiblePosts).map((post) => (
+                <tr key={post.boardId}>
+                  <td className="px-6 py-4 whitespace-nowrap">{post.boardId}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{post.title}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{post.content}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{formatTime(post.createdDate)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <p className="text-lg font-medium text-gray-500">작성한 게시글이 없습니다.</p>
+      )}
+      {!showNoMorePosts && posts.length > visiblePosts && (
+        <div className="flex justify-end mt-4">
+          <button
+            className="px-4 py-2 bg-[#E8C5A5] text-gray-800 rounded-md"
+            onClick={loadMorePosts}
+          >
+            더보기
+          </button>
+        </div>
+      )}
+      {showNoMorePosts && posts.length > 0 && (
+        <p className="mt-2 text-lg font-medium text-gray-500">더 이상 게시글이 없습니다.</p>
       )}
     </div>
   );
 };
-
 export default PostList;

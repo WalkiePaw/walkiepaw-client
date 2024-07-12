@@ -5,9 +5,9 @@ import DashboardSidebar from './DashboardSidebar';
 
 const DashboardLayout = ({ children }) => {
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <DashboardSidebar />
-      <div className="flex-grow p-4">
+      <div className="flex-auto overflow-auto p-6">
         {children}
       </div>
     </div>

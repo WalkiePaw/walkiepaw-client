@@ -26,20 +26,21 @@ const BoardList = () => {
 
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
+  const [memberPhoto, setMemberPhoto] = useState(null);
 
   // const memberNickName = '헬스유투버'; // 로그인 유저의 임시 id 나중에 바꿔야 함
-  // const memberId = 1;
-  const [memberId, setMemberId] = useState(null);
+  const memberId = 1;
+  // const [memberId, setMemberId] = useState(null);
 
   // JWT 토큰을 디코딩하여 사용자 정보를 추출
-  useEffect(() => {
-    const token = localStorage.getItem('jwtToken');
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      console.log(decodedToken);
-      setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem('jwtToken');
+  //   if (token) {
+  //     const decodedToken = jwtDecode(token);
+  //     console.log(decodedToken);
+  //     setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
+  //   }
+  // }, []);
 
   // location의 값에서 '동'이 포함된 값만 추출
   const dongFromLocal = (location) => {
@@ -75,13 +76,14 @@ const BoardList = () => {
         setPosts((prevPosts) => [...prevPosts, ...data]);
         setHasMore(response.data?.last === false);
         setPage((prevPage) => prevPage + 1);
+        setMemberPhoto(memberPhoto);
       } catch (error) {
         console.error('Failed to fetch posts', error);
       }
     };
 
     fetchPosts();
-  }, [category, page, hasMore]);
+  }, [category, page, hasMore, memberPhoto]);
 
   // 무한 스크롤
   useEffect(() => {
@@ -183,6 +185,7 @@ const BoardList = () => {
         detailedLocation: post.detailedLocation,
         priceProposal: post.priceProposal,
         photoUrls: post.photoUrls || [],
+        memberPhoto,
       },
     });
   };
@@ -239,6 +242,7 @@ const BoardList = () => {
                 memberNickName={post.memberNickName}
                 status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
                 category={post.category} // 카테고리 정보 전달
+                memberPhoto={post.memberPhoto}
               />
             </div>
           ))

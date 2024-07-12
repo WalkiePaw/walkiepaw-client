@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 // axios 임포트
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+// 프로필이 없는 경우: 기본 이미지
 import { getProfileImage } from "../../util/profile-img";
 // 프로필 사진이 있는 경우
 import ImageUpload from "../../components/ImageUpload";
@@ -53,15 +54,15 @@ const DashboardSidebar = () => {
     }
   }, []);
 
-    const handleImageUpload = (newImageUrl) => {
-    setProfileImage(newImageUrl);
-  };
+  //   const handleImageUpload = (newImageUrl) => {
+  //   setProfileImage(newImageUrl);
+  // };
 
   return (
-    <div className="w-80 h-screen bg-gray-100 p-4">
+    <div className="w-80 bg-gray-100 p-4 h-screen overflow-y-auto">
         <div className="text-center mt-5mb-3">
           <ImageUpload
-            onImageUpload={handleImageUpload}
+            // onImageUpload={handleImageUpload} //
             initialImage={profileImage}
             readOnly={!!profileImage} 
           />

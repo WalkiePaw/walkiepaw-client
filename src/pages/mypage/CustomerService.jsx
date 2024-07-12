@@ -1,7 +1,5 @@
 // 고객센터
-// src/pages/CustomerService.jsx
-
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 // axios 임포트
 import axios from "axios";
 // 팝업창, 모달: sweetalert 적용
@@ -10,7 +8,6 @@ import withReactContent from "sweetalert2-react-content";
 // 아이콘: font-awesome 적용
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-
 
 const MySwal = withReactContent(Swal);
 
@@ -52,17 +49,20 @@ const CustomerService = () => {
   return (
     <div className="max-h-screen overflow-y-auto">
       <h1 className="text-3xl font-bold mb-6">고객센터</h1>
-      <h2 className="text-2xl font-bold mb-3">🔔 1:1 문의</h2>
-
-      <div className="flex items-center mb-2">
+        <div className="p-3 mb-5 bg-white rounded-lg border-2" style={{ borderColor: '#FFA7A7' }}>
+          <h2 className="text-2xl font-bold mb-3">🔔 1:1 문의</h2>
+          <div className="flex items-center mb-2">
+            <h2 className="font-bold">온라인 보안 팁:</h2>
+          </div>
+          <p className="mb-6">
+            고객님의 보안 유지를 위해, 개인정보나 신용카드 정보를 전화, 이메일, 채팅
+            등으로 공유하는 행위는 절대 삼가시기 바랍니다.
+          </p>
+        </div>
+      <h2 className="text-2xl font-bold mb-6">
         <FontAwesomeIcon icon={faCircleInfo} className="mr-2" />
-        <h2 className="font-bold">온라인 보안 팁</h2>
-      </div>
-      <p className="mb-6">
-        고객님의 보안 유지를 위해, 개인정보나 신용카드 정보를 전화, 이메일, 채팅
-        등으로 공유하는 행위는 절대 삼가시기 바랍니다.
-      </p>
-      <h2 className="text-2xl font-bold mb-6">도움이 필요하신가요?</h2>
+        도움이 필요하신가요?
+      </h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label
