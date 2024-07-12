@@ -17,7 +17,7 @@ Api.interceptors.request.use(
 
 export const verifyTokenApi = () => Api.get('/secured');
 
-export const loginApi = (credentials) => Api.post('/login', credentials);
+export const loginApi = (credentials) => Api.post('api/v1/auth/login', credentials);
 
 // export const getUserProfile = async () => {
 //   const token = localStorage.getItem('token');
