@@ -97,8 +97,10 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/settings"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              >
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
+            >
               <FontAwesomeIcon
                 icon={faGripLines}
                 style={{ marginRight: "0.5rem" }}
@@ -109,8 +111,10 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/history"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              >
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
+            >
               <FontAwesomeIcon
                 icon={faGripLines}
                 style={{ marginRight: "0.5rem" }}
@@ -121,8 +125,10 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/transaction"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              >
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
+            >
               <FontAwesomeIcon
                 icon={faGripLines}
                 style={{ marginRight: "0.5rem" }}
@@ -133,8 +139,10 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/review"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              >
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
+            >
               <FontAwesomeIcon
                 icon={faGripLines}
                 style={{ marginRight: "0.5rem" }}
@@ -145,8 +153,10 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/preferences"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              >
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
+            >
               <FontAwesomeIcon
                 icon={faGripLines}
                 style={{ marginRight: "0.5rem" }}
@@ -160,8 +170,10 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/information"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              >
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
+            >
               <FontAwesomeIcon
                 icon={faGripLines}
                 style={{ marginRight: "0.5rem" }}
@@ -172,8 +184,10 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/withdrawal"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              >
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
+            >
               <FontAwesomeIcon
                 icon={faGripLines}
                 style={{ marginRight: "0.5rem" }}
@@ -187,8 +201,10 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/customer-service"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              >
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
+            >
               <FontAwesomeIcon
                 icon={faGripLines}
                 style={{ marginRight: "0.5rem" }}
@@ -199,8 +215,10 @@ const MyPageSidebar = () => {
           <li className="my-2">
             <NavLink
               to="/mypage/qna-list"
-              className={({ isActive }) => (isActive ? 'active' : '')}
-              >
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
+            >
               <FontAwesomeIcon
                 icon={faGripLines}
                 style={{ marginRight: "0.5rem" }}

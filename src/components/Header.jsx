@@ -148,7 +148,7 @@ const Header = () => {
             </li>
             <li>
               <NavLink 
-                to="/chatpage" 
+                to="/chatpage"
                 className={({ isActive }) => (isActive ? 'active' : '')}
               >
                 채팅

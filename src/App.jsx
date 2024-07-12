@@ -68,9 +68,9 @@ function App() {
           <Route
             path="/mypage"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <MyPageLayout />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           >
             <Route index element={<MyPage />} />
