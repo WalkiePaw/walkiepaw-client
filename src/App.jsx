@@ -1,56 +1,83 @@
-import BoardList from './pages/BoardList/BoardList';
-import Home from './pages/Home/Home';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { verifyToken } from './store/AuthSlice';
+import ProtectedRoute from './store/ProtectedRoute.jsx';
+import BoardList from './pages/boardList/BoardList.jsx'
+import Home from './pages/home/Home';
 import Layout from './Layout';
 import './App.css';
+import 'react-datepicker/dist/react-datepicker.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Routes, Route, useNavigate } from 'react-router-dom';
+
 import Notfound from './components/Notfound';
-import MyPage from './pages/MyPage/MyPage';
-import MyPageLayout from './pages/MyPage/MyPageLayout';
-import MyHistory from './pages/MyPage/MyHistory';
-import MySettings from './pages/MyPage/MySettings';
-import MembershipWithdrawal from './pages/MyPage/MembershipWithdrawal';
+import MyPage from './pages/mypage/MyPage';
+import MyPageLayout from './pages/mypage/MyPageLayout';
+import MyHistory from './pages/mypage/MyHistory';
+import MySettings from './pages/mypage/MySettings';
+import MembershipWithdrawal from './pages/mypage/MembershipWithdrawal';
 
-import MyInformation from './pages/MyPage/MyInformation';
-import NewPostForm from './pages/Post/New/NewPostForm';
+import MyInformation from './pages/mypage/MyInformation';
+import NewPostForm from './pages/post/new/NewPostForm';
 import Login from './pages/Login';
-import Dashboard from '/src/pages/Dashboard/Dashboard';
-import PostList from '/src/pages/Dashboard/PostList';
-import Introduction from '/src/pages/Dashboard/Introduction';
-import Preferences from './pages/MyPage/Preferences';
-import React from 'react';
-import ModifyPostForm from './pages/Post/Modify/ModifyPostForm';
-import CustomerService from './pages/MyPage/CustomerService';
-import PostView from './pages/PostView/PostView';
+import Dashboard from '/src/pages/dashboard/Dashboard';
+import PostList from '/src/pages/dashboard/PostList';
+import Introduction from '/src/pages/dashboard/Introduction';
+import Preferences from './pages/mypage/Preferences';
+import ModifyPostForm from './pages/post/modify/ModifyPostForm';
+import CustomerService from './pages/mypage/CustomerService';
 
-import MyTransaction from './pages/MyPage/MyTransaction.jsx';
-import KakaoLoginCallback from './components/OAuth/KakaoLoginCallback.jsx';
-import NaverLoginCallback from './components/OAuth/NaverLoginCallback.jsx';
-import GoogleLoginCallback from './components/OAuth/GoogleLoginCallback.jsx';
+import MyTransaction from './pages/mypage/MyTransaction.jsx';
+import KakaoLoginCallback from './components/auth/KakaoLoginCallback.jsx';
+import NaverLoginCallback from './components/auth/NaverLoginCallback.jsx';
+import GoogleLoginCallback from './components/auth/GoogleLoginCallback.jsx';
 import Review from './components/Review.jsx';
-import SignUp from './pages/OAuth/SignUp.jsx';
+import SignUp from './pages/auth/SignUp.jsx';
 import ChatPage from './pages/chatroom/ChatPage.jsx';
 import CSManagement from './admin/CSManagement.jsx';
 import Admin from './admin/Admin.jsx';
 import MemberList from './admin/MemberList.jsx';
-import QnaList from './pages/MyPage/QnaList.jsx';
+import QnaList from './pages/mypage/QnaList.jsx';
 import ReportManagement from './admin/ReportManagement.jsx';
 
+import ParticleCursor from './components/ParticleCursor.jsx';
+import PostView from './pages/postView/PostView.jsx';
+import ProtectedChatRoute from './store/ProtectedChatRoute.jsx';
+
 function App() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const nav = useNavigate();
   const onClickButton = () => {
     nav('/new');
   };
+
+  useEffect(() => {
+    dispatch(verifyToken());
+  }, [dispatch]);
+
   return (
     <>
+      {/* <ParticleCursor /> */}
+      <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="*" element={<Notfound />} />
 
-          <Route path="/mypage" element={<MyPageLayout />}>
+          <Route
+            path="/mypage"
+            element={
+              // <ProtectedRoute>
+                <MyPageLayout />
+              // </ProtectedRoute>
+            }
+          >
             <Route index element={<MyPage />} />
             <Route path="history" element={<MyHistory />} />
             <Route path="transaction" element={<MyTransaction />} />
             <Route path="preferences" element={<Preferences />} />
+
             <Route path="information" element={<MyInformation />} />
             <Route path="customer-service" element={<CustomerService />} />
             <Route path="settings" element={<MySettings />} />
@@ -62,15 +89,25 @@ function App() {
           <Route index element={<Home />} />
           <Route path="recruit" element={<BoardList category="JOB_OPENING" />} />
           <Route path="jobs" element={<BoardList category="JOB_SEARCH" />} />
-          <Route path="new-post" element={<NewPostForm />}></Route>
+          <Route
+            path="new-post"
+            element={
+              // <ProtectedRoute>
+              <NewPostForm />
+              // </ProtectedRoute>
+            }
+          ></Route>
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
+          <Route path="post/:postId" element={<PostView />} />
           <Route path="login" element={<Login />} />
           <Route path="/login/kakao" element={<KakaoLoginCallback />} />
           <Route path="/login/naver" element={<NaverLoginCallback />} />
           <Route path="/login/google" element={<GoogleLoginCallback />} />
           <Route path="signup" element={<SignUp />} />
-          <Route path="chatpage" element={<ChatPage />} />
-          <Route path="post/:postId" element={<PostView />} />
+
+          <Route element={<ProtectedChatRoute />}>
+            <Route path="chatpage" element={<ChatPage />} />
+          </Route>
 
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<Introduction />} />

@@ -1,23 +1,57 @@
-// 회원 가입, 내 정보 수정 시 이미지 업로드 및 삭제
-import React, { useState, useRef } from 'react';
+// 이미지 업로드
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
+import PropTypes from 'prop-types';
+// 삭제 시 x 아이콘
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
-const ImageUpload = () => {
+const ImageUpload = ({ 
+    onImageUpload = () => {},
+    initialImage = null, 
+    readOnly = false,
+  }) => {
   const [imagePreview, setImagePreview] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  const handleImageChange = (e) => {
+  useEffect(() => {
+    if (initialImage) {
+      setImagePreview(initialImage);
+    }
+  }, [initialImage]);
+
+  const handleImageChange = async (e) => {
+    if (readOnly) return;
+
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await axios.post('http://localhost:8080/api/v1/uploads', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        const uploadedImageUrl = response.data.url;
+        setImagePreview(uploadedImageUrl);
+        onImageUpload(uploadedImageUrl); // 부모 컴포넌트에 URL 전달
+
+      } catch (error) {
+        console.error('이미지 업로드 실패:', error);
+        // 에러 처리 (예: 사용자에게 알림)
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
   const handleDeleteImage = () => {
+    if (readOnly) return;
+
     setImagePreview(null);
+    onImageUpload(null); // 이미지 삭제 시 부모 컴포넌트에 null 전달
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -25,14 +59,17 @@ const ImageUpload = () => {
 
   return (
     <div className="mb-3">
-      <div className="relative w-48 h-48 border-2 border-dashed border-gray-300 rounded-md overflow-hidden">
-        <input
-          type="file"
-          name="profileImage"
-          onChange={handleImageChange}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          ref={fileInputRef}
-        />
+      <div className={`relative ${readOnly ? 'w-24 h-24 mx-auto' : 'w-48 h-48'} ${readOnly ? '' : 'border-2 border-dashed border-gray-300'} rounded-md overflow-hidden`}>
+        {!readOnly && (
+          <input
+            type="file"
+            name="profileImage"
+            onChange={handleImageChange}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            ref={fileInputRef}
+            disabled={isUploading}
+          />
+        )}
         {imagePreview ? (
           <>
             <img
@@ -40,24 +77,34 @@ const ImageUpload = () => {
               alt="Preview"
               className="w-full h-full object-cover"
             />
-            <button
-              onClick={handleDeleteImage}
-              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none"
-              type="button"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
+            {!readOnly && (
+              <button
+                onClick={handleDeleteImage}
+                className="absolute top-2 right-2 text-red-500 rounded-full p-1 hover:text-red-600 focus:outline-none"
+                type="button"
+                style={{ width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <FontAwesomeIcon icon={faCircleXmark} size='lg' />
+
+              </button>
+            )}
           </>
         ) : (
-          <div className="flex items-center justify-center w-full h-full text-gray-400">
-            클릭하여 사진 업로드
-          </div>
+          !readOnly && (
+            <div className="flex items-center justify-center w-full h-full text-gray-400">
+              {isUploading ? '업로드 중...' : '클릭하여 사진 업로드'}
+            </div>
+          )
         )}
       </div>
     </div>
   );
+};
+
+ImageUpload.propTypes = {
+  onImageUpload: PropTypes.func,
+  initialImage: PropTypes.string,
+  readOnly: PropTypes.bool,
 };
 
 export default ImageUpload;

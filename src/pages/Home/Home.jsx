@@ -22,12 +22,12 @@ const Home = () => {
         <div className="text-box1">
           <h2>산책인 모집</h2>
           <p>믿을만한 지역 주민 산책인 모집</p>
-          <div className="button1">
-            <Link to="/recruit">
+          <Link to="/recruit">
+            <div className="button1">
               <span>산책인 모집하기</span>
-            </Link>{' '}
-            {/* 버튼을 눌렀을 때 산책 list로 이동 */}
-          </div>
+              {/* 버튼을 눌렀을 때 산책 list로 이동 */}
+            </div>
+          </Link>{' '}
         </div>
       </div>
       <div className="homebox3">
@@ -35,12 +35,12 @@ const Home = () => {
         <div className="text-box2">
           <h2>알바</h2>
           <p>귀여운 강아지와 산책하며 일하기</p>
-          <div className="button2">
-            <button onClick={handleClick}>
+          <button onClick={handleClick}>
+            <div className="button2">
               <span>내 근처 알바 보기</span>
-            </button>{' '}
-            {/* 버튼을 눌렀을 때 알바 list로 이동 */}
-          </div>
+              {/* 버튼을 눌렀을 때 알바 list로 이동 */}
+            </div>
+          </button>{' '}
         </div>
       </div>
     </div>

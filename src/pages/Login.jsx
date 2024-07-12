@@ -1,25 +1,34 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import {useDispatch} from "react-redux";
 import axios from 'axios';
-import { Modal } from 'antd';
+import {Button, Modal} from 'antd';
 import UserInput from '../components/UserInput';
 import UserButton from '../components/UserButton';
-import KakaoLogin from '../components/OAuth/KakaoLogin';
-import NaverLogin from '../components/OAuth/NaverLogin';
-import GoogleLogin from '../components/OAuth/GoogleLogin';
+import KakaoLogin from '../components/auth/KakaoLogin';
+import NaverLogin from '../components/auth/NaverLogin';
+import GoogleLogin from '../components/auth/GoogleLogin';
+import FindEmail from "../components/auth/FindEmail.jsx";
+import FindPassword from "../components/auth/FindPassword.jsx";
 import pawpaw from '../assets/pawpaw.png';
+import { loginSuccess, loginFailure, setLoading } from "../store/AuthSlice.jsx";
+
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [userInfo, setUserInfo] = useState({
     email: '',
     password: '',
   });
-
-
   const [errors, setErrors] = useState({});
-  const [isModalVisible, setIsModalVisible] = useState(false); // 모달 표시 여부 상태
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const navigate = useNavigate();
+  const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
+  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+
+
 
   const handleInputChange = event => {
     const { name, value } = event.target;
@@ -62,15 +71,8 @@ const Login = () => {
       userInfo.password.length >= 8;
 
 
-  const handleNaverLogin = () => {
-    console.log('Naver login clicked');
-  };
-
-  const handleGoogleLogin = () => {
-    console.log('Google login clicked');
-  };
-
   const onSubmit = async () => {
+    dispatch(setLoading(true));
     try {
       const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
         email: userInfo.email,
@@ -78,17 +80,52 @@ const Login = () => {
       });
 
       console.log('Login successful:', response.data);
-      localStorage.setItem('token', response.data.token);
-      navigate('/');
+      dispatch(loginSuccess({
+        token: response.data.token,
+        user: response.data.user
+      }));
+      // 로그인 성공 후 리다이렉트
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+
     } catch (error) {
       console.error('Login failed:', error.response ? error.response.data : error.message);
+      dispatch(loginFailure(error.response?.data?.message || "로그인에 실패했습니다."));
       setModalMessage('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
       setIsModalVisible(true);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
-  const handleModalOk = () => {
-    setIsModalVisible(false);
+  const showEmailModal = () => setIsEmailModalVisible(true);
+  const handleEmailModalCancel = () => setIsEmailModalVisible(false);
+  const handleModalOk = () => setIsModalVisible(false);
+  const showPasswordModal = () => setIsPasswordModalVisible(true);
+  const handlePasswordModalCancel = () => setIsPasswordModalVisible(false);
+
+  const modalStyle = {
+    content: {
+      backgroundColor: '#E8C5A5',
+      borderRadius: '10px',
+    },
+    header: {
+      backgroundColor: '#43312A',
+      color: '#E8C5A5',
+      borderTopLeftRadius: '10px',
+      borderTopRightRadius: '10px',
+      padding: '10px 20px',
+    },
+    body: {
+      padding: '20px',
+    },
+    footer: {
+      backgroundColor: '#E8C5A5',
+      borderTop: '1px solid #43312A',
+      borderBottomLeftRadius: '10px',
+      borderBottomRightRadius: '10px',
+      padding: '10px 20px',
+    },
   };
 
   return (
@@ -135,19 +172,27 @@ const Login = () => {
               <span className="text-sm text-red-500">{errors.login}</span>
           )}
           <div className="flex justify-between w-3/4 mb-6">
-            <button className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300">
+            <Button
+                onClick={showEmailModal}
+                type="link"
+                style={{ color: '#43312A' }}
+            >
               이메일 찾기
-            </button>
-            <button className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300">
+            </Button>
+            <Button
+                onClick={showPasswordModal}
+                type="link"
+                style={{ color: '#43312A' }}
+            >
               비밀번호 찾기
-            </button>
-            <button
-                type="button"
-                className="text-sm text-gray-600 hover:text-blue-500 transition-colors duration-300"
+            </Button>
+            <Button
                 onClick={() => navigate('/signup')}
+                type="link"
+                style={{ color: '#43312A' }}
             >
               회원가입
-            </button>
+            </Button>
           </div>
           <div className="flex justify-between w-3/4 mb-4">
             <KakaoLogin />
@@ -155,6 +200,32 @@ const Login = () => {
             <GoogleLogin />
           </div>
         </div>
+
+        <Modal
+            title="이메일 찾기"
+            open={isEmailModalVisible}
+            onCancel={handleEmailModalCancel}
+            footer={null}
+            style={modalStyle.content}
+            bodyStyle={modalStyle.body}
+            maskStyle={{ backgroundColor: 'rgba(67, 49, 42, 0.5)' }}
+            titleStyle={modalStyle.header}
+        >
+          <FindEmail onClose={handleEmailModalCancel} />
+        </Modal>
+
+        <Modal
+            title="비밀번호 찾기"
+            open={isPasswordModalVisible}
+            onCancel={handlePasswordModalCancel}
+            footer={null}
+            style={modalStyle.content}
+            bodyStyle={modalStyle.body}
+            maskStyle={{ backgroundColor: 'rgba(67, 49, 42, 0.5)' }}
+            titleStyle={modalStyle.header}
+        >
+          <FindPassword onClose={handlePasswordModalCancel} />
+        </Modal>
 
         <Modal
             title={<span style={{ color: 'red' }}>로그인 오류</span>}

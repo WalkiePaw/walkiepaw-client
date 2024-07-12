@@ -1,11 +1,54 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './MyPageKakao.css'; // Add this line to import the CSS file
+import styled from 'styled-components';
 
-const MyPageKakaoMap = ({ onSelectPlace }) => {
+const MapContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 400px;
+  margin-bottom: 20px;
+`;
+
+const Map = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const SearchContainer = styled.div`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+`;
+
+const KeywordInput = styled.input`
+  margin-right: 10px;
+  padding: 5px;
+`;
+
+const PlacesList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0;
+  max-height: 200px;
+  overflow-y: auto;
+`;
+
+const Pagination = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+`;
+
+const MyPageKakaoMap = ({ setLocation }) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [infowindow, setInfowindow] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const [selectedPlaces, setSelectedPlaces] = useState([]);
 
   useEffect(() => {
     const initializeMap = () => {
@@ -83,7 +126,7 @@ const MyPageKakaoMap = ({ onSelectPlace }) => {
       });
 
       window.kakao.maps.event.addListener(marker, 'click', () => {
-        onSelectPlace(place.road_address_name || place.address_name);
+        handleSelectPlace(place.road_address_name || place.address_name);
       });
 
       itemEl.onmouseover = () => {
@@ -95,7 +138,7 @@ const MyPageKakaoMap = ({ onSelectPlace }) => {
       };
 
       itemEl.onclick = () => {
-        onSelectPlace(place.road_address_name || place.address_name);
+        handleSelectPlace(place.road_address_name || place.address_name);
       };
 
       newMarkers.push(marker);
@@ -192,43 +235,43 @@ const MyPageKakaoMap = ({ onSelectPlace }) => {
     }
   };
 
+  const handleSelectPlace = (placeName) => {
+    // Check if the place is already selected
+    if (selectedPlaces.some((place) => place === placeName)) {
+      alert('이미 선택된 장소입니다.');
+      return;
+    }
+
+    setSelectedPlaces((prev) => [...prev, placeName]);
+    setLocation(placeName); // Update parent component state
+  };
+
+  const handleClearSelectedPlaces = () => {
+    setSelectedPlaces([]);
+  };
   return (
-    <div>
-      <div style={{ position: 'relative', height: '400px' }}>
-        <div
-          id="map"
-          ref={mapRef}
-          style={{ width: '100%', height: '100%' }}
-        ></div>
-        <div
-          style={{
-            position: 'absolute',
-            top: '10px',
-            left: '10px',
-            zIndex: '1',
-            backgroundColor: 'white',
-            padding: '10px',
-            borderRadius: '5px',
-            boxShadow: '0 0 6px rgba(0,0,0,0.1)',
-          }}
-        >
-          <input
-            type="text"
-            id="keyword"
-            placeholder="검색할 장소를 입력하세요"
-            style={{ marginRight: '10px', padding: '5px' }}
-          />
-          <button onClick={searchPlaces} style={{ padding: '5px 10px' }}>
-            검색
-          </button>
-        </div>
+    <MapContainer>
+      <Map id="map" ref={mapRef}></Map>
+      <SearchContainer className="search-container">
+        <KeywordInput
+          type="text"
+          id="keyword"
+          placeholder="검색할 장소를 입력하세요"
+        />
+        <button onClick={searchPlaces}>검색</button>
+      </SearchContainer>
+      <PlacesList id="placesList" className="places-list"></PlacesList>
+      <Pagination id="pagination" className="pagination"></Pagination>
+      <div>
+        <h2 className='text-xl font-bold'>선택된 장소: </h2>
+        <ul>
+          {selectedPlaces.map((place, index) => (
+            <li key={index}>{place}</li>
+          ))}
+        </ul>
+        <button onClick={handleClearSelectedPlaces}>선택 초기화</button>
       </div>
-      <ul
-        id="placesList"
-        className="places-list" 
-      ></ul>
-      <div id="pagination" className="pagination mt-4"></div>
-    </div>
+    </MapContainer>
   );
 };
 

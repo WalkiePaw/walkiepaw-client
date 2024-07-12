@@ -1,15 +1,19 @@
 // src/component/CardList/CardList
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import './CardList.css';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+import ImageUpload from '../ImageUpload';
+import { getProfileImage } from '../../util/profile-img';
 
 const CardList = ({
   title,
   location,
-  image,
+  photoUrls,
   memberNickName,
+  memberPhoto,
   status,
   category,
   price,
@@ -17,20 +21,24 @@ const CardList = ({
   startTime,
   endTime,
   onCardClick,
+  initialLiked,
+  onLikeChange,
+  boardId,
+  likeCount,
 }) => {
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
+  const [liked, setLiked] = useState(initialLiked);
+  const [currentLikeCount, setCurrentLikeCount] = useState(likeCount); // 좋아요 수 상태 추가
 
-  const handleLike = (e) => {
-    e.stopPropagation(); // 클릭 이벤트 전파 방지
-    if (!liked) {
-      setLiked(true);
-      setLikeCount(likeCount + 1);
-    } else {
-      setLiked(false);
-      setLikeCount(likeCount - 1);
-    }
-  };
+  const handleLike = useCallback(
+    (e) => {
+      e.stopPropagation();
+      const newLikedState = !liked;
+      setLiked(newLikedState);
+      setCurrentLikeCount((prev) => (newLikedState ? prev + 1 : prev - 1)); // 좋아요 수 즉시 업데이트
+      onLikeChange(boardId, newLikedState);
+    },
+    [liked, onLikeChange, boardId]
+  );
 
   // 시간 계산
   const formatTime = (timeString) => {
@@ -76,18 +84,16 @@ const CardList = ({
   return (
     <div className="CardStyled" onClick={onCardClick}>
       <div className="Locals">
-        <div className="author-info">
-          {' '}
-          {/* 맴버 사진으로 넣어야함 */}
-          <img src="https://via.placeholder.com/40" alt="Author" className="author-image" />
+        <div className="member-info">
+          <img src={memberPhoto || '/src/assets/default_user.png'} alt="Author" className="author-image" />
         </div>
         <div className="MemberNickName">{memberNickName}</div>
         <div className="Local">{location}</div>
       </div>
       <div className="Title">
         <span className={`post-status ${status?.toLowerCase()?.replace(' ', '-')}`}>
-          {status === 'RECRUITING' && '구인중'}
-          {status === 'RESERVED' && '구인 대기중'}
+          {status === 'RECRUITING' && '모집중'}
+          {status === 'RESERVED' && '예약'}
           {status === 'COMPLETED' && '구인 완료'}
         </span>
         {` - ${title}`}
@@ -104,16 +110,28 @@ const CardList = ({
         {priceType === 'HOURLY' && '시급'} {priceType === 'DAILY' && '일급'} 금액: {formatToKRW(price)}원
       </div>
       <div className="CardImageBox">
-        <img className="CardImage" src={image} alt="card" />
+        {photoUrls && photoUrls.length > 0 ? (
+          <img className="CardImage" src={photoUrls} alt="card" />
+        ) : (
+          <div className="NoImagePlaceholder">No Image Available</div>
+        )}
       </div>
       <div className="Icons">
         <div className="Icon" onClick={handleLike}>
           <FontAwesomeIcon icon={liked ? solidHeart : regularHeart} color={liked ? 'red' : 'gray'} />
-          <span>{likeCount}</span>
+          <span>{currentLikeCount}</span>
         </div>
       </div>
     </div>
   );
+};
+
+CardList.propTypes = {
+  initialLiked: PropTypes.bool.isRequired,
+  onLikeChange: PropTypes.func.isRequired,
+  boardId: PropTypes.number.isRequired,
+  likeCount: PropTypes.number.isRequired,
+  memberPhoto: PropTypes.string,
 };
 
 export default CardList;
