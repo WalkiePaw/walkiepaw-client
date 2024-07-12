@@ -1,6 +1,10 @@
+// 이미지 업로드
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+// 삭제 시 x 아이콘
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
 const ImageUpload = ({ onImageUpload, initialImage, readOnly }) => {
   const [imagePreview, setImagePreview] = useState(null);
@@ -72,12 +76,12 @@ const ImageUpload = ({ onImageUpload, initialImage, readOnly }) => {
             {!readOnly && (
               <button
                 onClick={handleDeleteImage}
-                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none"
+                className="absolute top-2 right-2 text-red-500 rounded-full p-1 hover:text-red-600 focus:outline-none"
                 type="button"
+                style={{ width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clipRule="evenodd" />
-                </svg>
+                <FontAwesomeIcon icon={faCircleXmark} size='lg' />
+
               </button>
             )}
           </>

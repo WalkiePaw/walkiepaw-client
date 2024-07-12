@@ -7,32 +7,40 @@ import ReviewForm from "../../components/ReviewForm";
 
 const MyTransaction = () => {
   const [transactions, setTransactions] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const MySwal = withReactContent(Swal);
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = async (page = 0) => {
     try {
-      const memberId = 2;
+      const memberId = 1;
       const response = await axios.get(
         `http://localhost:8080/api/v1/chatrooms/${memberId}/transaction`,
-        {
-          params: {
-            page: 0,
-            size: 10,
-            sort: "createdDate,desc",
-          },
-        }
-      );
+      {
+        params: {
+          page: page,
+          size: 10,
+          sort: "createdDate,desc",
+        },
+      }
+    );
+    if (page === 0) {
       setTransactions(response.data.content);
-    } catch (error) {
-      console.error("Failed to fetch transactions", error);
-      MySwal.fire({
-        title: "Error",
-        text: "거래 내역을 불러오는데 실패했습니다",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
+    } else {
+      setTransactions(prev => [...prev, ...response.data.content]);
     }
-  };
+    setHasMore(!response.data.last);
+    setCurrentPage(page);
+  } catch (error) {
+    console.error("Failed to fetch transactions", error);
+    MySwal.fire({
+      title: "Error",
+      text: "거래 내역을 불러오는데 실패했습니다",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  }
+};
 
   useEffect(() => {
     fetchTransactions();
@@ -60,7 +68,7 @@ const MyTransaction = () => {
       point: reviewData.points,
       content: reviewData.content,
       chatroomId: transaction.chatroomId,
-      reviewerId: 2, // 현재 로그인한 사용자의 ID
+      reviewerId: 1, // 현재 로그인한 사용자의 ID
       category: transaction.category,
     };
 
@@ -99,6 +107,12 @@ const MyTransaction = () => {
     return `${year}-${month}-${day} / ${hours}:${minutes}`;
   };
 
+  const loadMore = () => {
+    if (hasMore) {
+      fetchTransactions(currentPage + 1);
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <h1 className="text-3xl font-bold mb-5 mr-4">내 거래 내역</h1>
@@ -106,41 +120,25 @@ const MyTransaction = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 게시글 제목
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 거래한 회원
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 리뷰 작성
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 거래일/시간
               </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {transactions.map((transaction) => (
-              <tr key={transaction.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {transaction.title}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {transaction.memberNickName}
-                </td>
+              <tr key={transaction.chatroomId}>
+                <td className="px-6 py-4 whitespace-nowrap">{transaction.title}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{transaction.memberNickName}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {!transaction.hasReview ? (
                     <button
@@ -161,6 +159,14 @@ const MyTransaction = () => {
           </tbody>
         </table>
       </div>
+      {hasMore && (
+        <button
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
+          onClick={loadMore}
+        >
+          더 보기
+        </button>
+      )}
     </div>
   );
 };
