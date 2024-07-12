@@ -1,10 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import logo from '../assets/logo.png';
 import AuthButton from '../../src/components/auth/AuthButton'; //
-import { useSelector } from 'react-redux';
 
 const HeaderContainer = styled.header`
   position: relative;
