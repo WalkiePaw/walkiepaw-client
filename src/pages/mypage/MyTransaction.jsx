@@ -10,37 +10,37 @@ const MyTransaction = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const MySwal = withReactContent(Swal);
+  const memberId = 1;
 
   const fetchTransactions = async (page = 0) => {
     try {
-      const memberId = 2;
       const response = await axios.get(
         `http://localhost:8080/api/v1/chatrooms/${memberId}/transaction`,
-      {
-        params: {
-          page: page,
-          size: 10,
-          sort: "createdDate,desc",
-        },
+        {
+          params: {
+            page: page,
+            size: 10,
+            sort: "createdDate,desc",
+          },
+        }
+      );
+      if (page === 0) {
+        setTransactions(response.data.content);
+      } else {
+        setTransactions((prev) => [...prev, ...response.data.content]);
       }
-    );
-    if (page === 0) {
-      setTransactions(response.data.content);
-    } else {
-      setTransactions(prev => [...prev, ...response.data.content]);
+      setHasMore(!response.data.last);
+      setCurrentPage(page);
+    } catch (error) {
+      console.error("Failed to fetch transactions", error);
+      MySwal.fire({
+        title: "Error",
+        text: "거래 내역을 불러오는데 실패했습니다",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
-    setHasMore(!response.data.last);
-    setCurrentPage(page);
-  } catch (error) {
-    console.error("Failed to fetch transactions", error);
-    MySwal.fire({
-      title: "Error",
-      text: "거래 내역을 불러오는데 실패했습니다",
-      icon: "error",
-      confirmButtonText: "OK",
-    });
-  }
-};
+  };
 
   useEffect(() => {
     fetchTransactions();
@@ -68,7 +68,7 @@ const MyTransaction = () => {
       point: reviewData.points,
       content: reviewData.content,
       chatroomId: transaction.chatroomId,
-      reviewerId: 1, // 현재 로그인한 사용자의 ID
+      reviewerId: memberId, // 현재 로그인한 사용자의 ID
       category: transaction.category,
     };
 
@@ -137,8 +137,12 @@ const MyTransaction = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {transactions.map((transaction) => (
               <tr key={transaction.chatroomId}>
-                <td className="px-6 py-4 whitespace-nowrap">{transaction.title}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{transaction.memberNickName}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {transaction.title}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {transaction.memberNickName}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {!transaction.hasReview ? (
                     <button
