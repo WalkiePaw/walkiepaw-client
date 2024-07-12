@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { verifyToken } from './store/AuthSlice';
+import ProtectedRoute from "./store/ProtectedRoute.jsx";
 import BoardList from "./pages/boardList/BoardList";
 import Home from "./pages/home/Home";
 import Layout from "./Layout";
@@ -64,7 +65,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route path="*" element={<Notfound />} />
 
-          <Route path="/mypage" element={<MyPageLayout />}>
+          <Route path="/mypage" element={<ProtectedRoute><MyPageLayout /></ProtectedRoute>}>
             <Route index element={<MyPage />} />
             <Route path="history" element={<MyHistory />} />
             <Route path="transaction" element={<MyTransaction />} />
@@ -92,7 +93,8 @@ function App() {
           <Route path="/login/naver" element={<NaverLoginCallback />} />
           <Route path="/login/google" element={<GoogleLoginCallback />} />
           <Route path="signup" element={<SignUp />} />
-          <Route path="chatpage" element={<ChatPage />} />
+          <Route path="chatpage" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+
 
 
           <Route path="/dashboard" element={<Dashboard />}>
