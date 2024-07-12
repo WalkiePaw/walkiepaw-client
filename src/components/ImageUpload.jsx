@@ -6,7 +6,11 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
-const ImageUpload = ({ onImageUpload, initialImage, readOnly }) => {
+const ImageUpload = ({ 
+    onImageUpload = () => {},
+    initialImage = null, 
+    readOnly = false,
+  }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
@@ -98,14 +102,9 @@ const ImageUpload = ({ onImageUpload, initialImage, readOnly }) => {
 };
 
 ImageUpload.propTypes = {
-  onImageUpload: PropTypes.func.isRequired,
+  onImageUpload: PropTypes.func,
   initialImage: PropTypes.string,
   readOnly: PropTypes.bool,
-};
-
-ImageUpload.defaultProps = {
-  initialImage: null,
-  readOnly: false,
 };
 
 export default ImageUpload;
