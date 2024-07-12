@@ -98,12 +98,13 @@ const ImageUpload = ({ onImageUpload, initialImage, readOnly }) => {
 };
 
 ImageUpload.propTypes = {
-  onImageUpload: PropTypes.func.isRequired,
+  onImageUpload: PropTypes.func,
   initialImage: PropTypes.string,
   readOnly: PropTypes.bool,
 };
 
 ImageUpload.defaultProps = {
+  onImageUpload: () => {},
   initialImage: null,
   readOnly: false,
 };
