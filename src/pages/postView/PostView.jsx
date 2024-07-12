@@ -8,6 +8,7 @@ import axios from 'axios';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Carousel 스타일 가져오기
 import { jwtDecode } from 'jwt-decode';
+import ProtectedRoute from '../../store/ProtectedRoute';
 
 const PostView = () => {
   const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
@@ -25,17 +26,18 @@ const PostView = () => {
 
   const [memberNickName, setMemberNickname] = useState(location?.state?.memberNickName);
   // const [memberId, setMemberId] = useState(location?.state?.memberId);
-  const [memberId, setMemberId] = useState(null);
+  const memberId = 1;
+  const [memberPhoto, setMemberPhoto] = useState(null);
 
   // JWT 토큰을 디코딩하여 사용자 정보를 추출
-  useEffect(() => {
-    const token = localStorage.getItem('jwtToken');
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      console.log(decodedToken);
-      setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem('jwtToken');
+  //   if (token) {
+  //     const decodedToken = jwtDecode(token);
+  //     console.log(decodedToken);
+  //     setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
+  //   }
+  // }, []);
 
   useEffect(() => {
     console.log('useEffect 실행 되었다!');
@@ -50,6 +52,7 @@ const PostView = () => {
         setPriceProposal(postData?.priceProposal);
         setDetailedLocation(postData?.detailedLocation);
         setPhotoUrls(postData?.photoUrls);
+        setMemberPhoto(postData?.memberPhoto);
       } catch (error) {
         console.error('게시글을 가져오는 중 오류 발생', error);
       }
@@ -218,9 +221,7 @@ const PostView = () => {
         )}
         <div className="post-header">
           <div className="author-info">
-            {' '}
-            {/* 맴버 사진으로 넣어야함 */}
-            <img src="https://via.placeholder.com/40" alt="Author" className="author-image" />
+            <img src={memberPhoto || '/src/assets/default_user.png'} alt="Author" className="author-image" />
             <div className="author-details">
               <span className="author-name">{post.memberNickName}</span>
               <span className="post-location">{post.local}</span>
@@ -258,9 +259,11 @@ const PostView = () => {
         <div className="post-location-box">지역 : {post.location}</div>
         <div className="post-detailedLocation-box">상세주소 : {detailedLocation}</div>
         <div className="report-box">
-          <button className="report-button" onClick={() => setShowReportModal(true)}>
-            이 게시글 신고하기
-          </button>
+          <ProtectedRoute>
+            <button className="report-button" onClick={() => setShowReportModal(true)}>
+              이 게시글 신고하기
+            </button>
+          </ProtectedRoute>
         </div>
 
         {memberNickName === post.memberNickName && (
