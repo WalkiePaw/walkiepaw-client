@@ -62,15 +62,15 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
     }
   }, []);
 
-  const handleImageUpload = (newImageUrl) => {
-    setProfileImage(newImageUrl);
-  };
+  // const handleImageUpload = (newImageUrl) => {
+  //   setProfileImage(newImageUrl);
+  // };
 
   return (
     <div className={"w-80 h-screen bg-gray-100 p-4"}>
       <div className="text-center mt-5 mb-3">
         <ImageUpload
-          onImageUpload={handleImageUpload}
+          // onImageUpload={handleImageUpload}
           initialImage={profileImage}
           readOnly={!!profileImage} 
         />

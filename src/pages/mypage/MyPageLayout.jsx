@@ -8,17 +8,15 @@ import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 const MyPageLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  // const toggleSidebar = () => {
+  //   setIsSidebarOpen(!isSidebarOpen);
+  // };
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <MyPageSidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+    <div className="flex h-screen">
+      <MyPageSidebar/>
       <div
-        className={`flex-1 p-4 bg-white transition-all duration-300 
-        ${isSidebarOpen ? 'ml-64' : 'ml-0'}
-        md:ml-0 md:pl-${isSidebarOpen ? '64' : '0'}`}
+        className={"flex-1 overflow-auto"}
       >
         {/* <button 
           className="fixed top-4 left-4 z-50 text-black" 
