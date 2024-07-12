@@ -1,4 +1,4 @@
-// src/pages/Dashboard/Introduction.jsx 홈 화면
+// Introduction 대시보드(프로파일) 홈 화면
 
 import React, { useEffect, useState } from 'react';
 // axios 임포트
@@ -57,16 +57,6 @@ const Introduction = () => {
     }
   }, []);
 
-  // 게시글 더보기
-  const loadMorePosts = () => {
-    setPostCount(prevCount => prevCount + 2); // 2개씩 더보기 추가
-  };
-
-  // 리뷰 더보기
-  const loadMoreReviews = () => {
-    setReviewCount(prevCount => prevCount + 2); // 2개씩 더보기 추가
-  };
-
   // 상단으로 올라가기
   const scrollToTop = () => {
     window.scrollTo({
@@ -74,7 +64,6 @@ const Introduction = () => {
       behavior: 'smooth',
     });
   };
-
 
   return (
     <div className='flex-1 p-4'>

@@ -10,13 +10,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 // axios 임포트
 import axios from 'axios';
+// 게시글 작성일
+import formatTime from '../../util/formatTime';
 
 const MyHistory = () => {
   const [activeTab, setActiveTab] = useState('JOB_OPENING');
   // 게시글 데이터 가져오기
   const [posts, setPosts] = useState([]);
   const MySwal = withReactContent(Swal);
-  const id = 1;
   const memberId = 1;
   const navigate = useNavigate();
 
@@ -73,17 +74,6 @@ const MyHistory = () => {
         }
       }
     });
-  };
-
-  // 날짜 설정
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${year}-${month}-${day} / ${hours}:${minutes}`;
   };
 
   const handleRowClick = (boardId) => {

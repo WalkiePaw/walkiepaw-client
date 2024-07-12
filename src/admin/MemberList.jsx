@@ -1,8 +1,13 @@
-// g회원 목록 관리
+// 회원 목록 관리
 import React, { useState, useEffect } from 'react';
+// axios 임포트
 import axios from 'axios';
+// 팝업 모달창
 import Swal from 'sweetalert2';
+// styled-component 적용
 import styled from 'styled-components';
+// 회원가입일
+import formatTime from '../util/formatTime'
 
 // 스타일드 컴포넌트 정의
 const StyledSelect = styled.select`
@@ -137,15 +142,6 @@ const MemberList = () => {
     WITHDRAWN: "탈퇴",
     BANNED: "제재 또는 정지된 회원",
     INACTIVE: "휴면 상태"
-  };
-
-  // 회원 가입일 설정
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
   };
 
     // 필터링된 회원 목록을 반환하는 함수: 이름, 닉네임, 누적 신고 횟수, 이메일로 검색 가능

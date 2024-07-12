@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import axios from "axios";
 import ReviewForm from "../../components/ReviewForm";
+// 거래일
+import formatTime from "../../util/formatTime";
 
 const MyTransaction = () => {
   const [transactions, setTransactions] = useState([]);
@@ -95,16 +97,6 @@ const MyTransaction = () => {
         confirmButtonText: "OK",
       });
     }
-  };
-
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${year}-${month}-${day} / ${hours}:${minutes}`;
   };
 
   const loadMore = () => {

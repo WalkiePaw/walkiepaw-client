@@ -66,7 +66,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route path="*" element={<Notfound />} />
 
-          <Route path="/mypage" element={<ProtectedRoute><MyPageLayout /></ProtectedRoute>}>
+          <Route path="/mypage" element={<MyPageLayout />}>
             <Route index element={<MyPage />} />
             <Route path="history" element={<MyHistory />} />
             <Route path="transaction" element={<MyTransaction />} />
