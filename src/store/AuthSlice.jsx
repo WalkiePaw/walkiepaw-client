@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 
 // 이 verifyToken 함수는 다음과 같이 동작합니다:
@@ -21,11 +22,16 @@ export const verifyToken = createAsyncThunk(
         const response = await axios.get('http://localhost:8080/secured', {
           headers: { Authorization: `Bearer ${token}` }
         });
+
+        // JWT 토큰 디코딩
+        const decodedToken = jwtDecode(token);
+
         const userInfo = {
-          email: response.data.split('\n')[1].split(': ')[1],
-          authorities: response.data.split('\n')[3].split(': ')[1]
+          email: decodedToken.sub, // JWT의 'sub' 클레임은 일반적으로 사용자의 식별자(이메일 또는 ID)입니다
+          authorities: decodedToken.authorities, // JWT에 권한 정보가 포함되어 있다고 가정
+          id: decodedToken.id // JWT에 사용자 ID가 포함되어 있다고 가정
         };
-        return userInfo;
+        return { user: userInfo, token };
       } catch (error) {
         return rejectWithValue(error.response?.data?.message || 'Token verification failed');
       }
@@ -47,7 +53,15 @@ const authSlice = createSlice({
       state.isLoggedIn = true;
       state.isLoading = false;
       state.token = action.payload.token;
-      state.user = action.payload.user;
+
+      // JWT 토큰 디코딩
+      const decodedToken = jwtDecode(action.payload.token);
+
+      state.user = {
+        id: decodedToken.id,
+        email: decodedToken.sub,
+        authorities: decodedToken.authorities
+      };
       state.error = null;
       localStorage.setItem('token', action.payload.token);
     },
@@ -79,6 +93,7 @@ const authSlice = createSlice({
       state.isLoggedIn = true;
       state.isLoading = false;
       state.user = action.payload.user;
+      state.token = action.payload.token;
       state.error = null;
     })
     .addCase(verifyToken.rejected, (state) => {
