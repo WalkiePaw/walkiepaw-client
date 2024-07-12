@@ -74,15 +74,14 @@ const Login = () => {
   const onSubmit = async () => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
+      const response = await axios.post('http://localhost:8080/login', {
         email: userInfo.email,
         password: userInfo.password
       });
 
       console.log('Login successful:', response.data);
       dispatch(loginSuccess({
-        token: response.data.token,
-        user: response.data.user
+        token: response.data
       }));
       // 로그인 성공 후 리다이렉트
       const from = location.state?.from?.pathname || '/';
