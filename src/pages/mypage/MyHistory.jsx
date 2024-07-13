@@ -102,6 +102,7 @@ const MyHistory = () => {
         </button>
       </div>
       <div className="w-full overflow-hidden rounded-lg border border-gray-300">
+      {posts.length > 0 ? (
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -156,6 +157,11 @@ const MyHistory = () => {
             ))}
           </tbody>
         </table>
+        ) : (
+          <div className="px-6 py-4 text-center text-gray-500">
+            내 작성글이 없습니다
+          </div>
+        )}
       </div>
     </div>
   );

@@ -93,34 +93,39 @@ const Preferences = () => {
   };
 
   return (
-      <div>
-        <h1 className="font-bold text-3xl mb-6">내 관심 목록</h1>
-        {likes.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {likes.map((like) => (
-                  <CardList
-                      key={like.id}
-                      boardId={like.id}
-                      title={like.title}
-                      location={like.location}
-                      image={like.image}
-                      memberNickName={like.memberNickName}
-                      status={like.status}
-                      category={like.category}
-                      price={like.price}
-                      priceType={like.priceType}
-                      startTime={like.startTime}
-                      endTime={like.endTime}
-                      initialLiked={true}
-                      likeCount={like.likeCount}
-                      onLikeChange={handleLikeChange}
-                  />
-              ))}
-            </div>
-        ) : (
-            <p>관심 목록이 비어 있습니다.</p>
-        )}
-      </div>
+    <div>
+      <h1 className="font-bold text-3xl mb-6">내 관심 목록</h1>
+      <div className="w-full overflow-hidden rounded-lg border border-gray-300">
+      {likes.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {likes.map((like) => (
+            <CardList
+              key={like.id}
+              boardId={like.id}
+              title={like.title}
+              location={like.location}
+              image={like.image}
+              memberNickName={like.memberNickName}
+              status={like.status}
+              category={like.category}
+              price={like.price}
+              priceType={like.priceType}
+              startTime={like.startTime}
+              endTime={like.endTime}
+              initialLiked={true}
+              likeCount={like.likeCount}
+              memberId={id}
+              initialLikeCount={like.likeCount}
+              onLikeChange={handleLikeChange}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="px-6 py-4 text-center text-gray-500">
+        내 관심 목록이 없습니다
+      </div>      )}
+    </div>
+    </div>
   );
 };
 

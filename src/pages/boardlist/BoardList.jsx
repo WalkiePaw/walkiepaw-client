@@ -25,13 +25,11 @@ const BoardList = () => {
   const { user } = useSelector((state) => state.auth); // 로그인한 유저의 정보를 가져온다
   const [loading, setLoading] = useState(false); // 게시글이 출력되기 전 상태 표시
 
-  console.log('====>', user);
+  // console.log('====>', user);
 
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
   const [memberPhoto, setMemberPhoto] = useState(null);
-
-  // const memberId = 1;
   const [memberId, setMemberId] = useState(null);
 
   // JWT 토큰을 디코딩하여 사용자 정보를 추출
@@ -39,8 +37,9 @@ const BoardList = () => {
     const token = localStorage.getItem('jwtToken');
     if (token) {
       const decodedToken = jwtDecode(token);
-      console.log(decodedToken);
-      setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
+      console.log("JWT 토큰", decodedToken);
+      setMemberId(decodedToken.id); // 사용자 ID를 상태에 저장
+      console.log("회원번호:", decodedToken.id);
     }
   }, []);
 
@@ -242,6 +241,7 @@ const BoardList = () => {
           filteredPosts.map((post) => (
             <div key={post.id} onClick={() => handlePostClick(post)}>
               <CardList
+                boardId={post.id}
                 title={post.title}
                 location={dongFromLocal(post.location)}
                 price={post.price}
@@ -253,6 +253,8 @@ const BoardList = () => {
                 status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
                 category={post.category} // 카테고리 정보 전달
                 memberPhoto={post.memberPhoto}
+                id={memberId} // 로그인한 사용자의 ID
+                initialLikeCount={post.likeCount} // 여기서 likeCount 전달
               />
             </div>
           ))

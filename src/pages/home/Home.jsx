@@ -12,7 +12,7 @@ const Home = () => {
     <div className="root">
       <div className="homebox1">
         <div className="top-box1">
-          <h2>애완견의 행복한 산책을 위하여!</h2>
+          <h2>반려견의 행복한 산책을 위하여!</h2>
           <p>산책인과 반려견 모두 만족하는 WalkiePaw 입니다.</p>
         </div>
         <img src="img/dog1.jpg" className="homebox1-img" alt="homeImg"></img>
