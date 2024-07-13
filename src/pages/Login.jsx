@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {useDispatch} from "react-redux";
-import axios from 'axios';
 import {Button, Modal} from 'antd';
 import UserInput from '../components/UserInput';
 import UserButton from '../components/UserButton';
@@ -12,7 +11,7 @@ import FindEmail from "../components/auth/FindEmail.jsx";
 import FindPassword from "../components/auth/FindPassword.jsx";
 import pawpaw from '../assets/pawpaw.png';
 import { loginSuccess, loginFailure, setLoading } from "../store/AuthSlice.jsx";
-
+import {loginApi} from "../Api.jsx";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -74,15 +73,14 @@ const Login = () => {
   const onSubmit = async () => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
+      const response = await loginApi({
         email: userInfo.email,
         password: userInfo.password
       });
 
       console.log('Login successful:', response.data);
       dispatch(loginSuccess({
-        token: response.data.token,
-        user: response.data.user
+        token: response.data.token
       }));
       // 로그인 성공 후 리다이렉트
       const from = location.state?.from?.pathname || '/';
