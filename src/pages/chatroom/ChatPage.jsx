@@ -102,7 +102,7 @@ const ChatPage = () => {
       writerId: id,
     };
 
-    send("/api/v1/chats", chatAddRequest);
+    send("/api/v1/ws/chats", chatAddRequest);
 
     // 로컬 상태 업데이트 (optional)
     setMessages(prevMessages => [
