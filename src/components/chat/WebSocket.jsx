@@ -16,7 +16,7 @@ const WebSocket = (url) => {
       'Authorization': 'Bearer ' + token
     };
 
-    stompClient.connect(headers, function(frame) {
+    client.current.connect(headers, function(frame) {
       console.log('Connected: ' + frame);
     }, function(error) {
       console.log('Error: ' + error);

@@ -5,7 +5,8 @@ import axios from 'axios';
 import { ChatContainer, MessageList, Message, Avatar, ConversationHeader } from '@chatscope/chat-ui-kit-react'; // 올바른 컴포넌트만 import
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import ChatRoom from '../../components/chat/ChatRoom.jsx'; // 경로 확인
-import ChatInput from '../../components/chat/ChatInput.jsx'; // 경로 확인
+import ChatInput from '../../components/chat/ChatInput.jsx';
+import {useSelector} from "react-redux"; // 경로 확인
 
 const ChatLayout = styled.div`
   display: flex;
@@ -37,7 +38,8 @@ const StyledConversationHeader = styled(ConversationHeader)`
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [selectedChatroomId, setSelectedChatroomId] = useState(null);
-  const currentUserId = 1; // 현재 사용자의 ID
+  const user = useSelector(state => state.auth.user);  // 전체 user 객체 가져오기
+  const id = user?.id;  // Optional chaining을 사용하여 id 값 안전하게 접근
 
   const { subscribe, send, unsubscribe } = WebSocket('http://localhost:8080/ws');
 
@@ -55,7 +57,7 @@ const ChatPage = () => {
           message: msg.content,
           sentTime: new Date(msg.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           sender: msg.nickname,
-          direction: msg.writerId === currentUserId ? 'outgoing' : 'incoming',
+          direction: msg.writerId === id ? 'outgoing' : 'incoming',
           position: 'single',
         }));
         setMessages(formattedMessages);
@@ -70,7 +72,7 @@ const ChatPage = () => {
           message: message.content,
           sentTime: new Date(message.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           sender: message.nickname,
-          direction: message.writerId === currentUserId ? 'outgoing' : 'incoming',
+          direction: message.writerId === id ? 'outgoing' : 'incoming',
           position: 'single',
         }]);
       });
@@ -82,7 +84,7 @@ const ChatPage = () => {
         unsubscribe(`/topic/chatroom/${selectedChatroomId}`);
       }
     };
-  }, [selectedChatroomId, subscribe, unsubscribe, currentUserId]);
+  }, [selectedChatroomId, subscribe, unsubscribe, id]);
 
   const handleChatroomSelect = (chatroomId) => {
     setSelectedChatroomId(chatroomId);
@@ -97,7 +99,7 @@ const ChatPage = () => {
     const chatAddRequest = {
       content: newMessage,
       chatroomId: selectedChatroomId,
-      writerId: currentUserId,
+      writerId: id,
     };
 
     send("/api/v1/chats", chatAddRequest);
@@ -111,7 +113,7 @@ const ChatPage = () => {
         sender: '나',
         direction: 'outgoing',
         position: 'single',
-        writerId: currentUserId,
+        writerId: id,
       },
     ]);
   };
