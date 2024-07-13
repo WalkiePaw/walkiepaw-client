@@ -86,7 +86,7 @@ const AuthButton = () => {
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
                     >
-                      <MenuItem onClick={() => navigate('/mypage/settings')}>
+                      <MenuItem onClick={() => navigate('/mypage')}>
                         마이페이지
                       </MenuItem>
                       <MenuItem onClick={handleLogout}>
