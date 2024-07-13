@@ -148,14 +148,13 @@ const PostView = () => {
     try {
       const chatroom = await createChatroom(postId, user.id);  // `postId`와 `user.id`를 인자로 전달
       console.log('새 채팅방 생성 성공:', chatroom);
-      // 성공적으로 채팅방이 생성된 후의 로직 (예: 채팅방 페이지로 이동)
-      navigate(`/chatroom/${chatroom.id}`);
+      // 성공적으로 채팅방이 생성된 후의 로직
+      navigate('/chatpage', { state: { selectedChatroomId: chatroom.id } });
     } catch (error) {
       console.error('채팅방 생성 실패:', error.message);
       alert('채팅방을 생성할 수 없습니다.');
     }
   };
-
 
   const formatTime = (dataTimeString) => {
     const date = new Date(dataTimeString);
