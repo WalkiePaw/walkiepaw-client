@@ -34,7 +34,6 @@ const CardList = ({
   const handleLike = useCallback(
     (e) => {
       e.stopPropagation();
-      console.log("Clicked like button. BoardId:", boardId); // boardId 로깅
       const newLikedState = !liked;
       setLiked(newLikedState);
       setLikeCount((prevCount) =>
@@ -175,14 +174,24 @@ const CardList = ({
 };
 
 CardList.propTypes = {
-  initialLiked: PropTypes.bool.isRequired,
-  onLikeChange: PropTypes.func.isRequired,
+  initialLiked: PropTypes.bool,
+  onLikeChange: PropTypes.func,
   boardId: PropTypes.number.isRequired,
-  likeCount: PropTypes.number.isRequired,
-  memberPhoto: PropTypes.string,
-  id: PropTypes.number.isRequired,
   initialLikeCount: PropTypes.number.isRequired,
+  id: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  location: PropTypes.string.isRequired,
+  photoUrls: PropTypes.array,
+  memberNickName: PropTypes.string.isRequired,
+  memberPhoto: PropTypes.string,
+  status: PropTypes.string.isRequired,
+  category: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
+  priceType: PropTypes.string.isRequired,
+  startTime: PropTypes.string.isRequired,
+  endTime: PropTypes.string.isRequired,
 };
+
 
 export default CardList;
 
