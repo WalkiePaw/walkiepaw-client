@@ -37,14 +37,14 @@ const PostView = () => {
       const decodedToken = jwtDecode(token);
       console.log(decodedToken);
       setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
-      setMemberNickname(decodedToken.mamberNickname);
+      setMemberNickname(decodedToken.nickname);
     }
   }, []);
 
   useEffect(() => {
     console.log('user:', user);
-    console.log('post.memberId:', post.memberId);
-  }, [user, post.memberId]);
+    console.log('post.memberId:', post.memberNickName);
+  }, [user, post.memberNickName]);
 
   useEffect(() => {
     console.log('useEffect 실행 되었다!');
@@ -209,7 +209,7 @@ const PostView = () => {
             ))}
           </Carousel>
         )}
-        {user === post.memberId && (
+        {user?.nickname === post.memberNickName && (
           <div className="post-status">
             <select value={status} onChange={handleStatusChange} className={getStatusClass(status)}>
               <option value="RECRUITING" className="post-status-option recruiting">
@@ -271,7 +271,7 @@ const PostView = () => {
           </div>
         )}
 
-        {user === post.memberId && (
+        {user?.nickname === post.memberNickName && (
           <div className="post-management">
             <button className="edit-button" onClick={handleEdit}>
               수정하기
