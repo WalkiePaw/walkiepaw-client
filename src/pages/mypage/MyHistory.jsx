@@ -1,7 +1,7 @@
 // 내 작성글 보기
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 // sweetalert2 임포트
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -10,24 +10,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 // axios 임포트
 import axios from 'axios';
+// 게시글 작성일
+import formatTime from '../../util/formatTime';
 
 const MyHistory = () => {
   const [activeTab, setActiveTab] = useState('JOB_OPENING');
-  // 게시글 데이터 가져오기
   const [posts, setPosts] = useState([]);
   const MySwal = withReactContent(Swal);
-  const id = 1;
-  const memberId = 1;
   const navigate = useNavigate();
+  const { id } = useOutletContext();
 
   useEffect(() => {
-    fetchPosts(activeTab); // 기본 탭 설정을 "구직"으로 변경
-  }, []);
+    if (id) { // id가 존재할 때만 fetchPosts 호출
+      fetchPosts(activeTab);
+    }
+  }, [id, activeTab]); // id와 activeTab이 변경될 때마다 useEffect 실행
 
   const fetchPosts = async (category) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}`);
-
+      const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${id}/${category}`);
       setPosts(response.data.content);
     } catch (error) {
       console.error('Failed to fetch posts', error);
@@ -73,17 +74,6 @@ const MyHistory = () => {
         }
       }
     });
-  };
-
-  // 날짜 설정
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${year}-${month}-${day} / ${hours}:${minutes}`;
   };
 
   const handleRowClick = (boardId) => {

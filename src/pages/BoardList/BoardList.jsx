@@ -23,24 +23,26 @@ const BoardList = () => {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const { user } = useSelector((state) => state.auth); // 로그인한 유저의 정보를 가져온다
+  const [loading, setLoading] = useState(false); // 게시글이 출력되기 전 상태 표시
+
+  console.log('====>', user);
 
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
   const [memberPhoto, setMemberPhoto] = useState(null);
 
-  // const memberNickName = '헬스유투버'; // 로그인 유저의 임시 id 나중에 바꿔야 함
-  const memberId = 1;
-  // const [memberId, setMemberId] = useState(null);
+  // const memberId = 1;
+  const [memberId, setMemberId] = useState(null);
 
   // JWT 토큰을 디코딩하여 사용자 정보를 추출
-  // useEffect(() => {
-  //   const token = localStorage.getItem('jwtToken');
-  //   if (token) {
-  //     const decodedToken = jwtDecode(token);
-  //     console.log(decodedToken);
-  //     setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
-  //   }
-  // }, []);
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      console.log(decodedToken);
+      setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
+    }
+  }, []);
 
   // location의 값에서 '동'이 포함된 값만 추출
   const dongFromLocal = (location) => {
@@ -67,7 +69,7 @@ const BoardList = () => {
     const fetchPosts = async () => {
       try {
         if (!category || !hasMore) return; // 카테고리가 없으면 요청하지 않도록 처리
-
+        setLoading(true);
         const response = await axios.get(`http://localhost:8080/api/v1/boards/list/${category}`, {
           params: { page, size: 8 },
         }); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
@@ -79,6 +81,8 @@ const BoardList = () => {
         setMemberPhoto(memberPhoto);
       } catch (error) {
         console.error('Failed to fetch posts', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -149,12 +153,15 @@ const BoardList = () => {
         params.content = searchKeyword;
       }
 
+      setLoading(true);
+
       const response = await axios.get(`http://localhost:8080/api/v1/boards/search`, { params });
       console.log(response.data);
 
       // 검색 결과가 없는 경우 처리
       if (response.data?.length === 0) {
         alert('검색 결과가 없습니다.');
+        setLoading(false);
         return;
       }
 
@@ -165,6 +172,8 @@ const BoardList = () => {
     } catch (error) {
       console.error('검색 요청 실패!', error);
       alert('검색에 실패 했습니다.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -180,7 +189,6 @@ const BoardList = () => {
     navigate(`/post/${post.id}`, {
       state: {
         post,
-        // memberNickName,
         memberId,
         detailedLocation: post.detailedLocation,
         priceProposal: post.priceProposal,
@@ -227,8 +235,10 @@ const BoardList = () => {
           />
         </div>
       </div>
-      <div className={`board-list ${filteredPosts?.length === 0 ? 'no-posts-container' : ''}`}>
-        {filteredPosts?.length > 0 ? (
+      <div className={`board-list ${filteredPosts?.length === 0 && !loading ? 'no-posts-container' : ''}`}>
+        {loading ? (
+          <div className="loading">Loading...</div>
+        ) : filteredPosts?.length > 0 ? (
           filteredPosts.map((post) => (
             <div key={post.id} onClick={() => handlePostClick(post)}>
               <CardList
@@ -250,11 +260,13 @@ const BoardList = () => {
           <div className="no-posts">게시글이 없습니다.</div>
         )}
         <div className="bl-button-container">
-          <Link to="/new-post">
-            <button className="post-button">
-              <FontAwesomeIcon icon={faPenToSquare} />
-            </button>
-          </Link>
+          {user && (
+            <Link to="/new-post">
+              <button className="post-button">
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </button>
+            </Link>
+          )}
           <button className="top-button" onClick={scrollToTop}>
             <FontAwesomeIcon icon={faCircleArrowUp} />
           </button>

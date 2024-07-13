@@ -4,11 +4,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 // 팝업창
 import Swal from "sweetalert2";
+// 날짜 설정
+import formatTime from "../util/formatTime";
 
 const CSManagement = () => {
   const [qnaList, setQnaList] = useState([]);
   const [selectedQna, setSelectedQna] = useState(null);
-  const [replyContent, setReplyContent] = useState("");
+  // const [replyContent, setReplyContent] = useState("");
   const [unresolvedOnly, setUnresolvedOnly] = useState(true); // 처리되지 않은 항목만 보기 여부
 
   useEffect(() => {
@@ -113,19 +115,6 @@ const CSManagement = () => {
   const filteredQnaList = unresolvedOnly
   ? qnaList.filter((qna) => qna.status === "WAITING")
   : qnaList;
-
-
-  // 날짜 설정
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${year}-${month}-${day} / ${hours}:${minutes}`;
-  };
-
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg">

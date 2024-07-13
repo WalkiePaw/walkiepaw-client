@@ -1,7 +1,6 @@
 // 고객센터
-// src/pages/CustomerService.jsx
-
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 // axios 임포트
 import axios from "axios";
 // 팝업창, 모달: sweetalert 적용
@@ -11,40 +10,49 @@ import withReactContent from "sweetalert2-react-content";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
-
 const MySwal = withReactContent(Swal);
 
 const CustomerService = () => {
+  const { id } = useOutletContext(); // id를 context에서 가져옵니다.
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:8080/api/v1/qna', {
-        title,
-        content,
-        memberId: 1, // 멤버 ID를 적절히 설정하세요
-      });
-
-      if (response.status === 201) {
-        MySwal.fire({
-          title: "제출이 완료되었습니다",
-          icon: "success",
-          confirmButtonText: "확인",
-        }).then(() => {
-          setTitle("");
-          setContent("");
+    if (id) {
+      try {
+        const response = await axios.post('http://localhost:8080/api/v1/qna', {
+          title,
+          content,
+          memberId: id, // context에서 가져온 id 사용
         });
+
+        if (response.status === 201) {
+          MySwal.fire({
+            title: "제출이 완료되었습니다",
+            icon: "success",
+            confirmButtonText: "확인",
+          }).then(() => {
+            setTitle("");
+            setContent("");
+          });
+        }
+      } catch (error) {
+        MySwal.fire({
+          title: "오류가 발생했습니다",
+          text: "다시 시도해 주세요.",
+          icon: "error",
+          confirmButtonText: "확인",
+        });
+        console.error("There was an error adding the QnA!", error);
       }
-    } catch (error) {
+    } else {
       MySwal.fire({
-        title: "오류가 발생했습니다",
-        text: "다시 시도해 주세요.",
+        title: "오류",
+        text: "로그인이 필요합니다.",
         icon: "error",
         confirmButtonText: "확인",
       });
-      console.error("There was an error adding the QnA!", error);
     }
   };
 
@@ -52,17 +60,20 @@ const CustomerService = () => {
   return (
     <div className="max-h-screen overflow-y-auto">
       <h1 className="text-3xl font-bold mb-6">고객센터</h1>
-      <h2 className="text-2xl font-bold mb-3">🔔 1:1 문의</h2>
-
-      <div className="flex items-center mb-2">
+        <div className="p-3 mb-5 bg-white rounded-lg border-2" style={{ borderColor: '#FFA7A7' }}>
+          <h2 className="text-2xl font-bold mb-3">🔔 1:1 문의</h2>
+          <div className="flex items-center mb-2">
+            <h2 className="font-bold">온라인 보안 팁:</h2>
+          </div>
+          <p className="mb-6">
+            고객님의 보안 유지를 위해, 개인정보나 신용카드 정보를 전화, 이메일, 채팅
+            등으로 공유하는 행위는 절대 삼가시기 바랍니다.
+          </p>
+        </div>
+      <h2 className="text-2xl font-bold mb-6">
         <FontAwesomeIcon icon={faCircleInfo} className="mr-2" />
-        <h2 className="font-bold">온라인 보안 팁</h2>
-      </div>
-      <p className="mb-6">
-        고객님의 보안 유지를 위해, 개인정보나 신용카드 정보를 전화, 이메일, 채팅
-        등으로 공유하는 행위는 절대 삼가시기 바랍니다.
-      </p>
-      <h2 className="text-2xl font-bold mb-6">도움이 필요하신가요?</h2>
+        도움이 필요하신가요?
+      </h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label

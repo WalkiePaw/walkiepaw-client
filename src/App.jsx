@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { verifyToken } from './store/AuthSlice';
 import ProtectedRoute from './store/ProtectedRoute.jsx';
@@ -9,7 +10,7 @@ import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+
 
 import Notfound from './components/Notfound';
 import MyPage from './pages/mypage/MyPage';
@@ -63,17 +64,12 @@ function App() {
       <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
           <Route path="*" element={<Notfound />} />
 
-          <Route
-            path="/mypage"
-            element={
-              <ProtectedRoute>
-                <MyPageLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<MyPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="mypage" element={<MyPageLayout />}>
+              <Route index element={<MyPage />} />
             <Route path="history" element={<MyHistory />} />
             <Route path="transaction" element={<MyTransaction />} />
             <Route path="preferences" element={<Preferences />} />
@@ -84,19 +80,13 @@ function App() {
             <Route path="review" element={<Review />} />
             <Route path="withdrawal" element={<MembershipWithdrawal />} />
             <Route path="qna-list" element={<QnaList />} />
+            </Route>
           </Route>
 
-          <Route index element={<Home />} />
+
           <Route path="recruit" element={<BoardList category="JOB_OPENING" />} />
           <Route path="jobs" element={<BoardList category="JOB_SEARCH" />} />
-          <Route
-            path="new-post"
-            element={
-              // <ProtectedRoute>
-              <NewPostForm />
-              // </ProtectedRoute>
-            }
-          ></Route>
+          <Route path="new-post" element={<NewPostForm />}></Route>
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
           <Route path="post/:postId" element={<PostView />} />
           <Route path="login" element={<Login />} />

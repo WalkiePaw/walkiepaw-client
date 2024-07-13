@@ -11,32 +11,30 @@ import { faGripLines } from "@fortawesome/free-solid-svg-icons";
 // axios 임포트
 import axios from "axios";
 
-const MyPageSidebar = ({ isSidebarOpen }) => {
-  const [memberData, setMemberData] = useState(null);
-  const [score, setScore] = useState(0);
-  const [counts, setCounts] = useState({ recruitCount: 0, researchCount: 0 });
-  const [profileImage, setProfileImage] = useState(null);
+  const MyPageSidebar = ({ id }) => {
+    const [memberData, setMemberData] = useState(null);
+    const [score, setScore] = useState(0);
+    const [counts, setCounts] = useState({ recruitCount: 0, researchCount: 0 });
+    const [profileImage, setProfileImage] = useState(null);
 
-  useEffect(() => {
-    const memberId = 1; // 로그인한 사용자의 ID를 가져옴
-
-    if (memberId) {
-      axios
-        .get(`http://localhost:8080/api/v1/members/${memberId}`)
+    useEffect(() => {
+      if (id) {  // id가 존재할 때만 API 호출
+        axios
+        .get(`http://localhost:8080/api/v1/members/${id}`)
         .then((response) => {
           setMemberData(response.data);
           if (response.data.photo) {
-            setProfileImage(response.data.photo); 
+            setProfileImage(response.data.photo);
           } else {
-            setProfileImage(getProfileImage(1)); 
+            setProfileImage(getProfileImage(1));
           }
         })
         .catch((error) => {
           console.error("회원 정보를 가져오던 도중 오류 발생:", error);
         });
 
-      axios
-        .get(`http://localhost:8080/api/v1/members/${memberId}/score`)
+        axios
+        .get(`http://localhost:8080/api/v1/members/${id}/score`)
         .then((response) => {
           console.log('Score:', response.data);
           setScore(response.data.score);
@@ -45,32 +43,23 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
           console.error("평점 정보를 가져오던 도중 오류 발생:", error);
         });
 
-      axios
-        .get(`http://localhost:8080/api/v1/members/${memberId}/RRCount`)
+        axios
+        .get(`http://localhost:8080/api/v1/members/${id}/RRCount`)
         .then((response) => {
           console.log('Counts:', response.data);
           setCounts(response.data);
         })
         .catch((error) => {
-          console.error(
-            "산책/알바 횟수 정보를 가져오던 도중 오류 발생:",
-            error
-          );
+          console.error("산책/알바 횟수 정보를 가져오던 도중 오류 발생:", error);
         });
-    } else {
-      console.error("No user ID found in local storage.");
-    }
-  }, []);
+      }
+    }, [id]);  // id가 변경될 때마다 useEffect 실행
 
-  // const handleImageUpload = (newImageUrl) => {
-  //   setProfileImage(newImageUrl);
-  // };
 
   return (
     <div className={"w-80 h-screen bg-gray-100 p-4"}>
       <div className="text-center mt-5 mb-3">
         <ImageUpload
-          // onImageUpload={handleImageUpload}
           initialImage={profileImage}
           readOnly={!!profileImage} 
         />
@@ -102,8 +91,9 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
           <li className="my-2">
             <NavLink
               to="/mypage/settings"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -115,8 +105,9 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
           <li className="my-2">
             <NavLink
               to="/mypage/history"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -128,8 +119,9 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
           <li className="my-2">
             <NavLink
               to="/mypage/transaction"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -141,8 +133,9 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
           <li className="my-2">
             <NavLink
               to="/mypage/review"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -154,8 +147,9 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
           <li className="my-2">
             <NavLink
               to="/mypage/preferences"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -170,8 +164,9 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
           <li className="my-2">
             <NavLink
               to="/mypage/information"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -183,8 +178,9 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
           <li className="my-2">
             <NavLink
               to="/mypage/withdrawal"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -199,8 +195,9 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
           <li className="my-2">
             <NavLink
               to="/mypage/customer-service"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}
@@ -212,8 +209,9 @@ const MyPageSidebar = ({ isSidebarOpen }) => {
           <li className="my-2">
             <NavLink
               to="/mypage/qna-list"
-              className="text-black hover:text-orange-300"
-              activeClassName="text-orange-600"
+              className={({ isActive }) => 
+                `text-black hover:text-orange-300 ${isActive ? 'text-orange-300' : ''}`
+              }
             >
               <FontAwesomeIcon
                 icon={faGripLines}

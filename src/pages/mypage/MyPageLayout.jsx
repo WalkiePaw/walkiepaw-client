@@ -1,32 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import MyPageSidebar from './MyPageSidebar';
-// FontAwesome 임포트 - 사이드 바 열고 닫는 기능(보류)
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 const MyPageLayout = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const user = useSelector(state => state.auth.user);  // 전체 user 객체 가져오기
+  const id = user?.id;  // Optional chaining을 사용하여 id 값 안전하게 접근
 
-  // const toggleSidebar = () => {
-  //   setIsSidebarOpen(!isSidebarOpen);
-  // };
 
   return (
     <div className="flex h-screen">
-      <MyPageSidebar/>
-      <div
-        className={"flex-1 overflow-auto"}
-      >
-        {/* <button 
-          className="fixed top-4 left-4 z-50 text-black" 
-          onClick={toggleSidebar}
-          aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-        >
-          <FontAwesomeIcon icon={isSidebarOpen ? faArrowLeft : faArrowRight} size="2x" />
-        </button> */}
+      <MyPageSidebar id={id} />
+      <div className={"flex-1 overflow-auto"}>
         <main className="p-8">
-          <Outlet />
+          <Outlet context={{ id }} />
         </main>
       </div>
     </div>

@@ -1,28 +1,31 @@
 // 거래 내역 + 리뷰 달기
 import { useState, useEffect } from "react";
+import { useOutletContext } from 'react-router-dom';
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import axios from "axios";
 import ReviewForm from "../../components/ReviewForm";
+import formatTime from "../../util/formatTime";
 
 const MyTransaction = () => {
+  const { id } = useOutletContext(); // id를 context에서 가져옵니다.
   const [transactions, setTransactions] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const MySwal = withReactContent(Swal);
-  const memberId = 1;
 
   const fetchTransactions = async (page = 0) => {
+    if (!id) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/chatrooms/${memberId}/transaction`,
-        {
-          params: {
-            page: page,
-            size: 10,
-            sort: "createdDate,desc",
-          },
-        }
+          `http://localhost:8080/api/v1/chatrooms/${id}/transaction`,
+          {
+            params: {
+              page: page,
+              size: 10,
+              sort: "createdDate,desc",
+            },
+          }
       );
       if (page === 0) {
         setTransactions(response.data.content);
@@ -43,8 +46,11 @@ const MyTransaction = () => {
   };
 
   useEffect(() => {
-    fetchTransactions();
-  }, []);
+    if (id) {
+      fetchTransactions();
+    }
+  }, [id]);
+
 
   const handleReviewClick = (transaction) => {
     MySwal.fire({
@@ -68,7 +74,7 @@ const MyTransaction = () => {
       point: reviewData.points,
       content: reviewData.content,
       chatroomId: transaction.chatroomId,
-      reviewerId: memberId, // 현재 로그인한 사용자의 ID
+      reviewerId: id, // 현재 로그인한 사용자의 ID
       category: transaction.category,
     };
 
@@ -95,16 +101,6 @@ const MyTransaction = () => {
         confirmButtonText: "OK",
       });
     }
-  };
-
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${year}-${month}-${day} / ${hours}:${minutes}`;
   };
 
   const loadMore = () => {

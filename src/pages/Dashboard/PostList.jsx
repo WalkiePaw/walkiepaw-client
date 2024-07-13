@@ -10,9 +10,8 @@ import axios from 'axios';
 const PostList = ( {postCount} ) => {
   const [activeTab, setActiveTab] = useState('JOB_SEARCH');
   const [posts, setPosts] = useState([]);
-  const [visiblePosts, setVisiblePosts] = useState(2); // 처음 보일 게시글 수
+  const [visiblePosts, setVisiblePosts] = useState(); // 처음 보일 게시글 수
   const [showNoMorePosts, setShowNoMorePosts] = useState(false);
-  const pageSize = 3; // 한 번에 불러올 게시글 수
   const MySwal = withReactContent(Swal);
   const memberId = 1;
 
@@ -48,7 +47,7 @@ const PostList = ( {postCount} ) => {
     if (tab !== activeTab) {
       setActiveTab(tab);
       setPosts([]);
-      setVisiblePosts(5);
+      setVisiblePosts(5);// 5개까지 보이도록 설정
       setShowNoMorePosts(false);
     }
   };
