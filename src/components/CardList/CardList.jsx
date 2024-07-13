@@ -1,14 +1,14 @@
 // src/component/CardList/CardList
-import React, { useState, useCallback } from 'react';
-import './CardList.css';
+import React, { useState, useCallback, useEffect } from 'react';
+// import './CardList.css';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
-import ImageUpload from '../ImageUpload';
-import { getProfileImage } from '../../util/profile-img';
+import axios from 'axios';
 
 const CardList = ({
+  boardId,
   title,
   location,
   photoUrls,
@@ -23,22 +23,65 @@ const CardList = ({
   onCardClick,
   initialLiked,
   onLikeChange,
-  boardId,
-  likeCount,
+  memberId =1,
+  initialLikeCount,
 }) => {
   const [liked, setLiked] = useState(initialLiked);
-  const [currentLikeCount, setCurrentLikeCount] = useState(likeCount); // 좋아요 수 상태 추가
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const [likeChangeTimeout, setLikeChangeTimeout] = useState(null);
+  console.log('CardList received boardId:', boardId); // 컴포넌트 내에서 boardId를 로그
 
   const handleLike = useCallback(
     (e) => {
       e.stopPropagation();
+      console.log('Clicked like button. BoardId:', boardId); // boardId 로깅
       const newLikedState = !liked;
       setLiked(newLikedState);
-      setCurrentLikeCount((prev) => (newLikedState ? prev + 1 : prev - 1)); // 좋아요 수 즉시 업데이트
-      onLikeChange(boardId, newLikedState);
+      setLikeCount(prevCount => newLikedState ? prevCount + 1 : prevCount - 1);
+
+      // 기존의 타이머를 취소
+      if (likeChangeTimeout) {
+        clearTimeout(likeChangeTimeout);
+      }
+
+      // 새로운 타이머 설정
+      const newTimeout = setTimeout(() => {
+        updateLikeToServer(newLikedState);
+      }, 3000);
+
+      setLikeChangeTimeout(newTimeout);
     },
-    [liked, onLikeChange, boardId]
+    [liked, boardId, memberId, likeChangeTimeout]
   );
+
+  const updateLikeToServer = async (isLiked) => {
+    try {
+      if (isLiked) {
+        await axios.post(`http://localhost:8080/api/v1/boards-like`, {
+          memberId,
+          boardId,
+        });
+      } else {
+        await axios.delete(`http://localhost:8080/api/v1/boards-like`, {
+          data: { memberId, boardId },
+        });
+      }
+    } catch (error) {
+      console.error("Failed to update like", error);
+      // 에러 발생 시 UI를 원래 상태로 되돌림
+      setLiked(!isLiked);
+      setLikeCount(prevCount => isLiked ? prevCount - 1 : prevCount + 1);    
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (likeChangeTimeout) {
+        clearTimeout(likeChangeTimeout);
+      }
+    };
+  }, [likeChangeTimeout]);
+
 
   // 시간 계산
   const formatTime = (timeString) => {
@@ -119,7 +162,7 @@ const CardList = ({
       <div className="Icons">
         <div className="Icon" onClick={handleLike}>
           <FontAwesomeIcon icon={liked ? solidHeart : regularHeart} color={liked ? 'red' : 'gray'} />
-          <span>{currentLikeCount}</span>
+          <span>{likeCount}</span>
         </div>
       </div>
     </div>
@@ -132,6 +175,8 @@ CardList.propTypes = {
   boardId: PropTypes.number.isRequired,
   likeCount: PropTypes.number.isRequired,
   memberPhoto: PropTypes.string,
+  memberId: PropTypes.number.isRequired,
+  initialLikeCount: PropTypes.number.isRequired,
 };
 
 export default CardList;

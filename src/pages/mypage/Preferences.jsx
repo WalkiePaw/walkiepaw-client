@@ -152,6 +152,8 @@ const Preferences = () => {
               endTime={like.endTime}
               initialLiked={true}
               likeCount={like.likeCount}
+              memberId={memberId}
+              initialLikeCount={like.likeCount}
               onLikeChange={handleLikeChange}
             />
           ))}
