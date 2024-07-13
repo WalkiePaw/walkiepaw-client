@@ -10,6 +10,7 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Carousel 스�
 import { jwtDecode } from 'jwt-decode';
 import ProtectedRoute from '../../store/ProtectedRoute';
 import { useSelector } from 'react-redux';
+import {createChatroom} from "../../Api.jsx";
 
 const PostView = () => {
   const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
@@ -140,6 +141,18 @@ const PostView = () => {
         console.error('삭제 오류', error);
         alert('게시글을 삭제 할 수 없습니다.');
       }
+    }
+  };
+
+  const handleCreateChatroom = async () => {
+    try {
+      const chatroom = await createChatroom(postId, user.id);  // `postId`와 `user.id`를 인자로 전달
+      console.log('새 채팅방 생성 성공:', chatroom);
+      // 성공적으로 채팅방이 생성된 후의 로직
+      navigate('/chatpage', { state: { selectedChatroomId: chatroom.id } });
+    } catch (error) {
+      console.error('채팅방 생성 실패:', error.message);
+      alert('채팅방을 생성할 수 없습니다.');
     }
   };
 
@@ -282,12 +295,14 @@ const PostView = () => {
           </div>
         )}
         <div className="button-container">
-          <button className="message-button">채팅 하기</button>
+          <button className="message-button" onClick={handleCreateChatroom}>
+            채팅 하기
+          </button>
         </div>
       </div>
       {showReportModal && (
-        <PostReportModal
-          onClose={() => setShowReportModal(false)}
+          <PostReportModal
+              onClose={() => setShowReportModal(false)}
           onSubmit={handlerReport}
           boardId={postId}
           memberId={memberId}
