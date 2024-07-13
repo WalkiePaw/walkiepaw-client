@@ -9,6 +9,7 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Carousel 스타일 가져오기
 import { jwtDecode } from 'jwt-decode';
 import ProtectedRoute from '../../store/ProtectedRoute';
+import { useSelector } from 'react-redux';
 
 const PostView = () => {
   const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
@@ -21,23 +22,29 @@ const PostView = () => {
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 이미지 슬라이드 인덱스
   const [priceProposal, setPriceProposal] = useState(location.state?.priceProposal || false); // 가격 협의 상태
   const [photoUrls, setPhotoUrls] = useState([]); // 사진을 빈배열로 셋팅
+  const { user } = useSelector((state) => state.auth);
 
   // BoardList에서 로그인한 유저의 id와 nickname을 가져옴
 
-  const [memberNickName, setMemberNickname] = useState(location?.state?.memberNickName);
-  // const [memberId, setMemberId] = useState(location?.state?.memberId);
-  const memberId = 1;
+  const [memberNickName, setMemberNickname] = useState(null);
+  const [memberId, setMemberId] = useState(null);
   const [memberPhoto, setMemberPhoto] = useState(null);
 
   // JWT 토큰을 디코딩하여 사용자 정보를 추출
-  // useEffect(() => {
-  //   const token = localStorage.getItem('jwtToken');
-  //   if (token) {
-  //     const decodedToken = jwtDecode(token);
-  //     console.log(decodedToken);
-  //     setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
-  //   }
-  // }, []);
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      console.log(decodedToken);
+      setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
+      setMemberNickname(decodedToken.nickname);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('user:', user);
+    console.log('post.memberId:', post.memberNickName);
+  }, [user, post.memberNickName]);
 
   useEffect(() => {
     console.log('useEffect 실행 되었다!');
@@ -64,8 +71,6 @@ const PostView = () => {
   }, [postId]);
 
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
-
-  // const photoUrls = post.photoUrls || []; // 게시글에 이미지가 없으면 빈 배열로 초기화
 
   const handlerReport = (reason) => {
     console.log('신고 이유: ', reason);
@@ -204,7 +209,7 @@ const PostView = () => {
             ))}
           </Carousel>
         )}
-        {memberNickName === post.memberNickName && (
+        {user?.nickname === post.memberNickName && (
           <div className="post-status">
             <select value={status} onChange={handleStatusChange} className={getStatusClass(status)}>
               <option value="RECRUITING" className="post-status-option recruiting">
@@ -258,15 +263,15 @@ const PostView = () => {
         </div>
         <div className="post-location-box">지역 : {post.location}</div>
         <div className="post-detailedLocation-box">상세주소 : {detailedLocation}</div>
-        <div className="report-box">
-          <ProtectedRoute>
+        {user && (
+          <div className="report-box">
             <button className="report-button" onClick={() => setShowReportModal(true)}>
               이 게시글 신고하기
             </button>
-          </ProtectedRoute>
-        </div>
+          </div>
+        )}
 
-        {memberNickName === post.memberNickName && (
+        {user?.nickname === post.memberNickName && (
           <div className="post-management">
             <button className="edit-button" onClick={handleEdit}>
               수정하기

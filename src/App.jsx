@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { verifyToken } from './store/AuthSlice';
 import ProtectedRoute from './store/ProtectedRoute.jsx';
-import BoardList from './pages/boardList/BoardList.jsx'
+import BoardList from './pages/boardlist/BoardList.jsx';
 import Home from './pages/home/Home';
 import Layout from './Layout';
 import './App.css';
@@ -86,14 +86,7 @@ function App() {
 
           <Route path="recruit" element={<BoardList category="JOB_OPENING" />} />
           <Route path="jobs" element={<BoardList category="JOB_SEARCH" />} />
-          <Route
-            path="new-post"
-            element={
-              // <ProtectedRoute>
-              <NewPostForm />
-              // </ProtectedRoute>
-            }
-          ></Route>
+          <Route path="new-post" element={<NewPostForm />}></Route>
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
           <Route path="post/:postId" element={<PostView />} />
           <Route path="login" element={<Login />} />
