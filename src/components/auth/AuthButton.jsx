@@ -74,7 +74,7 @@ const AuthButton = () => {
         {isLoggedIn ? (
             <>
               <img
-                  src={user.profileImage || default_user}
+                  src={default_user}
                   alt="user"
                   onClick={toggleDropdown}
               />

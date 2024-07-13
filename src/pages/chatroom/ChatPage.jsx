@@ -65,7 +65,7 @@ const ChatPage = () => {
       });
 
       // 새 채팅방 구독
-      subscribe(`/topic/chatroom/${selectedChatroomId}`, (message) => {
+      subscribe(`/chats/${selectedChatroomId}`, (message) => {
         setMessages(prevMessages => [...prevMessages, {
           message: message.content,
           sentTime: new Date(message.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -100,7 +100,7 @@ const ChatPage = () => {
       writerId: currentUserId,
     };
 
-    send("/app/chat", chatAddRequest);
+    send("/api/v1/chats", chatAddRequest);
 
     // 로컬 상태 업데이트 (optional)
     setMessages(prevMessages => [

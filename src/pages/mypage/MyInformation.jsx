@@ -1,5 +1,6 @@
 // 내 정보 수정
 import React, { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
 // 팝업창, 모달: sweetalert 적용
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -27,6 +28,7 @@ const schema = yup.object().shape({
 });
 
 const MyInformation = () => {
+  const { id } = useOutletContext();
   // 유효성 검사
   const {
     register,
@@ -52,10 +54,9 @@ const MyInformation = () => {
 
   // 회원 정보 불러오기
   useEffect(() => {
-    const memberId = 1; // 임의로 지정한 ID, 실제로는 로그인 정보에서 가져와야 함
-
-    axios
-      .get(`http://localhost:8080/api/v1/members/${memberId}`)
+    if (id) {
+      axios
+      .get(`http://localhost:8080/api/v1/members/${id}`)
       .then((response) => {
         const memberData = response.data;
         // react-hook-form의 setValue로 필드 값 설정
@@ -82,13 +83,14 @@ const MyInformation = () => {
       .catch((error) => {
         console.error('There was an error fetching the member data!', error);
       });
-  }, [setValue]);
+    }
+  }, [id, setValue]);
 
   
     // 업데이트된 정보를 서버로 보내는 함수
     const saveInformation = () => {
-      const memberId = localStorage.getItem('memberId');
-      const updatedData = {
+      if (id) {
+        const updatedData = {
         name: name,
         nickname: nickname,
         email: email,
@@ -99,8 +101,8 @@ const MyInformation = () => {
         password: password,
         // 기타 필요한 정보들도 동일하게 추가
       };
-  
-      axios.patch(`http://localhost:8080/api/v1/members/${memberId}`, updatedData)
+
+        axios.patch(`http://localhost:8080/api/v1/members/${id}`, updatedData)
         .then(response => {
           console.log('User information updated successfully:', response.data);
           // 저장 후 필요한 작업 추가
@@ -108,24 +110,24 @@ const MyInformation = () => {
         .catch(error => {
           console.error('Error updating user information:', error);
         });
+      }
     };
-    
-    const onSubmit = async (data) => {
+
+  const onSubmit = async (data) => {
+    if (id) {
       try {
-        const memberId = 1; // 임의로 지정한 ID
-        await axios.patch(`http://localhost:8080/api/v1/members/${memberId}`, data);
+        await axios.patch(`http://localhost:8080/api/v1/members/${id}`, data);
         MySwal.fire({
           title: "회원 정보를 저장했습니다",
           icon: "success",
           confirmButtonText: "확인",
         });
         console.log('회원 정보가 성공적으로 업데이트되었습니다.');
-        // 성공 메시지 또는 리다이렉션 등 추가적인 로직
       } catch (error) {
         console.error('회원 정보 업데이트 중 오류가 발생했습니다:', error);
-        // 실패 시 처리 로직
       }
-    };
+    }
+  };
 
   // 닉네임 중복 검사
   const handleCheckDuplicate = () => {
@@ -240,11 +242,11 @@ const MyInformation = () => {
           <div className="mb-3">
             <label className="block mb-1">비밀번호</label>
             <button
-              type="button"
-              name="password"
-              {...register("password")}
-              className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none"
-              onClick={handleChangePassword}
+                type="button"
+                name="password"
+                {...register("password")}
+                className="px-4 py-2 bg-[#E8C5A5] text-black rounded-md focus:outline-none"
+                onClick={() => handleChangePassword(id)}
             >
               비밀번호 변경
             </button>
@@ -253,8 +255,8 @@ const MyInformation = () => {
             <label className="block mb-1">이메일 주소</label>
             <div className="flex space-x-2">
               <input
-                type="email"
-                name="email"
+                  type="email"
+                  name="email"
                 value={email}
                 readOnly
                 className="w-1/2 px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:border-blue-500"

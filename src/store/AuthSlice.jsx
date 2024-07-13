@@ -4,20 +4,16 @@ import {verifyTokenApi, loginApi} from "../Api.jsx";
 
 export const verifyToken = createAsyncThunk(
     'auth/verifyToken',
-    async (_, { rejectWithValue }) => {
+    async (_, { rejectWithValue, getState }) => {
       const token = localStorage.getItem('token');
       if (!token) {
         return rejectWithValue('No token found');
       }
       try {
         await verifyTokenApi();
-        const decodedToken = jwtDecode(token);
-        const userInfo = {
-          id: decodedToken.id,  // 또는 decodedToken.memberId
-          email: decodedToken.email,
-          authorities: decodedToken.authorities  // 권한 정보가 필요한 경우
-        };
-        return { user: userInfo, token };
+        // 토큰이 유효하다면, 이미 저장된 사용자 정보를 반환
+        const { user } = getState().auth;
+        return { user, token };
       } catch (error) {
         return rejectWithValue(error.response?.data?.message || 'Token verification failed');
       }
@@ -58,7 +54,8 @@ const AuthSlice = createSlice({
       state.user = {
         id: decodedToken.id,  // 또는 decodedToken.memberId, 토큰에 사용된 키에 따라 다름
         email: decodedToken.email,  // JWT에서 일반적으로 'sub'는 subject를 의미하며, 여기서는 이메일로 사용됨
-        authorities: decodedToken.authorities  // 권한 정보가 필요한 경우
+        authorities: decodedToken.role,  // 권한 정보가 필요한 경우
+        nickname: decodedToken.nickname
       };
       state.error = null;
       localStorage.setItem('token', action.payload.token);
@@ -113,7 +110,8 @@ const AuthSlice = createSlice({
       state.user = {
         id: decodedToken.id,  // 또는 decodedToken.memberId
         email: decodedToken.email,
-        authorities: decodedToken.authorities  // 권한 정보가 필요한 경우
+        nickname: decodedToken.nickname,
+        authorities: decodedToken.role  // 권한 정보가 필요한 경우
       };
       state.error = null;
       localStorage.setItem('token', action.payload.token);
