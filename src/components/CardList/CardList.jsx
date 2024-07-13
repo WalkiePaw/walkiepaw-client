@@ -2,7 +2,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 // import './CardList.css';
 import styled from "styled-components";
-// import { useOutletContext } from 'react-router-dom';
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
@@ -26,8 +25,8 @@ const CardList = ({
   initialLiked,
   onLikeChange,
   initialLikeCount,
+  id,
 }) => {
-  // const { id } = useOutletContext(); // id를 context에서 가져옵니다.
   const [liked, setLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [likeChangeTimeout, setLikeChangeTimeout] = useState(null);
@@ -54,19 +53,18 @@ const CardList = ({
 
       setLikeChangeTimeout(newTimeout);
     }
-    // [liked, boardId,id, likeChangeTimeout]
   );
 
   const updateLikeToServer = async (isLiked) => {
     try {
       if (isLiked) {
         await axios.post(`http://localhost:8080/api/v1/boards-like`, {
-          // id,
+          id,
           boardId,
         });
       } else {
         await axios.delete(`http://localhost:8080/api/v1/boards-like`, {
-          // data: { id, boardId },
+          data: { id, boardId },
         });
       }
     } catch (error) {

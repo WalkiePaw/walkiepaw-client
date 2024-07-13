@@ -242,6 +242,7 @@ const BoardList = () => {
           filteredPosts.map((post) => (
             <div key={post.id} onClick={() => handlePostClick(post)}>
               <CardList
+                boardId={post.id}
                 title={post.title}
                 location={dongFromLocal(post.location)}
                 price={post.price}
@@ -253,6 +254,7 @@ const BoardList = () => {
                 status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
                 category={post.category} // 카테고리 정보 전달
                 memberPhoto={post.memberPhoto}
+                id={memberId} // 로그인한 사용자의 ID
               />
             </div>
           ))
