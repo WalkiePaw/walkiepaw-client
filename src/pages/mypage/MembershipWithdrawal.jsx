@@ -2,17 +2,13 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
-
-// 팝업창, 모달: sweetalert 적용
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-// fontawesome: 이모지 적용
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSadTear } from "@fortawesome/free-solid-svg-icons";
-// 유효성 검사: yup 적용
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-// axios 임포트
 import axios from 'axios';
 
 const schema = yup.object().shape({
@@ -27,11 +23,14 @@ const schema = yup.object().shape({
 });
 
 const MembershipWithdrawal = () => {
+  const { id } = useOutletContext();
+  const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
 
   const MySwal = withReactContent(Swal);
+
 
   const onSubmit = async (data) => {
     MySwal.fire({
@@ -43,13 +42,12 @@ const MembershipWithdrawal = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const memberId = 1; // 테스트용 하드코딩 
-          if (!memberId) {
+          if (!id) {
             throw new Error("사용자 ID를 찾을 수 없습니다.");
           }
 
           // 회원 상태를 WITHDRAWN으로 업데이트하는 API 호출
-          await axios.patch(`http://localhost:8080/api/v1/members/${memberId}`, {
+          await axios.patch(`http://localhost:8080/api/v1/members/${id}`, {
             status: "WITHDRAWN"
           });
 
@@ -59,7 +57,7 @@ const MembershipWithdrawal = () => {
             confirmButtonText: "확인",
           }).then(() => {
             // 홈 화면으로 리다이렉트
-            window.location.href = "/";
+            navigate('/');
           });
         } catch (error) {
           MySwal.fire({

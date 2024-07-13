@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import WebSocket from '../../components/chat/WebSocket.jsx'
 import styled from 'styled-components';
 import axios from 'axios';
 import { ChatContainer, MessageList, Message, Avatar, ConversationHeader } from '@chatscope/chat-ui-kit-react'; // 올바른 컴포넌트만 import
@@ -38,26 +39,50 @@ const ChatPage = () => {
   const [selectedChatroomId, setSelectedChatroomId] = useState(null);
   const currentUserId = 1; // 현재 사용자의 ID
 
+  const { subscribe, send, unsubscribe } = WebSocket('http://localhost:8080/ws');
+
   useEffect(() => {
     if (selectedChatroomId) {
+    //   // 이전 구독 해제
+    //   unsubscribe(`/topic/chatroom/${selectedChatroomId}`);
+
+      // 채팅 메시지 히스토리 로드
       axios
-        .get(`http://localhost:8080/api/v1/chats?chatroomId=${selectedChatroomId}`)
-        .then((response) => {
-          console.log(response.data);
-          const formattedMessages = response.data.map((msg) => ({
-            message: msg.content,
-            sentTime: new Date(msg.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            sender: msg.nickname,
-            direction: msg.writerId === currentUserId ? 'outgoing' : 'incoming',
-            position: 'single',
-          }));
-          setMessages(formattedMessages);
-        })
-        .catch((error) => {
-          console.error('Error fetching chat messages:', error);
-        });
+      .get(`http://localhost:8080/api/v1/chats?chatroomId=${selectedChatroomId}`)
+      .then((response) => {
+        console.log(response.data);
+        const formattedMessages = response.data.map((msg) => ({
+          message: msg.content,
+          sentTime: new Date(msg.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sender: msg.nickname,
+          direction: msg.writerId === currentUserId ? 'outgoing' : 'incoming',
+          position: 'single',
+        }));
+        setMessages(formattedMessages);
+      })
+      .catch((error) => {
+        console.error('Error fetching chat messages:', error);
+      });
+
+      // 새 채팅방 구독
+      subscribe(`/chats/${selectedChatroomId}`, (message) => {
+        setMessages(prevMessages => [...prevMessages, {
+          message: message.content,
+          sentTime: new Date(message.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sender: message.nickname,
+          direction: message.writerId === currentUserId ? 'outgoing' : 'incoming',
+          position: 'single',
+        }]);
+      });
     }
-  }, [selectedChatroomId]);
+
+    // 컴포넌트 언마운트 시 구독 해제
+    return () => {
+      if (selectedChatroomId) {
+        unsubscribe(`/topic/chatroom/${selectedChatroomId}`);
+      }
+    };
+  }, [selectedChatroomId, subscribe, unsubscribe, currentUserId]);
 
   const handleChatroomSelect = (chatroomId) => {
     setSelectedChatroomId(chatroomId);
@@ -69,35 +94,28 @@ const ChatPage = () => {
       return;
     }
 
-    try {
-      const chatAddRequest = {
-        content: newMessage,
-        chatroomId: selectedChatroomId,
+    const chatAddRequest = {
+      content: newMessage,
+      chatroomId: selectedChatroomId,
+      writerId: currentUserId,
+    };
+
+    send("/api/v1/chats", chatAddRequest);
+
+    // 로컬 상태 업데이트 (optional)
+    setMessages(prevMessages => [
+      ...prevMessages,
+      {
+        message: newMessage,
+        sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sender: '나',
+        direction: 'outgoing',
+        position: 'single',
         writerId: currentUserId,
-      };
-
-      const response = await axios.post('http://localhost:8080/api/v1/chats', chatAddRequest);
-
-      if (response.status === 201) {
-        // 성공적으로 생성됨
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            message: newMessage,
-            sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            sender: '나',
-            direction: 'outgoing',
-            position: 'single',
-            writerId: currentUserId,
-          },
-        ]);
-      } else {
-        console.error('Failed to add message');
-      }
-    } catch (error) {
-      console.error('Error adding message:', error);
-    }
+      },
+    ]);
   };
+
 
   return (
     <ChatLayout>
