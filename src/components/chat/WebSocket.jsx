@@ -16,7 +16,7 @@ const WebSocket = (url) => {
       'Authorization': 'Bearer ' + token
     };
 
-    stompClient.connect(headers, function(frame) {
+    client.current.connect(headers, function(frame) {
       console.log('Connected: ' + frame);
     }, function(error) {
       console.log('Error: ' + error);
@@ -39,9 +39,18 @@ const WebSocket = (url) => {
 
   const send = useCallback((destination, body) => {
     if (client.current && client.current.connected) {
-      client.current.send(destination, {}, JSON.stringify(body));
+      const headers = {
+        "content-type": "application/json",  // 예시로 콘텐츠 타입 추가
+        // 여기에 다른 필요한 헤더를 추가
+      };
+      try {
+        client.current.send(destination, headers, JSON.stringify(body));
+      } catch (error) {
+        console.error("Failed to send message:", error);
+      }
     }
-  }, []);
+  }, [client.current]);
+
 
   return { subscribe, send };
 };

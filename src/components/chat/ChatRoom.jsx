@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ConversationList, Conversation, Avatar } from '@chatscope/chat-ui-kit-react';
 import default_user from '../../assets/default_user.png';
 import { format, parse } from 'date-fns';
+import {useSelector} from "react-redux";
 
 const SidebarContainer = styled.div`
   width: 300px;
@@ -22,10 +23,13 @@ const StyledConversation = styled(Conversation)`
 const ChatRoom = ({ onChatroomSelect }) => {
   const [chatrooms, setChatrooms] = useState([]);
   const [pageInfo, setPageInfo] = useState({});
+  const user = useSelector(state => state.auth.user);  // 전체 user 객체 가져오기
+  const id = user?.id;  // Optional chaining을 사용하여 id 값 안전하게 접근
+
 
   useEffect(() => {
     axios.get('http://localhost:8080/api/v1/chatrooms', {
-      params: { id: 1 } // 여기에 실제 memberId를 넣어야 합니다.
+      params: { id } // 여기에 실제 memberId를 넣어야 합니다.
     })
     .then(response => {
       console.log('Chatrooms data:', response.data);
@@ -46,7 +50,7 @@ const ChatRoom = ({ onChatroomSelect }) => {
 
   const formatTime = (timeString) => {
     // 밀리세컨드를 포함하는 시간 포맷을 파싱합니다.
-    const time = parse(timeString, 'HH:mm:ss', new Date());
+    const time = parse(timeString, 'HH:mm:ss.SSSSSS', new Date());
     // 밀리세컨드를 제외하고 시간을 'HH:mm:ss' 형식으로 포맷팅합니다.
     return format(time, 'HH:mm:ss');
   };

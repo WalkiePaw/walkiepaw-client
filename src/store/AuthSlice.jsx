@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { jwtDecode } from 'jwt-decode';
 import {verifyTokenApi, loginApi} from "../Api.jsx";
 
+
 export const verifyToken = createAsyncThunk(
     'auth/verifyToken',
     async (_, { rejectWithValue, getState }) => {
@@ -36,7 +37,7 @@ export const login = createAsyncThunk(
 const AuthSlice = createSlice({
   name: 'auth',
   initialState: {
-    isLoggedIn: false,
+    isLoggedIn: !!localStorage.getItem('token'),
     isLoading: false,
     user: null,
     token: localStorage.getItem('token'),
@@ -77,6 +78,28 @@ const AuthSlice = createSlice({
     },
     setLoading: (state, action) => {
       state.isLoading = action.payload;
+    },
+    // 여기에 setInitialState 리듀서를 추가합니다
+    setInitialState: (state) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        state.isLoggedIn = true;
+        state.token = token;
+        try {
+          const decodedToken = jwtDecode(token);
+          state.user = {
+            id: decodedToken.id,
+            email: decodedToken.email,
+            nickname: decodedToken.nickname,
+            authorities: decodedToken.role
+          };
+        } catch (error) {
+          // 토큰 디코딩 실패 시 처리
+          state.isLoggedIn = false;
+          state.user = null;
+          localStorage.removeItem('token');
+        }
+      }
     },
   },
   extraReducers: (builder) => {
@@ -126,5 +149,10 @@ const AuthSlice = createSlice({
   },
 });
 
-export const { loginSuccess, loginFailure, logout, setLoading } = AuthSlice.actions;
+export const {
+  loginSuccess,
+  loginFailure,
+  logout,
+  setLoading,
+  setInitialState  } = AuthSlice.actions;
 export default AuthSlice.reducer;

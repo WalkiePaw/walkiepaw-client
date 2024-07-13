@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { verifyToken } from './store/AuthSlice';
+import {setInitialState, verifyToken} from './store/AuthSlice';
 import ProtectedRoute from './store/ProtectedRoute.jsx';
 import BoardList from './pages/boardList/BoardList.jsx'
 import Home from './pages/home/Home';
@@ -55,8 +55,15 @@ function App() {
   };
 
   useEffect(() => {
-    dispatch(verifyToken());
+    // 초기 상태 설정 (로컬 스토리지 기반)
+    dispatch(setInitialState());
+
+    // 백그라운드에서 토큰 검증
+    if (localStorage.getItem('token')) {
+      dispatch(verifyToken());
+    }
   }, [dispatch]);
+
 
   return (
     <>
