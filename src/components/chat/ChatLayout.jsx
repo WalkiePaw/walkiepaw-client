@@ -51,6 +51,7 @@ const ChatLayout = () => {
     send(`/api/v1/ws/chats/${chatroomId}`, { content, writerId: id, chatroomId });
   }, [send, id]);
 
+
   return (
       <ChatLayoutContainer>
         <ChatRoom onChatroomSelect={handleChatroomSelect} />

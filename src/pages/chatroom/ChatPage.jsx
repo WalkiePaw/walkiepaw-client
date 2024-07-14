@@ -84,8 +84,13 @@ const ChatPage = () => {
   }, [messages]);
 
   const onSendMessage = (content) => {
-    handleSendMessage(chatroomId, content);
+    if (chatroomId) {
+      handleSendMessage(chatroomId, content);
+    } else {
+      console.error('No chatroomId available');
+    }
   };
+
 
   return (
       <ChatArea>
@@ -101,7 +106,7 @@ const ChatPage = () => {
               </MessageItem>
           ))}
         </MessageList>
-        <ChatInput onSend={handleSendMessage} />
+        <ChatInput onSend={onSendMessage} />
       </ChatArea>
   );
 };
