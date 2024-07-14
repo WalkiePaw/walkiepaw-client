@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {setInitialState, verifyToken} from './store/AuthSlice';
 import ProtectedRoute from './store/ProtectedRoute.jsx';
-import BoardList from './pages/boardList/BoardList.jsx'
+import BoardList from './pages/boardlist/BoardList.jsx';
 import Home from './pages/home/Home';
 import Layout from './Layout';
 import './App.css';
