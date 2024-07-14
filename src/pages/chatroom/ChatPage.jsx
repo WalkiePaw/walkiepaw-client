@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import ChatInput from '../../components/chat/ChatInput';
 import { useOutletContext, useParams } from "react-router-dom";
+import {useSelector} from "react-redux";
 
 const ChatArea = styled.div`
   flex: 1;
@@ -39,7 +40,7 @@ const MessageItem = styled.div`
 
 const MessageContent = styled.div`
   display: inline-block;
-  background-color: ${props => props.$isOutgoing ? '#dcf8c6' : '#fff'};
+  background-color: ${props => props.$isOutgoing ? '#E8C5A5' : '#fff'};
   border-radius: 10px;
   padding: 8px 12px;
   max-width: 70%;
@@ -68,6 +69,11 @@ const ChatPage = () => {
   const { chatroomId } = useParams();
   const { id, messages: contextMessages, handleSendMessage } = useOutletContext();
   const messageListRef = useRef(null);
+
+  // Redux에서 사용자 정보 가져오기
+  const user = useSelector(state => state.auth.user);
+
+
   const fetchMessages = useCallback(async () => {
     if (!chatroomId) return;
     try {
@@ -91,6 +97,19 @@ const ChatPage = () => {
   }, [chatroomId, fetchMessages]);
 
   useEffect(() => {
+    if (contextMessages && contextMessages[chatroomId]) {
+      setMessages(prevMessages => [
+        ...prevMessages,
+        ...contextMessages[chatroomId].filter(msg =>
+            !prevMessages.some(prevMsg =>
+                prevMsg.content === msg.content && prevMsg.sentTime === msg.sentTime
+            )
+        )
+      ]);
+    }
+  }, [contextMessages, chatroomId]);
+
+  useEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
@@ -99,27 +118,32 @@ const ChatPage = () => {
   const onSendMessage = (content) => {
     if (chatroomId) {
       handleSendMessage(chatroomId, content);
+      // 로컬에서 즉시 메시지 추가
+      const newMessage = {
+        content: content,
+        sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sender: user.nickname || 'Me', // 사용자의 닉네임 사용
+        isOutgoing: true
+      };
+      setMessages(prevMessages => [...prevMessages, newMessage]);
     } else {
       console.error('No chatroomId available');
     }
   };
 
-
   return (
       <ChatArea>
         <ChatHeader>Chat Room {chatroomId}</ChatHeader>
-        <MessageListContainer>
-          <MessageList ref={messageListRef}>
-            {messages.map((msg, index) => (
-                <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
-                  <MessageContent $isOutgoing={msg.isOutgoing}>
-                    <MessageSender>{msg.sender}</MessageSender>
-                    {msg.content}
-                    <MessageTime>{msg.sentTime}</MessageTime>
-                  </MessageContent>
-                </MessageItem>
-            ))}
-          </MessageList>
+        <MessageListContainer ref={messageListRef}>
+          {messages.map((msg, index) => (
+              <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
+                <MessageContent $isOutgoing={msg.isOutgoing}>
+                  <MessageSender>{msg.sender}</MessageSender>
+                  {msg.content}
+                  <MessageTime>{msg.sentTime}</MessageTime>
+                </MessageContent>
+              </MessageItem>
+          ))}
         </MessageListContainer>
         <ChatInputContainer>
           <ChatInput onSend={onSendMessage} />
