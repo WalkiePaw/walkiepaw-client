@@ -102,21 +102,22 @@ const ChatPage = () => {
       writerId: id,
     };
 
-    send("/api/v1/ws/chats", chatAddRequest);
 
-    // 로컬 상태 업데이트 (optional)
+    send(`/api/v1/ws/chats/${selectedChatroomId}`, chatAddRequest);
+
+    // 로컬 상태 업데이트
     setMessages(prevMessages => [
       ...prevMessages,
       {
         message: newMessage,
         sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        sender: '나',
+        sender: user.nickname || '나',
         direction: 'outgoing',
         position: 'single',
-        writerId: id,
       },
     ]);
   };
+
 
 
   return (
@@ -130,11 +131,13 @@ const ChatPage = () => {
           </StyledConversationHeader>
           <StyledMessageList>
             {messages.map((msg, index) => (
-              <Message key={index} model={msg}>
-                {msg.direction === 'incoming' && <Avatar src="path_to_avatar_image.jpg" name={msg.sender} />}
-                <Message.Header sender={msg.sender} sentTime={msg.sentTime} />
-                {msg.message}
-              </Message>
+                <Message key={index} model={msg}>
+                  {msg.direction === 'incoming' && <Avatar src="path_to_avatar_image.jpg" name={msg.sender} />}
+                  <Message.Header sender={msg.sender} sentTime={msg.sentTime} />
+                  <Message.Content>
+                    <Message.TextContent>{msg.message}</Message.TextContent>
+                  </Message.Content>
+                </Message>
             ))}
           </StyledMessageList>
         </StyledChatContainer>
