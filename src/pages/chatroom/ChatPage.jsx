@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useSelector } from "react-redux";
-import ChatLayout from "../../components/chat/ChatLayout.jsx";
 import ChatInput from '../../components/chat/ChatInput';
 import { useOutletContext, useParams } from "react-router-dom";
 
@@ -29,12 +27,12 @@ const MessageList = styled.div`
 
 const MessageItem = styled.div`
   margin-bottom: 10px;
-  ${props => props.isOutgoing ? 'text-align: right;' : ''}
+  text-align: ${props => props.$isOutgoing ? 'right' : 'left'};
 `;
 
 const MessageContent = styled.div`
   display: inline-block;
-  background-color: ${props => props.isOutgoing ? '#dcf8c6' : '#fff'};
+  background-color: ${props => props.$isOutgoing ? '#dcf8c6' : '#fff'};
   border-radius: 10px;
   padding: 8px 12px;
   max-width: 70%;
@@ -55,9 +53,8 @@ const MessageTime = styled.div`
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const { chatroomId } = useParams();
-  const { id } = useOutletContext();
+  const { id, messages: contextMessages, handleSendMessage } = useOutletContext();
   const messageListRef = useRef(null);
-
   const fetchMessages = useCallback(async () => {
     if (!chatroomId) return;
     try {
@@ -86,21 +83,8 @@ const ChatPage = () => {
     }
   }, [messages]);
 
-  const handleSendMessage = async (message) => {
-    if (!chatroomId) return;
-
-    const newMessage = {
-      content: message,
-      chatroomId: chatroomId,
-      writerId: id,
-    };
-
-    try {
-      await axios.post(`http://localhost:8080/api/v1/chats/${chatroomId}`, newMessage);
-      fetchMessages();  // Refresh messages after sending
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
+  const onSendMessage = (content) => {
+    handleSendMessage(chatroomId, content);
   };
 
   return (
@@ -108,8 +92,8 @@ const ChatPage = () => {
         <ChatHeader>Chat Room {chatroomId}</ChatHeader>
         <MessageList ref={messageListRef}>
           {messages.map((msg, index) => (
-              <MessageItem key={index} isOutgoing={msg.isOutgoing}>
-                <MessageContent isOutgoing={msg.isOutgoing}>
+              <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
+                <MessageContent $isOutgoing={msg.isOutgoing}>
                   <MessageSender>{msg.sender}</MessageSender>
                   {msg.content}
                   <MessageTime>{msg.sentTime}</MessageTime>
