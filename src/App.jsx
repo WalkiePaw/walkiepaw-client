@@ -44,6 +44,7 @@ import ReportManagement from './admin/ReportManagement.jsx';
 import ParticleCursor from './components/ParticleCursor.jsx';
 import PostView from './pages/postView/PostView.jsx';
 import ProtectedChatRoute from './store/ProtectedChatRoute.jsx';
+import ChatLayout from "./components/chat/ChatLayout.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -100,7 +101,10 @@ function App() {
           <Route path="signup" element={<SignUp />} />
 
           <Route element={<ProtectedChatRoute />}>
-            <Route path="chatpage" element={<ChatPage />} />
+            <Route path="chat" element={<ChatLayout />}>
+              <Route index element={<ChatPage />} />
+              <Route path=":chatroomId" element={<ChatPage />} />
+            </Route>
           </Route>
 
           <Route path="/dashboard" element={<Dashboard />}>

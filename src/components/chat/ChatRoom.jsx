@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { ConversationList, Conversation, Avatar } from '@chatscope/chat-ui-kit-react';
-import default_user from '../../assets/default_user.png';
 import { format, parse } from 'date-fns';
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
+import default_user from '../../assets/default_user.png';
 
 const SidebarContainer = styled.div`
   width: 300px;
@@ -14,22 +13,60 @@ const SidebarContainer = styled.div`
   overflow-y: auto;
 `;
 
-const StyledConversation = styled(Conversation)`
+const ConversationList = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Conversation = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
   &:hover {
     background-color: #e8e8e8;
   }
 `;
 
+const Avatar = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+`;
+
+const ConversationInfo = styled.div`
+  flex: 1;
+`;
+
+const ConversationName = styled.div`
+  font-weight: bold;
+`;
+
+const ConversationLastMessage = styled.div`
+  font-size: 0.9em;
+  color: #666;
+`;
+
+const UnreadDot = styled.div`
+  width: 10px;
+  height: 10px;
+  background-color: #007bff;
+  border-radius: 50%;
+  margin-left: 10px;
+`;
+
 const ChatRoom = ({ onChatroomSelect }) => {
   const [chatrooms, setChatrooms] = useState([]);
   const [pageInfo, setPageInfo] = useState({});
-  const user = useSelector(state => state.auth.user);  // 전체 user 객체 가져오기
-  const id = user?.id;  // Optional chaining을 사용하여 id 값 안전하게 접근
-
+  const user = useSelector(state => state.auth.user);
+  const id = user?.id;
 
   useEffect(() => {
     axios.get('http://localhost:8080/api/v1/chatrooms', {
-      params: { id } // 여기에 실제 memberId를 넣어야 합니다.
+      params: { id }
     })
     .then(response => {
       console.log('Chatrooms data:', response.data);
@@ -46,12 +83,10 @@ const ChatRoom = ({ onChatroomSelect }) => {
     .catch(error => {
       console.error('There was an error fetching the chatrooms!', error);
     });
-  }, []);
+  }, [id]);
 
   const formatTime = (timeString) => {
-    // 밀리세컨드를 포함하는 시간 포맷을 파싱합니다.
     const time = parse(timeString, 'HH:mm:ss.SSSSSS', new Date());
-    // 밀리세컨드를 제외하고 시간을 'HH:mm:ss' 형식으로 포맷팅합니다.
     return format(time, 'HH:mm:ss');
   };
 
@@ -60,17 +95,16 @@ const ChatRoom = ({ onChatroomSelect }) => {
         <ConversationList>
           {chatrooms.length > 0 ? (
               chatrooms.map(chatroom => (
-                  <StyledConversation
-                      key={chatroom.id}
-                      name={`${chatroom.nickname} - ${chatroom.location}`}
-                      info={`${chatroom.latestMessage || '새로운 채팅방입니다.'} (${formatTime(chatroom.latestTime)})`}
-                      onClick={() => onChatroomSelect(chatroom.id)}
-                  >
-                    <Avatar src={default_user} name={chatroom.location} />
-                    {chatroom.unreadCount > 0 && (
-                        <Conversation.UnreadDot count={chatroom.unreadCount} />
-                    )}
-                  </StyledConversation>
+                  <Conversation key={chatroom.id} onClick={() => onChatroomSelect(chatroom.id)}>
+                    <Avatar src={default_user} alt={chatroom.location} />
+                    <ConversationInfo>
+                      <ConversationName>{`${chatroom.nickname} - ${chatroom.location}`}</ConversationName>
+                      <ConversationLastMessage>
+                        {`${chatroom.latestMessage || '새로운 채팅방입니다.'} (${formatTime(chatroom.latestTime)})`}
+                      </ConversationLastMessage>
+                    </ConversationInfo>
+                    {chatroom.unreadCount > 0 && <UnreadDot />}
+                  </Conversation>
               ))
           ) : (
               <div>채팅방이 없습니다.</div>

@@ -25,7 +25,6 @@ export const createChatroom = async (postId, memberId) => {
     memberId,
   };
 
-
   try {
     const response = await Api.post('/api/v1/chatrooms', chatroomData);
     return response.data;

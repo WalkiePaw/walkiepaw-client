@@ -1,149 +1,124 @@
-import React, { useState, useEffect } from 'react';
-import WebSocket from '../../components/chat/WebSocket.jsx'
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { ChatContainer, MessageList, Message, Avatar, ConversationHeader } from '@chatscope/chat-ui-kit-react'; // 올바른 컴포넌트만 import
-import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import ChatRoom from '../../components/chat/ChatRoom.jsx'; // 경로 확인
-import ChatInput from '../../components/chat/ChatInput.jsx';
-import {useSelector} from "react-redux"; // 경로 확인
-
-const ChatLayout = styled.div`
-  display: flex;
-  margin-top: 0.1rem;
-  height: calc(100vh - 0.1rem);
-`;
+import { useSelector } from "react-redux";
+import ChatLayout from "../../components/chat/ChatLayout.jsx";
+import ChatInput from '../../components/chat/ChatInput';
+import { useOutletContext, useParams } from "react-router-dom";
 
 const ChatArea = styled.div`
   flex: 1;
   display: flex;
-  overflow: hidden;
   flex-direction: column;
-`;
-
-const StyledChatContainer = styled(ChatContainer)`
-  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
   overflow: hidden;
 `;
 
-const StyledMessageList = styled(MessageList)`
-  overflow-y: auto;
-`;
-
-const StyledConversationHeader = styled(ConversationHeader)`
+const ChatHeader = styled.div`
   background-color: #f0f0f0;
   padding: 10px;
+  font-weight: bold;
+`;
+
+const MessageList = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+`;
+
+const MessageItem = styled.div`
+  margin-bottom: 10px;
+  ${props => props.isOutgoing ? 'text-align: right;' : ''}
+`;
+
+const MessageContent = styled.div`
+  display: inline-block;
+  background-color: ${props => props.isOutgoing ? '#dcf8c6' : '#fff'};
+  border-radius: 10px;
+  padding: 8px 12px;
+  max-width: 70%;
+`;
+
+const MessageSender = styled.div`
+  font-size: 0.8em;
+  color: #666;
+  margin-bottom: 2px;
+`;
+
+const MessageTime = styled.div`
+  font-size: 0.7em;
+  color: #999;
+  margin-top: 2px;
 `;
 
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
-  const [selectedChatroomId, setSelectedChatroomId] = useState(null);
-  const user = useSelector(state => state.auth.user);  // 전체 user 객체 가져오기
-  const id = user?.id;  // Optional chaining을 사용하여 id 값 안전하게 접근
+  const { chatroomId } = useParams();
+  const { id } = useOutletContext();
+  const messageListRef = useRef(null);
 
-  const { subscribe, send, unsubscribe } = WebSocket('http://localhost:8080/ws');
+  const fetchMessages = useCallback(async () => {
+    if (!chatroomId) return;
+    try {
+      const response = await axios.get(`http://localhost:8080/api/v1/chats?chatroomId=${chatroomId}`);
+      const formattedMessages = response.data.map(msg => ({
+        content: msg.content,
+        sentTime: new Date(msg.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sender: msg.nickname,
+        isOutgoing: msg.writerId === id
+      }));
+      setMessages(formattedMessages);
+    } catch (error) {
+      console.error('Error fetching chat messages:', error);
+    }
+  }, [chatroomId, id]);
 
   useEffect(() => {
-    if (selectedChatroomId) {
-    //   // 이전 구독 해제
-    //   unsubscribe(`/topic/chatroom/${selectedChatroomId}`);
-
-      // 채팅 메시지 히스토리 로드
-      axios
-      .get(`http://localhost:8080/api/v1/chats?chatroomId=${selectedChatroomId}`)
-      .then((response) => {
-        console.log(response.data);
-        const formattedMessages = response.data.map((msg) => ({
-          message: msg.content,
-          sentTime: new Date(msg.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          sender: msg.nickname,
-          direction: msg.writerId === id ? 'outgoing' : 'incoming',
-          position: 'single',
-        }));
-        setMessages(formattedMessages);
-      })
-      .catch((error) => {
-        console.error('Error fetching chat messages:', error);
-      });
-
-      // 새 채팅방 구독
-      subscribe(`/chats/${selectedChatroomId}`, (message) => {
-        setMessages(prevMessages => [...prevMessages, {
-          message: message.content,
-          sentTime: new Date(message.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          sender: message.nickname,
-          direction: message.writerId === id ? 'outgoing' : 'incoming',
-          position: 'single',
-        }]);
-      });
+    if (chatroomId) {
+      fetchMessages();
     }
+  }, [chatroomId, fetchMessages]);
 
-    // 컴포넌트 언마운트 시 구독 해제
-    return () => {
-      if (selectedChatroomId) {
-        unsubscribe(`/topic/chatroom/${selectedChatroomId}`);
-      }
-    };
-  }, [selectedChatroomId, subscribe, unsubscribe, id]);
-
-  const handleChatroomSelect = (chatroomId) => {
-    setSelectedChatroomId(chatroomId);
-  };
-
-  const addMessage = async (newMessage) => {
-    if (!selectedChatroomId) {
-      console.error('No chatroom selected');
-      return;
+  useEffect(() => {
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
+  }, [messages]);
 
-    const chatAddRequest = {
-      content: newMessage,
-      chatroomId: selectedChatroomId,
+  const handleSendMessage = async (message) => {
+    if (!chatroomId) return;
+
+    const newMessage = {
+      content: message,
+      chatroomId: chatroomId,
       writerId: id,
     };
 
-
-    send(`/api/v1/ws/chats/${selectedChatroomId}`, chatAddRequest);
-
-    // 로컬 상태 업데이트
-    setMessages(prevMessages => [
-      ...prevMessages,
-      {
-        message: newMessage,
-        sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        sender: user.nickname || '나',
-        direction: 'outgoing',
-        position: 'single',
-      },
-    ]);
+    try {
+      await axios.post(`http://localhost:8080/api/v1/chats/${chatroomId}`, newMessage);
+      fetchMessages();  // Refresh messages after sending
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
   };
 
-
-
   return (
-    <ChatLayout>
-      <ChatRoom onChatroomSelect={handleChatroomSelect} />
       <ChatArea>
-        <StyledChatContainer>
-          <StyledConversationHeader>
-            <Avatar src="path_to_golden_retriever.jpg" name="골댕이" />
-            <ConversationHeader.Content userName="골댕이" info="안읽은 메세지만 보기" />
-          </StyledConversationHeader>
-          <StyledMessageList>
-            {messages.map((msg, index) => (
-                <Message key={index} model={msg}>
-                  {msg.direction === 'incoming' && <Avatar src="path_to_avatar_image.jpg" name={msg.sender} />}
-                  <Message.Header sender={msg.sender} sentTime={msg.sentTime} />
-                  <Message.Content>
-                    <Message.TextContent>{msg.message}</Message.TextContent>
-                  </Message.Content>
-                </Message>
-            ))}
-          </StyledMessageList>
-        </StyledChatContainer>
-        <ChatInput onSend={addMessage} />
+        <ChatHeader>Chat Room {chatroomId}</ChatHeader>
+        <MessageList ref={messageListRef}>
+          {messages.map((msg, index) => (
+              <MessageItem key={index} isOutgoing={msg.isOutgoing}>
+                <MessageContent isOutgoing={msg.isOutgoing}>
+                  <MessageSender>{msg.sender}</MessageSender>
+                  {msg.content}
+                  <MessageTime>{msg.sentTime}</MessageTime>
+                </MessageContent>
+              </MessageItem>
+          ))}
+        </MessageList>
+        <ChatInput onSend={handleSendMessage} />
       </ChatArea>
-    </ChatLayout>
   );
 };
 
