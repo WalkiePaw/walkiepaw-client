@@ -11,6 +11,7 @@ const ChatArea = styled.div`
   border: 1px solid #ccc;
   border-radius: 5px;
   overflow: hidden;
+  height: 100%; // 전체 높이를 사용하도록 설정
 `;
 
 const ChatHeader = styled.div`
@@ -19,10 +20,16 @@ const ChatHeader = styled.div`
   font-weight: bold;
 `;
 
-const MessageList = styled.div`
+const MessageListContainer = styled.div`
   flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MessageList = styled.div`
   padding: 10px;
+  flex: 1;
 `;
 
 const MessageItem = styled.div`
@@ -48,6 +55,12 @@ const MessageTime = styled.div`
   font-size: 0.7em;
   color: #999;
   margin-top: 2px;
+`;
+
+const ChatInputContainer = styled.div`
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-top: 1px solid #e0e0e0;
 `;
 
 const ChatPage = () => {
@@ -95,18 +108,22 @@ const ChatPage = () => {
   return (
       <ChatArea>
         <ChatHeader>Chat Room {chatroomId}</ChatHeader>
-        <MessageList ref={messageListRef}>
-          {messages.map((msg, index) => (
-              <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
-                <MessageContent $isOutgoing={msg.isOutgoing}>
-                  <MessageSender>{msg.sender}</MessageSender>
-                  {msg.content}
-                  <MessageTime>{msg.sentTime}</MessageTime>
-                </MessageContent>
-              </MessageItem>
-          ))}
-        </MessageList>
-        <ChatInput onSend={onSendMessage} />
+        <MessageListContainer>
+          <MessageList ref={messageListRef}>
+            {messages.map((msg, index) => (
+                <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
+                  <MessageContent $isOutgoing={msg.isOutgoing}>
+                    <MessageSender>{msg.sender}</MessageSender>
+                    {msg.content}
+                    <MessageTime>{msg.sentTime}</MessageTime>
+                  </MessageContent>
+                </MessageItem>
+            ))}
+          </MessageList>
+        </MessageListContainer>
+        <ChatInputContainer>
+          <ChatInput onSend={onSendMessage} />
+        </ChatInputContainer>
       </ChatArea>
   );
 };
