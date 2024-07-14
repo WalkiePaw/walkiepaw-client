@@ -25,11 +25,34 @@ const CardList = ({
   initialLiked,
   onLikeChange,
   initialLikeCount,
-  id,
+  loginUserId,
 }) => {
   const [liked, setLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [likeChangeTimeout, setLikeChangeTimeout] = useState(null);
+
+  const updateLikeToServer = useCallback(
+    async (isLiked) => {
+      try {
+        if (isLiked) {
+          await axios.post(`http://localhost:8080/api/v1/boards-like`, {
+            loginUserId,
+            boardId,
+          });
+        } else {
+          await axios.delete(`http://localhost:8080/api/v1/boards-like`, {
+            data: { loginUserId, boardId },
+          });
+        }
+      } catch (error) {
+        console.error("Failed to update like", error);
+        // 에러 발생 시 UI를 원래 상태로 되돌림
+        setLiked(!isLiked);
+        setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
+      }
+    },
+    [boardId, loginUserId]
+  );
 
   const handleLike = useCallback(
     (e) => {
@@ -51,28 +74,9 @@ const CardList = ({
       }, 3000);
 
       setLikeChangeTimeout(newTimeout);
-    }
+    },
+    [liked, likeChangeTimeout, updateLikeToServer]
   );
-
-  const updateLikeToServer = async (isLiked) => {
-    try {
-      if (isLiked) {
-        await axios.post(`http://localhost:8080/api/v1/boards-like`, {
-          id,
-          boardId,
-        });
-      } else {
-        await axios.delete(`http://localhost:8080/api/v1/boards-like`, {
-          data: { id, boardId },
-        });
-      }
-    } catch (error) {
-      console.error("Failed to update like", error);
-      // 에러 발생 시 UI를 원래 상태로 되돌림
-      setLiked(!isLiked);
-      setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
-    }
-  };
 
   useEffect(() => {
     return () => {
@@ -178,7 +182,7 @@ CardList.propTypes = {
   onLikeChange: PropTypes.func,
   boardId: PropTypes.number.isRequired,
   initialLikeCount: PropTypes.number.isRequired,
-  id: PropTypes.number.isRequired,
+  loginUserId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
   photoUrls: PropTypes.array,
@@ -191,7 +195,6 @@ CardList.propTypes = {
   startTime: PropTypes.string.isRequired,
   endTime: PropTypes.string.isRequired,
 };
-
 
 export default CardList;
 

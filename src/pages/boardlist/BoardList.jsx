@@ -29,7 +29,18 @@ const BoardList = () => {
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
   const [memberPhoto, setMemberPhoto] = useState(null);
-  const [memberId, setMemberId] = useState(null);
+  const [memberId, setMemberId] = useState(null); // 게시글 작성자의 아이디
+  const [loginUserId, setLoginUserId] = useState(null); // 로그인한 맴버아이디
+
+  console.log("user", user);
+
+  useEffect(() => {
+    if (user && user.id) {
+      setLoginUserId(user.id);
+    }
+  }, [user]);
+
+  console.log("loginUser", loginUserId);
 
   // location의 값에서 '동'이 포함된 값만 추출
   const dongFromLocal = (location) => {
@@ -174,7 +185,7 @@ const BoardList = () => {
     navigate(`/post/${post.id}`, {
       state: {
         post,
-        memberId,
+        memberId, // 게시글 작성자의 memberId
         detailedLocation: post.detailedLocation,
         priceProposal: post.priceProposal,
         photoUrls: post.photoUrls || [],
@@ -200,7 +211,6 @@ const BoardList = () => {
 
   useEffect(() => {
     let observer;
-    console.log("@@@@==>>나 실행됨");
     // if (posts.length === 0) {
     //   return;
     // }
@@ -274,7 +284,7 @@ const BoardList = () => {
                   status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
                   category={post.category} // 카테고리 정보 전달
                   memberPhoto={post.memberPhoto}
-                  id={memberId ?? 0} // 로그인한 사용자의 ID
+                  loginUserId={loginUserId} // 로그인한 사용자의 ID를 전달
                   initialLikeCount={post.likeCount} // 여기서 likeCount 전달
                 />
               </div>
