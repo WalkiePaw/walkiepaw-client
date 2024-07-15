@@ -223,10 +223,13 @@ const BoardList = () => {
 
   // 카테고리에 따라 다른 페이지 타이틀 출력
   let pageTitle;
+  let imageUrl;
   if (category === "JOB_OPENING") {
     pageTitle = "함께 걷는 행복, 반려견 산책의 모든 것";
+    imageUrl = "img/recruit.png";
   } else if (category === "JOB_SEARCH") {
     pageTitle = "다양한 반려견 산책 동행을 찾아보세요";
+    imageUrl = "img/jobs.png";
   }
 
   useEffect(() => {
@@ -252,8 +255,8 @@ const BoardList = () => {
   return (
     <>
       <div className="listTop">
-        <h1>{pageTitle}</h1>
-        <img src="img/dog3.jpg" className="listTop-img" alt="반려견 산책" />
+        <span>{pageTitle}</span>
+        <img src={imageUrl} className="listTop-img" />
       </div>
       <div className="filter-container">
         <MyTown
