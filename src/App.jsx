@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import {setInitialState, verifyToken} from './store/AuthSlice';
+import { setInitialState, verifyToken } from './store/AuthSlice';
 import ProtectedRoute from './store/ProtectedRoute.jsx';
 import BoardList from './pages/boardlist/BoardList.jsx';
 import Home from './pages/home/Home';
@@ -10,7 +10,6 @@ import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 
 import Notfound from './components/Notfound';
 import MyPage from './pages/mypage/MyPage';
@@ -26,7 +25,7 @@ import Dashboard from '/src/pages/dashboard/Dashboard';
 import PostList from '/src/pages/dashboard/PostList';
 import Introduction from '/src/pages/dashboard/Introduction';
 import Preferences from './pages/mypage/Preferences';
-import ModifyPostForm from './pages/post/modify/ModifyPostForm';
+import ModifyPostForm from './pages/post/modify/ModifyPostForm.jsx';
 import CustomerService from './pages/mypage/CustomerService';
 
 import MyTransaction from './pages/mypage/MyTransaction.jsx';
@@ -64,7 +63,6 @@ function App() {
     }
   }, [dispatch]);
 
-
   return (
     <>
       {/* <ParticleCursor /> */}
@@ -77,19 +75,18 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="mypage" element={<MyPageLayout />}>
               <Route index element={<MyPage />} />
-            <Route path="history" element={<MyHistory />} />
-            <Route path="transaction" element={<MyTransaction />} />
-            <Route path="preferences" element={<Preferences />} />
+              <Route path="history" element={<MyHistory />} />
+              <Route path="transaction" element={<MyTransaction />} />
+              <Route path="preferences" element={<Preferences />} />
 
-            <Route path="information" element={<MyInformation />} />
-            <Route path="customer-service" element={<CustomerService />} />
-            <Route path="settings" element={<MySettings />} />
-            <Route path="review" element={<Review />} />
-            <Route path="withdrawal" element={<MembershipWithdrawal />} />
-            <Route path="qna-list" element={<QnaList />} />
+              <Route path="information" element={<MyInformation />} />
+              <Route path="customer-service" element={<CustomerService />} />
+              <Route path="settings" element={<MySettings />} />
+              <Route path="review" element={<Review />} />
+              <Route path="withdrawal" element={<MembershipWithdrawal />} />
+              <Route path="qna-list" element={<QnaList />} />
             </Route>
           </Route>
-
 
           <Route path="recruit" element={<BoardList category="JOB_OPENING" />} />
           <Route path="jobs" element={<BoardList category="JOB_SEARCH" />} />
