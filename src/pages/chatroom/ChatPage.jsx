@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback } from 'react';
+import { createSelector } from '@reduxjs/toolkit';
 import styled from 'styled-components';
 import axios from 'axios';
 import ChatInput from '../../components/chat/ChatInput';
@@ -67,12 +68,22 @@ const ChatInputContainer = styled.div`
   border-top: 1px solid #e0e0e0;
 `;
 
+const selectChatMessages = createSelector(
+    [(state) => state.chat.messages, (_, chatroomId) => chatroomId],
+    (messages, chatroomId) => messages[chatroomId] || []
+);
+
+const selectUser = (state) => state.auth.user;
+const selectSubscriptions = (state) => state.chat.subscriptions;
+
+
+
 const ChatPage = () => {
   const { chatroomId } = useParams();
   const dispatch = useDispatch();
-  const messages = useSelector(state => state.chat.messages[chatroomId] || []);
-  const user = useSelector(state => state.auth.user);
-  const subscriptions = useSelector(state => state.chat.subscriptions);
+  const messages = useSelector(state => selectChatMessages(state, chatroomId));
+  const user = useSelector(selectUser);
+  const subscriptions = useSelector(selectSubscriptions);
   const messageListRef = useRef(null);
   const { handleSendMessage } = useOutletContext();
 
