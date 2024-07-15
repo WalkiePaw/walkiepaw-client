@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import ChatInput from '../../components/chat/ChatInput';
-import { useParams } from "react-router-dom";
+import { useParams, useOutletContext } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setMessages,
   subscribeToChat,
   sendWebSocketMessage,
-  receiveMessage  // 이 부분을 추가
+  receiveMessage
 } from '../../store/ChatSlice';
 
 const ChatArea = styled.div`
@@ -72,7 +72,9 @@ const ChatPage = () => {
   const dispatch = useDispatch();
   const messages = useSelector(state => state.chat.messages[chatroomId] || []);
   const user = useSelector(state => state.auth.user);
+  const subscriptions = useSelector(state => state.chat.subscriptions);
   const messageListRef = useRef(null);
+  const { handleSendMessage } = useOutletContext();
 
   const fetchMessages = useCallback(async () => {
     if (!chatroomId || !user) return;
@@ -94,14 +96,11 @@ const ChatPage = () => {
   useEffect(() => {
     if (chatroomId && user) {
       fetchMessages();
-      const unsubscribe = dispatch(subscribeToChat(chatroomId));
-      return () => {
-        if (unsubscribe && typeof unsubscribe === 'function') {
-          unsubscribe();
-        }
-      };
+      if (!subscriptions[chatroomId]) {
+        dispatch(subscribeToChat(chatroomId));
+      }
     }
-  }, [chatroomId, fetchMessages, dispatch, user]); // subscribeToChat 제거
+  }, [chatroomId, fetchMessages, dispatch, user, subscriptions]);
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -109,37 +108,13 @@ const ChatPage = () => {
     }
   }, [messages]);
 
-
-
   const onSendMessage = (content) => {
     if (chatroomId && user && user.id) {
-      dispatch(sendWebSocketMessage({ chatroomId, content }))
-      .unwrap()
-      .then((sentMessage) => {
-        console.log("Message sent successfully:", sentMessage);
-        dispatch(receiveMessage({ chatroomId, message: {...sentMessage, isOutgoing: true} }));
-      })
-      .catch((error) => console.error("Error sending message:", error));
+      handleSendMessage(chatroomId, content);
     } else {
       console.error('No chatroomId or user available');
     }
   };
-
-
-
-  useEffect(() => {
-    console.log("Messages updated:", messages);
-  }, [messages]);
-
-  useEffect(() => {
-    const unsubscribe = dispatch(subscribeToChat(chatroomId));
-    return () => {
-      if (unsubscribe && typeof unsubscribe === 'function') {
-        unsubscribe();
-      }
-    };
-  }, [chatroomId, dispatch]);
-
 
   if (!user) {
     return <div>Loading user information...</div>;
@@ -149,18 +124,15 @@ const ChatPage = () => {
       <ChatArea>
         <ChatHeader>Chat Room {chatroomId}</ChatHeader>
         <MessageListContainer ref={messageListRef}>
-          {messages.map((msg, index) => {
-            console.log("Rendering message:", msg);
-            return (
-                <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
-                  <MessageContent $isOutgoing={msg.isOutgoing}>
-                    <MessageSender>{msg.sender || msg.nickname}</MessageSender>
-                    {msg.content}
-                    <MessageTime>{msg.sentTime}</MessageTime>
-                  </MessageContent>
-                </MessageItem>
-            );
-          })}
+          {messages.map((msg, index) => (
+              <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
+                <MessageContent $isOutgoing={msg.isOutgoing}>
+                  <MessageSender>{msg.sender || msg.nickname}</MessageSender>
+                  {msg.content}
+                  <MessageTime>{msg.sentTime}</MessageTime>
+                </MessageContent>
+              </MessageItem>
+          ))}
         </MessageListContainer>
         <ChatInputContainer>
           <ChatInput onSend={onSendMessage} />
@@ -168,4 +140,5 @@ const ChatPage = () => {
       </ChatArea>
   );
 };
+
 export default ChatPage;

@@ -32,10 +32,10 @@ const ChatLayout = () => {
 
   const handleChatroomSelect = useCallback((chatroomId) => {
     navigate(`/chat/${chatroomId}`);
-    if (!subscriptions[chatroomId]) {
+    if (!subscriptions[chatroomId] && webSocketConnected) {
       dispatch(subscribeToChat(chatroomId));
     }
-  }, [navigate, dispatch, subscriptions]);
+  }, [navigate, dispatch, subscriptions, webSocketConnected]);
 
   const handleSendMessage = useCallback((chatroomId, content) => {
     dispatch(sendWebSocketMessage({ chatroomId, content }));

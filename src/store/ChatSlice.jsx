@@ -75,7 +75,7 @@ export const sendWebSocketMessage = createAsyncThunk(
           sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           isOutgoing: true  // 이 부분을 추가했습니다.
         };
-        await stompClient.send(`/api/v1/ws/chats/${chatroomId}`, {}, JSON.stringify({...message, isOutgoing: true}));
+        await stompClient.send(`/api/v1/ws/chats/${chatroomId}`, {}, JSON.stringify(message));
         return message;
       } else {
         throw new Error('WebSocket is not connected');
@@ -104,14 +104,12 @@ const chatSlice = createSlice({
         state.messages[chatroomId] = [];
       }
       const isDuplicate = state.messages[chatroomId].some(
-          msg => msg.content === message.content && msg.sentTime === message.sentTime && msg.writerId === message.writerId
+          msg => msg.content === message.content &&
+              msg.sentTime === message.sentTime &&
+              msg.writerId === message.writerId
       );
       if (!isDuplicate) {
-        state.messages[chatroomId].push({
-          ...message,
-          isOutgoing: message.writerId === state.auth?.user?.id, // 여기서 auth 상태에 접근할 수 없습니다.
-          sender: message.nickname || message.sender
-        });
+        state.messages[chatroomId].push(message);
       }
     },
     setMessages: (state, action) => {
