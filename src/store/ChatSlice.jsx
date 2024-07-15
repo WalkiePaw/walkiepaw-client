@@ -41,11 +41,15 @@ export const disconnectWebSocket = createAsyncThunk(
 
 export const subscribeToChat = createAsyncThunk(
     'chat/subscribeToChat',
-    async (chatroomId, { dispatch }) => {
+    async (chatroomId, { dispatch, getState }) => {
       if (stompClient && stompClient.connected) {
+        const { auth } = getState();
         const subscription = stompClient.subscribe(`/chats/${chatroomId}`, (message) => {
           const payload = JSON.parse(message.body);
-          dispatch(receiveMessage({ chatroomId, message: payload }));
+          dispatch(receiveMessage({
+            chatroomId,
+            message: {...payload, isOutgoing: payload.writerId === auth.user.id}
+          }));
         });
         return { chatroomId, subscriptionId: subscription.id };
       } else {
@@ -69,10 +73,9 @@ export const sendWebSocketMessage = createAsyncThunk(
           nickname: auth.user.nickname,
           sender: auth.user.username,
           sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isOutgoing: true
+          isOutgoing: true  // 이 부분을 추가했습니다.
         };
-        await stompClient.send(`/api/v1/ws/chats/${chatroomId}`, {}, JSON.stringify(message));
-        console.log("Message sent:", message);
+        await stompClient.send(`/api/v1/ws/chats/${chatroomId}`, {}, JSON.stringify({...message, isOutgoing: true}));
         return message;
       } else {
         throw new Error('WebSocket is not connected');
@@ -106,7 +109,7 @@ const chatSlice = createSlice({
       if (!isDuplicate) {
         state.messages[chatroomId].push({
           ...message,
-          isOutgoing: message.writerId === state.auth?.user?.id, // Optional chaining 추가
+          isOutgoing: message.writerId === state.auth?.user?.id, // 여기서 auth 상태에 접근할 수 없습니다.
           sender: message.nickname || message.sender
         });
       }

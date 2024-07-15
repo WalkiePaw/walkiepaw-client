@@ -109,13 +109,15 @@ const ChatPage = () => {
     }
   }, [messages]);
 
+
+
   const onSendMessage = (content) => {
     if (chatroomId && user && user.id) {
       dispatch(sendWebSocketMessage({ chatroomId, content }))
       .unwrap()
       .then((sentMessage) => {
         console.log("Message sent successfully:", sentMessage);
-        dispatch(receiveMessage({ chatroomId, message: sentMessage }));
+        dispatch(receiveMessage({ chatroomId, message: {...sentMessage, isOutgoing: true} }));
       })
       .catch((error) => console.error("Error sending message:", error));
     } else {
@@ -123,9 +125,20 @@ const ChatPage = () => {
     }
   };
 
+
+
   useEffect(() => {
     console.log("Messages updated:", messages);
   }, [messages]);
+
+  useEffect(() => {
+    const unsubscribe = dispatch(subscribeToChat(chatroomId));
+    return () => {
+      if (unsubscribe && typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, [chatroomId, dispatch]);
 
 
   if (!user) {
