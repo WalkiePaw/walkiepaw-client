@@ -27,6 +27,10 @@ const Root = styled.div`
 const HomeBoxWrapper = styled.div`
   width: 100%; /* Ensure HomeBoxWrapper spans full width */
   background-color: ${(props) => props.bgColor};
+
+  @media (min-width: 768px) {
+    padding: 20px; /* Adjust padding for larger screens */
+  }
 `;
 
 const HomeBoxContent = styled.div`
@@ -37,16 +41,28 @@ const HomeBoxContent = styled.div`
   box-sizing: border-box;
   max-width: 800px; /* Limit content width */
   margin: 0 auto; /* Center align content */
+
+  @media (min-width: 768px) {
+    flex-direction: row; /* Adjust to row layout for larger screens */
+  }
 `;
 
 const TopBox = styled.div`
   flex: 1;
   text-align: left;
+
+  @media (min-width: 768px) {
+    text-align: left; /* Adjust text alignment for larger screens */
+  }
 `;
 
 const TextBox = styled.div`
   text-align: left;
   font-family: 'HancomMalangMalang-Regular', sans-serif;
+
+  @media (min-width: 768px) {
+    text-align: left; /* Adjust text alignment for larger screens */
+  }
 `;
 
 const Image = styled.img`
