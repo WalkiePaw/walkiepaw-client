@@ -273,7 +273,7 @@ const CardList = ({
       </Title>
       <CardImageBox>
         {photoUrls && photoUrls.length > 0 ? (
-          <CardImage src={photoUrls} alt="card" />
+          <CardImage src={photoUrls} alt={photoUrls ? "card" : "No Image Available"} />
         ) : (
           <NoImagePlaceholder>No Image Available</NoImagePlaceholder>
         )}
