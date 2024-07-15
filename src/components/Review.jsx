@@ -85,11 +85,13 @@ const Review = ({ reviewCount }) => {
       </div>
       <div className="w-full overflow-hidden rounded-lg border border-gray-300">
         {reviews.length > 0 ? (
-          <div className="w-full overflow-hidden rounded-lg border border-gray-300">
-            {reviews.slice(0, visibleReviews).map((review) => (
+          <>
+            {reviews.slice(0, visibleReviews).map((review, index) => (
               <div
                 key={review.id}
-                className="p-4 bg-white rounded-lg shadow-md border border-gray-300"
+                className={`p-4 bg-white ${
+                  index !== 0 ? "border-t border-gray-300" : ""
+                }`}
               >
                 <div className="flex items-center mb-2">
                   <span className="font-medium">평점:</span>
@@ -114,7 +116,7 @@ const Review = ({ reviewCount }) => {
               </div>
             ))}
             {!showNoMoreReviews && (
-              <div className="flex justify-end mt-4">
+              <div className="flex justify-end mt-4 p-4 border-t border-gray-300">
                 <button
                   className="px-4 py-2 bg-[#E8C5A5] text-gray-800 rounded-md"
                   onClick={handleLoadMore}
@@ -123,13 +125,12 @@ const Review = ({ reviewCount }) => {
                 </button>
               </div>
             )}
-
             {showNoMoreReviews && (
-              <p className="mt-2 text-lg font-medium text-gray-500">
+              <p className="mt-2 text-lg font-medium text-gray-500 p-4 border-t border-gray-300">
                 더 이상 받은 리뷰가 없습니다.
               </p>
             )}
-          </div>
+          </>
         ) : (
           <div className="px-6 py-4 text-center text-gray-500">
             받은 리뷰 내역이 없습니다

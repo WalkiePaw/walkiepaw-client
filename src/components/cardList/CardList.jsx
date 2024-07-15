@@ -8,6 +8,128 @@ import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
 import axios from "axios";
 
+// styled-components를 이용한 스타일 정의
+const CardStyled = styled.div`
+  background: #f9f3e6;
+  border-radius: 8px;
+  border: 2px solid #8d6e63; /* 테두리 라인 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  flex-direction: column;
+  width: 100%; // 카드 너비를 늘림
+  max-width: 1200px; // 최대 너비를 설정
+  margin-left: auto; // 좌우 중앙 정렬
+  margin-right: auto; // 좌우 중앙 정렬
+  &:hover {
+    transform: translateY(-5px);
+  }
+`;
+
+const Locals = styled.div`
+  display: flex;
+  justify-content: space-between; // location을 오른쪽 끝으로 이동
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 2px solid #8d6e63; /* 구분선 */
+  font-weight: bold;
+`;
+
+const Local = styled.div`
+  color: #6d4c41; /* 갈색으로 설정 */
+`;
+
+const MemberInfo = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const AuthorImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 8px;
+`;
+
+const MemberNickName = styled.div`
+  font-weight: bold;
+`;
+
+const Title = styled.div`
+  padding: 8px 16px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 3px;
+`;
+
+const PostStatus = styled.span`
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin-right: 8px;
+  &.recruiting {
+    background-color: #e0f7fa;
+    color: #00796b;
+  }
+  &.reserved {
+    background-color: #ffe0b2;
+    color: #f57c00;
+  }
+  &.completed {
+    background-color: #fce4ec;
+    color: #d81b60;
+  }
+`;
+
+const Time = styled.div`
+  padding: 8px 16px;
+  color: #333;
+`;
+
+const Price = styled.div`
+  padding: 8px 16px;
+  color: #333;
+  margin-top: -8px; /* 시간과 가격 사이 간격 조정 */
+`;
+
+const CardImageBox = styled.div`
+  width: calc(100% - 32px); // 이미지 양옆 여백 추가
+  height: 200px;
+  background: #f0f0f0;
+  margin: 0 16px; // 이미지 양옆 여백 추가
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px; /* 이미지 테두리 둥글게 */
+  overflow: hidden; /* 둥글게 된 테두리를 위해 필요 */
+`;
+
+const CardImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const NoImagePlaceholder = styled.div`
+  color: #888;
+`;
+
+const Icons = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 16px;
+`;
+
+const Icon = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #888;
+  & > span {
+    margin-left: 4px;
+  }
+`;
+
 const CardList = ({
   boardId,
   title,
@@ -194,125 +316,3 @@ CardList.propTypes = {
 
 
 export default CardList;
-
-// styled-components를 이용한 스타일 정의
-const CardStyled = styled.div`
-  background: #f9f3e6;
-  border-radius: 8px;
-  border: 2px solid #8d6e63; /* 테두리 라인 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 16px;
-  overflow: hidden;
-  cursor: pointer;
-  flex-direction: column;
-  width: 100%; // 카드 너비를 늘림
-  max-width: 1200px; // 최대 너비를 설정
-  margin-left: auto; // 좌우 중앙 정렬
-  margin-right: auto; // 좌우 중앙 정렬
-  &:hover {
-    transform: translateY(-5px);
-  }
-`;
-
-const Locals = styled.div`
-  display: flex;
-  justify-content: space-between; // location을 오른쪽 끝으로 이동
-  align-items: center;
-  padding: 8px 16px;
-  border-bottom: 2px solid #8d6e63; /* 구분선 */
-  font-weight: bold;
-`;
-
-const Local = styled.div`
-  color: #6d4c41; /* 갈색으로 설정 */
-`;
-
-const MemberInfo = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const AuthorImage = styled.img`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 8px;
-`;
-
-const MemberNickName = styled.div`
-  font-weight: bold;
-`;
-
-const Title = styled.div`
-  padding: 8px 16px;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 3px;
-`;
-
-const PostStatus = styled.span`
-  padding: 2px 4px;
-  border-radius: 4px;
-  margin-right: 8px;
-  &.recruiting {
-    background-color: #e0f7fa;
-    color: #00796b;
-  }
-  &.reserved {
-    background-color: #ffe0b2;
-    color: #f57c00;
-  }
-  &.completed {
-    background-color: #fce4ec;
-    color: #d81b60;
-  }
-`;
-
-const Time = styled.div`
-  padding: 8px 16px;
-  color: #333;
-`;
-
-const Price = styled.div`
-  padding: 8px 16px;
-  color: #333;
-  margin-top: -8px; /* 시간과 가격 사이 간격 조정 */
-`;
-
-const CardImageBox = styled.div`
-  width: calc(100% - 32px); // 이미지 양옆 여백 추가
-  height: 200px;
-  background: #f0f0f0;
-  margin: 0 16px; // 이미지 양옆 여백 추가
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px; /* 이미지 테두리 둥글게 */
-  overflow: hidden; /* 둥글게 된 테두리를 위해 필요 */
-`;
-
-const CardImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-
-const NoImagePlaceholder = styled.div`
-  color: #888;
-`;
-
-const Icons = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding: 8px 16px;
-`;
-
-const Icon = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  color: #888;
-  & > span {
-    margin-left: 4px;
-  }
-`;
