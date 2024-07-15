@@ -1,9 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import ChatInput from '../../components/chat/ChatInput';
-import { useOutletContext, useParams } from "react-router-dom";
-import {useSelector} from "react-redux";
+import { useParams, useOutletContext } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setMessages,
+  subscribeToChat,
+  sendWebSocketMessage
+} from '../../store/ChatSlice';
 
 const ChatArea = styled.div`
   flex: 1;
@@ -12,7 +17,7 @@ const ChatArea = styled.div`
   border: 1px solid #ccc;
   border-radius: 5px;
   overflow: hidden;
-  height: 100%; // 전체 높이를 사용하도록 설정
+  height: 100%;
 `;
 
 const ChatHeader = styled.div`
@@ -26,24 +31,21 @@ const MessageListContainer = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-`;
-
-const MessageList = styled.div`
   padding: 10px;
-  flex: 1;
 `;
 
 const MessageItem = styled.div`
+  display: flex;
+  flex-direction: ${props => props.$isOutgoing ? 'row-reverse' : 'row'};
   margin-bottom: 10px;
-  text-align: ${props => props.$isOutgoing ? 'right' : 'left'};
 `;
 
 const MessageContent = styled.div`
-  display: inline-block;
   background-color: ${props => props.$isOutgoing ? '#E8C5A5' : '#fff'};
   border-radius: 10px;
   padding: 8px 12px;
   max-width: 70%;
+  ${props => props.$isOutgoing ? 'margin-left: auto;' : ''}
 `;
 
 const MessageSender = styled.div`
@@ -65,49 +67,41 @@ const ChatInputContainer = styled.div`
 `;
 
 const ChatPage = () => {
-  const [messages, setMessages] = useState([]);
   const { chatroomId } = useParams();
-  const { id, messages: contextMessages, handleSendMessage } = useOutletContext();
-  const messageListRef = useRef(null);
-
-  // Redux에서 사용자 정보 가져오기
+  const dispatch = useDispatch();
+  const messages = useSelector(state => state.chat.messages[chatroomId] || []);
   const user = useSelector(state => state.auth.user);
-
+  const messageListRef = useRef(null);
+  const { handleSendMessage } = useOutletContext();
 
   const fetchMessages = useCallback(async () => {
-    if (!chatroomId) return;
+    if (!chatroomId || !user) return;
     try {
       const response = await axios.get(`http://localhost:8080/api/v1/chats?chatroomId=${chatroomId}`);
       const formattedMessages = response.data.map(msg => ({
+        id: msg.id,
         content: msg.content,
         sentTime: new Date(msg.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         sender: msg.nickname,
-        isOutgoing: msg.writerId === id
+        isOutgoing: msg.writerId === user.id
       }));
-      setMessages(formattedMessages);
+      dispatch(setMessages({ chatroomId, messages: formattedMessages }));
     } catch (error) {
       console.error('Error fetching chat messages:', error);
     }
-  }, [chatroomId, id]);
+  }, [chatroomId, user, dispatch]);
 
   useEffect(() => {
-    if (chatroomId) {
+    if (chatroomId && user) {
       fetchMessages();
+      const unsubscribe = dispatch(subscribeToChat(chatroomId));
+      return () => {
+        if (unsubscribe && typeof unsubscribe === 'function') {
+          unsubscribe();
+        }
+      };
     }
-  }, [chatroomId, fetchMessages]);
-
-  useEffect(() => {
-    if (contextMessages && contextMessages[chatroomId]) {
-      setMessages(prevMessages => [
-        ...prevMessages,
-        ...contextMessages[chatroomId].filter(msg =>
-            !prevMessages.some(prevMsg =>
-                prevMsg.content === msg.content && prevMsg.sentTime === msg.sentTime
-            )
-        )
-      ]);
-    }
-  }, [contextMessages, chatroomId]);
+  }, [chatroomId, fetchMessages, dispatch, user]);
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -116,20 +110,23 @@ const ChatPage = () => {
   }, [messages]);
 
   const onSendMessage = (content) => {
-    if (chatroomId) {
-      handleSendMessage(chatroomId, content);
-      // 로컬에서 즉시 메시지 추가
-      const newMessage = {
-        content: content,
-        sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        sender: user.nickname || 'Me', // 사용자의 닉네임 사용
-        isOutgoing: true
-      };
-      setMessages(prevMessages => [...prevMessages, newMessage]);
+    if (chatroomId && user) {
+      dispatch(sendWebSocketMessage({ chatroomId, content }))
+      .then(() => {
+        console.log("Message sent and local state updated");
+        if (messageListRef.current) {
+          messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+        }
+      })
+      .catch(error => console.error("Error sending message:", error));
     } else {
-      console.error('No chatroomId available');
+      console.error('No chatroomId or user available');
     }
   };
+
+  if (!user) {
+    return <div>Loading user information...</div>;
+  }
 
   return (
       <ChatArea>
@@ -138,7 +135,7 @@ const ChatPage = () => {
           {messages.map((msg, index) => (
               <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
                 <MessageContent $isOutgoing={msg.isOutgoing}>
-                  <MessageSender>{msg.sender}</MessageSender>
+                  <MessageSender>{msg.sender || msg.nickname}</MessageSender>
                   {msg.content}
                   <MessageTime>{msg.sentTime}</MessageTime>
                 </MessageContent>
@@ -151,5 +148,4 @@ const ChatPage = () => {
       </ChatArea>
   );
 };
-
 export default ChatPage;

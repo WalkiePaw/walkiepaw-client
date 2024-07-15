@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { format, parse } from 'date-fns';
-import { useSelector } from "react-redux";
+import { setChatrooms } from '../../store/ChatSlice';  // 이 부분을 수정
 import default_user from '../../assets/default_user.png';
+import styled from "styled-components";
+
 
 const SidebarContainer = styled.div`
   width: 300px;
@@ -59,31 +61,25 @@ const UnreadDot = styled.div`
 `;
 
 const ChatRoom = ({ onChatroomSelect }) => {
-  const [chatrooms, setChatrooms] = useState([]);
-  const [pageInfo, setPageInfo] = useState({});
+  const dispatch = useDispatch();
+  const chatrooms = useSelector(state => state.chat.chatrooms);
   const user = useSelector(state => state.auth.user);
-  const id = user?.id;
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/v1/chatrooms', {
-      params: { id }
-    })
-    .then(response => {
-      console.log('Chatrooms data:', response.data);
-      setChatrooms(response.data.content);
-      setPageInfo({
-        currentPage: response.data.number,
-        totalPages: response.data.totalPages,
-        size: response.data.size,
-        first: response.data.first,
-        last: response.data.last,
-        empty: response.data.empty
+    if (user && user.id) {  // user가 존재하고 id가 있는지 확인
+      axios.get('http://localhost:8080/api/v1/chatrooms', {
+        params: { id: user.id }
+      })
+      .then(response => {
+        console.log('Chatrooms data:', response.data);
+        dispatch(setChatrooms(response.data.content));
+      })
+      .catch(error => {
+        console.error('There was an error fetching the chatrooms!', error);
       });
-    })
-    .catch(error => {
-      console.error('There was an error fetching the chatrooms!', error);
-    });
-  }, [id]);
+    }
+  }, [user, dispatch]);
+
 
   const formatTime = (timeString) => {
     const time = parse(timeString, 'HH:mm:ss.SSSSSS', new Date());

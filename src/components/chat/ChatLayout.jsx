@@ -1,62 +1,51 @@
 // ChatLayout.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ChatRoom from './ChatRoom';
 import styled from 'styled-components';
-import useWebSocket from './useWebSocket';
-
+import {
+  connectWebSocket,
+  disconnectWebSocket,
+  subscribeToChat,
+  sendWebSocketMessage
+} from '../../store/ChatSlice.jsx';
 const ChatLayoutContainer = styled.div`
   display: flex;
   height: 100vh;
 `;
-
 const MainChatArea = styled.div`
   flex: 1;
   overflow: auto;
 `;
-
 const ChatLayout = () => {
-  const user = useSelector(state => state.auth.user);
-  const id = user?.id;
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [messages, setMessages] = useState({});
-  const { connect, disconnect, subscribe, unsubscribe, send } = useWebSocket('http://localhost:8080/ws');
-  const [currentSubscription, setCurrentSubscription] = useState(null);
+  const webSocketConnected = useSelector(state => state.chat.webSocketConnected);
+  const subscriptions = useSelector(state => state.chat.subscriptions);
 
   useEffect(() => {
-    connect();
-    return () => disconnect();
-  }, [connect, disconnect]);
+    dispatch(connectWebSocket());
+    return () => dispatch(disconnectWebSocket());
+  }, [dispatch]);
 
-  const handleMessage = useCallback((message) => {
-    setMessages(prev => ({
-      ...prev,
-      [message.chatroomId]: [...(prev[message.chatroomId] || []), message]
-    }));
-  }, []);
 
   const handleChatroomSelect = useCallback((chatroomId) => {
     navigate(`/chat/${chatroomId}`);
-
-    if (currentSubscription) {
-      unsubscribe(currentSubscription);
+    if (!subscriptions[chatroomId]) {
+      dispatch(subscribeToChat(chatroomId));
     }
-
-    const newSubscription = subscribe(`/chats/${chatroomId}`, handleMessage);
-    setCurrentSubscription(newSubscription);
-  }, [navigate, subscribe, unsubscribe, handleMessage, currentSubscription]);
+  }, [navigate, dispatch, subscriptions]);
 
   const handleSendMessage = useCallback((chatroomId, content) => {
-    send(`/api/v1/ws/chats/${chatroomId}`, { content, writerId: id, chatroomId });
-  }, [send, id]);
-
+    dispatch(sendWebSocketMessage({ chatroomId, content }));
+  }, [dispatch]);
 
   return (
       <ChatLayoutContainer>
         <ChatRoom onChatroomSelect={handleChatroomSelect} />
         <MainChatArea>
-          <Outlet context={{ id, messages, handleSendMessage }} />
+          <Outlet context={{ handleSendMessage }} />
         </MainChatArea>
       </ChatLayoutContainer>
   );
