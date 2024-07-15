@@ -3,19 +3,16 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import CardList from "../../components/cardList/CardList";
 import "./BoardList.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import MyTown from "../myTown/MyTown";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
-import MyPageKakaoMap from "../../modules/MyPageKakao";
 
 const BoardList = () => {
   const ref = useRef(null);
   const [posts, setPosts] = useState([]); // 게시글 목록을 저장
   const [filteredPosts, setFilteredPosts] = useState([]); // 필터링된 게시글 목록을 저장
-  const [selectedPlaces, setSelectedPlaces] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState(""); // 검색어를 저장
   const [searchOption, setSearchOption] = useState("title"); // 검색 옵션(제목 or 내용) 디폴트 값
   const [category, setCategory] = useState(""); // 게시글 카테고리를 저장
@@ -29,10 +26,7 @@ const BoardList = () => {
   const [memberPhoto, setMemberPhoto] = useState(null);
   const [memberId, setMemberId] = useState(null); // 게시글 작성자의 아이디
   const [loginUserId, setLoginUserId] = useState(null); // 로그인한 맴버아이디
-
-  const handleSetLocation = (placeName) => {
-    setSelectedPlaces(prevPlaces => [...prevPlaces, placeName]);
-  };
+  const selectedPlaces = useSelector((state) => state.selectedPlaces) || [];
   
   useEffect(() => {
     setPage(0); // 카테고리가 변경될 때 페이지 초기화
@@ -109,13 +103,12 @@ const BoardList = () => {
   useEffect(() => {
     const filterPosts = () => {
       if (posts.length === 0) return;
-
       let newFilteredPosts = posts;
 
-      // 선택된 지역 필터링
+      // 선택된 동네들로 필터링
       if (selectedPlaces.length > 0) {
-        newFilteredPosts = newFilteredPosts.filter(post =>
-          selectedPlaces.some(place => post.location?.includes(place))
+        newFilteredPosts = newFilteredPosts.filter((post) =>
+          selectedPlaces.some((place) => post.location?.includes(place))
         );
       }
 
@@ -239,7 +232,6 @@ const BoardList = () => {
         <img src="img/dog3.jpg" className="listTop-img" alt="반려견 산책" />
       </div>
       <div className="filter-container">
-          <MyPageKakaoMap setLocation={handleSetLocation} />
         <div className="board-search-container">
           <select
             className="search-filter"
