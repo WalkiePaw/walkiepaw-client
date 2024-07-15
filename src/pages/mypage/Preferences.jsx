@@ -65,12 +65,12 @@ const Preferences = () => {
           boardId = Number(boardId);
           if (isLiked) {
             return axios.post(`http://localhost:8080/api/v1/boards-like`, {
-              memberId: id,
+              loginUserId: id,
               boardId,
             });
           } else {
             return axios.delete(`http://localhost:8080/api/v1/boards-like`, {
-              data: { memberId: id, boardId },
+              data: { loginUserId: id, boardId },
             });
           }
         }
@@ -114,7 +114,7 @@ const Preferences = () => {
               endTime={like.endTime}
               initialLiked={true}
               likeCount={like.likeCount}
-              memberId={id}
+              loginUserId={id}
               initialLikeCount={like.likeCount}
               onLikeChange={handleLikeChange}
             />

@@ -102,11 +102,11 @@ const Menus = styled.ul`
       transition: color 0.3s;
 
       &.active {
-        color: #007bff;
+        color: #6d4c41;
       }
 
       &:hover {
-        color: #007bff;
+        color: #6d4c41;
       }
     }
   }
