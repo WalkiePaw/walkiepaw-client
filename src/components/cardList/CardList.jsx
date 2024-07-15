@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { verifyToken } from "../../store/AuthSlice";
 
 // styled-components를 이용한 스타일 정의
 const CardStyled = styled.div`
@@ -153,6 +155,15 @@ const CardList = ({
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [likeChangeTimeout, setLikeChangeTimeout] = useState(null);
 
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      dispatch(verifyToken());
+    }
+  }, [dispatch, isLoggedIn]);
+
   const updateLikeToServer = useCallback(
     async (isLiked) => {
       try {
@@ -286,15 +297,17 @@ const CardList = ({
         {priceType === "HOURLY" && "시급"} {priceType === "DAILY" && "일급"}: ₩
         {formatToKRW(price)}
       </Price>
-      <Icons>
-        <Icon onClick={handleLike}>
-          <FontAwesomeIcon
-            icon={liked ? solidHeart : regularHeart}
-            color={liked ? "red" : "gray"}
-          />
-          <span>{likeCount}</span>
-        </Icon>
-      </Icons>
+      {isLoggedIn && (
+        <Icons>
+          <Icon onClick={handleLike}>
+            <FontAwesomeIcon
+              icon={liked ? solidHeart : regularHeart}
+              color={liked ? "red" : "gray"}
+            />
+            <span>{likeCount}</span>
+          </Icon>
+        </Icons>
+      )}
     </CardStyled>
   );
 };

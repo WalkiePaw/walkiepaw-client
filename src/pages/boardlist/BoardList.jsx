@@ -8,7 +8,8 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { verifyToken } from "../../store/AuthSlice";
 
 const BoardList = () => {
   const ref = useRef(null);
@@ -23,13 +24,21 @@ const BoardList = () => {
   const [searchResultMessage, setSearchResultMessage] = useState(""); // 검색 결과 메시지
   const [page, setPage] = useState(0); // 기본값 1로 바꾸기
   const [hasMore, setHasMore] = useState(true);
-  const { user } = useSelector((state) => state.auth); // 로그인한 유저의 정보를 가져온다
+  const { user, isLoggedIn } = useSelector((state) => state.auth); // 로그인한 유저의 정보를 가져온다
   const [loading, setLoading] = useState(true); // 게시글이 출력되기 전 상태 표시
   const location = useLocation(); // 현재 경로 정보를 가져오는 Hook
   const navigate = useNavigate(); // 페이지 이동을 위한 함수
   const [memberPhoto, setMemberPhoto] = useState(null);
   const [memberId, setMemberId] = useState(null); // 게시글 작성자의 아이디
   const [loginUserId, setLoginUserId] = useState(null); // 로그인한 맴버아이디
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 토큰 검증
+    if (!isLoggedIn) {
+      dispatch(verifyToken());
+    }
+  }, [dispatch, isLoggedIn]);
 
   useEffect(() => {
     setPage(0); // 카테고리가 변경될 때 페이지 초기화
@@ -312,7 +321,7 @@ const BoardList = () => {
           }}
         />
         <div className="bl-button-container">
-          {user && (
+          {isLoggedIn && (
             <Link to="/new-post">
               <button className="post-button">
                 <FontAwesomeIcon icon={faPenToSquare} />
