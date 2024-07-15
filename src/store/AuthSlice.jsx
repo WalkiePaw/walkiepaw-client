@@ -51,6 +51,7 @@ const AuthSlice = createSlice({
 
       // JWT 토큰 디코딩
       const decodedToken = jwtDecode(action.payload.token);
+      console.log('Decoded token:', decodedToken);
 
       state.user = {
         id: decodedToken.id,  // 또는 decodedToken.memberId, 토큰에 사용된 키에 따라 다름
@@ -58,6 +59,8 @@ const AuthSlice = createSlice({
         authorities: decodedToken.role,  // 권한 정보가 필요한 경우
         nickname: decodedToken.nickname
       };
+      console.log('User state after login:', state.user);
+
       state.error = null;
       localStorage.setItem('token', action.payload.token);
     },

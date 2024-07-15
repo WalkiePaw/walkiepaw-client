@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import ChatInput from '../../components/chat/ChatInput';
-import { useParams, useOutletContext } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setMessages,
   subscribeToChat,
-  sendWebSocketMessage
+  sendWebSocketMessage,
+  receiveMessage  // 이 부분을 추가
 } from '../../store/ChatSlice';
 
 const ChatArea = styled.div`
@@ -72,7 +73,6 @@ const ChatPage = () => {
   const messages = useSelector(state => state.chat.messages[chatroomId] || []);
   const user = useSelector(state => state.auth.user);
   const messageListRef = useRef(null);
-  const { handleSendMessage } = useOutletContext();
 
   const fetchMessages = useCallback(async () => {
     if (!chatroomId || !user) return;
@@ -101,7 +101,7 @@ const ChatPage = () => {
         }
       };
     }
-  }, [chatroomId, fetchMessages, dispatch, user]);
+  }, [chatroomId, fetchMessages, dispatch, user]); // subscribeToChat 제거
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -110,19 +110,23 @@ const ChatPage = () => {
   }, [messages]);
 
   const onSendMessage = (content) => {
-    if (chatroomId && user) {
+    if (chatroomId && user && user.id) {
       dispatch(sendWebSocketMessage({ chatroomId, content }))
-      .then(() => {
-        console.log("Message sent and local state updated");
-        if (messageListRef.current) {
-          messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-        }
+      .unwrap()
+      .then((sentMessage) => {
+        console.log("Message sent successfully:", sentMessage);
+        dispatch(receiveMessage({ chatroomId, message: sentMessage }));
       })
-      .catch(error => console.error("Error sending message:", error));
+      .catch((error) => console.error("Error sending message:", error));
     } else {
       console.error('No chatroomId or user available');
     }
   };
+
+  useEffect(() => {
+    console.log("Messages updated:", messages);
+  }, [messages]);
+
 
   if (!user) {
     return <div>Loading user information...</div>;
@@ -132,15 +136,18 @@ const ChatPage = () => {
       <ChatArea>
         <ChatHeader>Chat Room {chatroomId}</ChatHeader>
         <MessageListContainer ref={messageListRef}>
-          {messages.map((msg, index) => (
-              <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
-                <MessageContent $isOutgoing={msg.isOutgoing}>
-                  <MessageSender>{msg.sender || msg.nickname}</MessageSender>
-                  {msg.content}
-                  <MessageTime>{msg.sentTime}</MessageTime>
-                </MessageContent>
-              </MessageItem>
-          ))}
+          {messages.map((msg, index) => {
+            console.log("Rendering message:", msg);
+            return (
+                <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
+                  <MessageContent $isOutgoing={msg.isOutgoing}>
+                    <MessageSender>{msg.sender || msg.nickname}</MessageSender>
+                    {msg.content}
+                    <MessageTime>{msg.sentTime}</MessageTime>
+                  </MessageContent>
+                </MessageItem>
+            );
+          })}
         </MessageListContainer>
         <ChatInputContainer>
           <ChatInput onSend={onSendMessage} />

@@ -56,21 +56,23 @@ export const subscribeToChat = createAsyncThunk(
 
 export const sendWebSocketMessage = createAsyncThunk(
     'chat/sendWebSocketMessage',
-    async ({ chatroomId, content }, { getState, dispatch }) => {
+    async ({ chatroomId, content }, { getState }) => {
       if (stompClient && stompClient.connected) {
         const { auth } = getState();
+        if (!auth.user || !auth.user.id) {
+          throw new Error('User information not available');
+        }
         const message = {
           chatroomId: parseInt(chatroomId),
           content,
           writerId: auth.user.id,
-          nickname: auth.user.username,
+          nickname: auth.user.nickname,
           sender: auth.user.username,
-          isOutgoing: true,
-          sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isOutgoing: true
         };
         await stompClient.send(`/api/v1/ws/chats/${chatroomId}`, {}, JSON.stringify(message));
-        console.log("Local message sent:", message);
-        dispatch(addLocalMessage({ chatroomId, message }));
+        console.log("Message sent:", message);
         return message;
       } else {
         throw new Error('WebSocket is not connected');
@@ -93,17 +95,6 @@ const chatSlice = createSlice({
     webSocketDisconnected: (state) => {
       state.webSocketConnected = false;
     },
-    addLocalMessage: (state, action) => {
-      const { chatroomId, message } = action.payload;
-      if (!state.messages[chatroomId]) {
-        state.messages[chatroomId] = [];
-      }
-      state.messages[chatroomId].push({
-        ...message,
-        isOutgoing: true,
-        sender: message.nickname || message.sender
-      });
-    },
     receiveMessage: (state, action) => {
       const { chatroomId, message } = action.payload;
       if (!state.messages[chatroomId]) {
@@ -115,7 +106,7 @@ const chatSlice = createSlice({
       if (!isDuplicate) {
         state.messages[chatroomId].push({
           ...message,
-          isOutgoing: message.writerId === state.auth?.user?.id,
+          isOutgoing: message.writerId === state.auth?.user?.id, // Optional chaining 추가
           sender: message.nickname || message.sender
         });
       }
