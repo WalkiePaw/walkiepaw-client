@@ -56,7 +56,12 @@ const BoardList = () => {
         const response = await axios.get(
           `http://localhost:8080/api/v1/boards/list/${category}`,
           {
-            params: { page }, // 카테고리 변경시 페이지 0으로
+            params: { 
+              page,
+              si: selectedSi,
+              gu: selectedGu,
+              dong: selectedDong
+            }, // 카테고리 변경시 페이지 0으로
           }
         ); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         const data = response?.data?.content ?? [];
@@ -76,7 +81,7 @@ const BoardList = () => {
         console.error("Failed to fetch posts", error);
       }
     },
-    [category, page, hasMore]
+    [category, page, hasMore, selectedSi, selectedGu, selectedDong]
   );
 
   // 페이지 경로에 따라 카테고리를 설정
@@ -99,34 +104,28 @@ const BoardList = () => {
       setHasMore(true);
       setSearchKeyword("");
       setSearchResultMessage("");
-      setSelectedSi("");
-      setSelectedGu("");
-      setSelectedDong("");
     }
-  }, [category, location.pathname]); // 카테고리가 변경될 때마다 실행됨
+  }, [category, location.pathname]); // location.pathname이 변경될 때마다 실행됨
 
-  // 카테고리, 지역, 검색어 필터링
+  useEffect(() => {
+    setPosts([]);
+    setFilteredPosts([]);
+    setPage(0);
+    setHasMore(true);
+    fetchPosts(true);
+  }, [selectedSi, selectedGu, selectedDong, category]);
+
+
+  // // 카테고리, 지역, 검색어 필터링
   useEffect(() => {
     const filterPosts = () => {
       if (posts.length === 0) return; // 게시글이 없으면 필터링을 하지 않음
-
       let newFilteredPosts = posts;
 
-      // 지역 필터링
-      if (selectedSi) {
-        // location이 Null일 때, includes()를 호출한다.
+      if (searchKeyword) {
         newFilteredPosts = newFilteredPosts.filter((post) =>
-          post.location?.includes(selectedSi)
-        );
-      }
-      if (selectedGu) {
-        newFilteredPosts = newFilteredPosts.filter((post) =>
-          post.location?.includes(selectedGu)
-        );
-      }
-      if (selectedDong) {
-        newFilteredPosts = newFilteredPosts.filter((post) =>
-          post.location?.includes(selectedDong)
+          post.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+          post.content.toLowerCase().includes(searchKeyword.toLowerCase())
         );
       }
 
@@ -134,7 +133,7 @@ const BoardList = () => {
     };
 
     filterPosts();
-  }, [selectedSi, selectedGu, selectedDong, posts, searchKeyword]);
+  }, [posts, searchKeyword]);
 
   // 검색 옵션 변경 핸들러
   const handleOptionChange = (e) => {
@@ -229,6 +228,9 @@ const BoardList = () => {
       const onIntersect = async ([entry], observer) => {
         if (entry.isIntersecting) {
           await fetchPosts();
+          // console.log("나 패치포스트@@@@ =>", 11111);
+          // console.log("나 카테고리 =>", category);
+          // console.log("나 페이지 =>", page);
         }
       };
       observer = new IntersectionObserver(onIntersect, { threshold: 0.1 }); // 추가된 부분
@@ -236,6 +238,9 @@ const BoardList = () => {
     }
     return () => observer && observer.disconnect();
   }, [category, page]); // 의존성으로 fetchPosts를 넣으면 카테고리가 변경되었을 때 변경 전 카테고리의 남아있는 게시글도 가지고옴
+
+  // console.log("filteredPosts", filteredPosts);
+  // console.log("posts", posts);
 
   return (
     <>
@@ -248,7 +253,6 @@ const BoardList = () => {
           onSiChange={setSelectedSi}
           onGuChange={setSelectedGu}
           onDongChange={setSelectedDong}
-          category={category}
         />
         <div className="board-search-container">
           <select
@@ -327,3 +331,4 @@ const BoardList = () => {
 };
 
 export default BoardList;
+

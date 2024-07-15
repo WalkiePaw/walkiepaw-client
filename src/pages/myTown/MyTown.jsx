@@ -1,61 +1,63 @@
-import { useEffect, useState } from "react";
-import "./MyTown.css";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import './MyTown.css';
 
-const MyTown = ({ onSiChange, onGuChange, onDongChange, category }) => {
-  const [selectedSi, setSelectedSi] = useState("");
-  const [selectedGu, setSelectedGu] = useState("");
-  const [selectedDong, setSelectedDong] = useState("");
+const MyTown = ({ onSiChange, onGuChange, onDongChange }) => {
+  const [siList, setSiList] = useState([]);
+  const [guList, setGuList] = useState([]);
+  const [dongList, setDongList] = useState([]);
+  const [selectedSi, setSelectedSi] = useState('');
+  const [selectedGu, setSelectedGu] = useState('');
+  const [selectedDong, setSelectedDong] = useState('');
 
-  // 카테고리가 변경될 때 지역 선택 값을 초기화하는 useEffect
+  // API 키 (실제 사용 시 환경변수로 관리하는 것이 좋습니다)
+  const API_KEY = import.meta.env.VITE_VWORLD_API_KEY;
+
   useEffect(() => {
-    setSelectedSi("");
-    setSelectedGu("");
-    setSelectedDong("");
-    onSiChange("");
-    onGuChange("");
-    onDongChange("");
-  }, [category, onSiChange, onGuChange, onDongChange]);
+    fetchSiList();
+  }, []);
 
-  const si = {
-    서울: {
-      강남구: ["역삼동", "개포동", "청담동"],
-      강동구: ["천호동", "성내동", "암사동"],
-      강북구: ["미아동", "번동", "수유동"],
-      강서구: ["화곡동", "등촌동", "방화동"],
-    },
-    경기: {
-      수원시: ["장안구", "팔달구", "영통구"],
-      성남시: ["분당구", "수정구", "중원구"],
-      용인시: ["수지구", "기흥구", "처인구"],
-      안양시: ["동안구", "만안구"],
-    },
-    인천: {
-      중구: ["도원동", "영종도"],
-      동구: ["송림동", "화수동"],
-      미추홀구: ["주안동", "도화동"],
-      연수구: ["송도동", "옥련동"],
-    },
-    부산: {
-      중구: ["부평동", "남포동"],
-      서구: ["동대신동", "부민동"],
-      동구: ["좌천동", "초량동"],
-      남구: ["대연동", "용호동"],
-    },
-    // 시, 구, 동을 더 추가 할 수 있음
+  const fetchSiList = async () => {
+    try {
+      const response = await axios.get(`/vworld/req/data?service=data&request=GetFeature&data=LT_C_ADSIDO_INFO&key=${API_KEY}&domain=http://localhost:5173`);      
+      setSiList(response.data.response.result.featureCollection.features);
+    } catch (error) {
+      console.error('Error fetching Si list:', error);
+    }
+  };
+
+  const fetchGuList = async (siCode) => {
+    try {
+      const response = await axios.get(`/vworld/req/data?service=data&request=GetFeature&data=LT_C_ADSIDO_INFO&key=${API_KEY}&domain=http://localhost:5173`);      
+      setGuList(response.data.response.result.featureCollection.features);
+    } catch (error) {
+      console.error('Error fetching Gu list:', error);
+    }
+  };
+
+  const fetchDongList = async (guCode) => {
+    try {
+      const response = await axios.get(`/vworld/req/data?service=data&request=GetFeature&data=LT_C_ADSIDO_INFO&key=${API_KEY}&domain=http://localhost:5173`);      
+      setDongList(response.data.response.result.featureCollection.features);
+    } catch (error) {
+      console.error('Error fetching Dong list:', error);
+    }
   };
 
   const handleSiChange = (e) => {
     const si = e.target.value;
     setSelectedSi(si);
-    setSelectedGu(""); // 구 리셋하기
-    setSelectedDong(""); // 동 리셋하기
+    setSelectedGu('');
+    setSelectedDong('');
+    fetchGuList(si.substr(0, 2));
     onSiChange(si);
   };
 
   const handleGuChange = (e) => {
     const gu = e.target.value;
     setSelectedGu(gu);
-    setSelectedDong(""); // 동 리셋하기
+    setSelectedDong('');
+    fetchDongList(gu.substr(0, 5));
     onGuChange(gu);
   };
 
@@ -67,7 +69,7 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange, category }) => {
 
   return (
     <div className="flex">
-      <h1 className="font-bold text-2xl" style={{ alignContent: "center" }}>
+      <h1 className="font-bold text-2xl" style={{ alignContent: 'center' }}>
         지역 선택
       </h1>
       {/* 시/도 선택 옵션 */}
@@ -79,10 +81,9 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange, category }) => {
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
         >
           <option value="">선택하세요</option>
-          {/* 시/도 옵션들을 맵으로 출력 */}
-          {Object.keys(si).map((si) => (
-            <option key={si} value={si}>
-              {si}
+          {siList.map((si) => (
+            <option key={si.properties.ctprvn_cd} value={si.properties.ctprvn_cd}>
+              {si.properties.ctp_kor_nm}
             </option>
           ))}
         </select>
@@ -97,10 +98,9 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange, category }) => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
           >
             <option value="">선택하세요</option>
-            {/* 선택된 시/도에 따른 시군구 옵션들을 맵으로 출력 */}
-            {Object.keys(si[selectedSi]).map((gu) => (
-              <option key={gu} value={gu}>
-                {gu}
+            {guList.map((gu) => (
+              <option key={gu.properties.sig_cd} value={gu.properties.sig_cd}>
+                {gu.properties.sig_kor_nm}
               </option>
             ))}
           </select>
@@ -116,10 +116,9 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange, category }) => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
           >
             <option value="">선택하세요</option>
-            {/* 선택된 시/도, 시군구에 따른 동/읍/면 옵션들을 맵으로 출력 */}
-            {si[selectedSi][selectedGu].map((dong) => (
-              <option key={dong} value={dong}>
-                {dong}
+            {dongList.map((dong) => (
+              <option key={dong.properties.emd_cd} value={dong.properties.emd_cd}>
+                {dong.properties.emd_kor_nm}
               </option>
             ))}
           </select>

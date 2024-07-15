@@ -28,6 +28,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
+      '/vworld': {
+        target: 'https://api.vworld.kr',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/vworld/, ''),
+      },
     },
   },
   assetsInclude: ['**/*.ttf'],
