@@ -49,7 +49,7 @@ export const subscribeToChat = createAsyncThunk(
           const formattedMessage = {
             ...payload,
             isOutgoing: payload.writerId === auth.user.id,
-            sentTime: new Date(payload.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            sentTime: payload.sentTime
           };
           dispatch(receiveMessage({
             chatroomId,
