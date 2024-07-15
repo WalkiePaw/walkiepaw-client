@@ -31,36 +31,16 @@ const PostView = () => {
 
   // BoardList에서 로그인한 유저의 id와 nickname을 가져옴
 
-  const [memberNickName, setMemberNickname] = useState(null);
-  const [memberId, setMemberId] = useState(null);
+  const [loginUserNickName, setLoginUserNickname] = useState(null);
   const [memberPhoto, setMemberPhoto] = useState(null);
 
-  // JWT 토큰을 디코딩하여 사용자 정보를 추출
   useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      console.log(decodedToken);
-      setMemberId(decodedToken.memberId); // 사용자 ID를 상태에 저장
-      setMemberNickname(decodedToken.nickname);
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log("user:", user);
-    console.log("post.memberId:", post.memberNickName);
-  }, [user, post.memberNickName]);
-
-  useEffect(() => {
-    console.log("useEffect 실행 되었다!");
     const fetchPost = async () => {
-      console.log("패치포스트 시작!");
       try {
         const response = await axios.get(
           `http://localhost:8080/api/v1/boards/${postId}`
         );
         const postData = response?.data;
-        console.log(postData);
         setPost(postData);
         setStatus(postData?.status);
         setPriceProposal(postData?.priceProposal);
@@ -73,8 +53,6 @@ const PostView = () => {
     };
 
     fetchPost();
-
-    console.log(fetchPost);
   }, [postId]);
 
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
@@ -95,7 +73,7 @@ const PostView = () => {
           status: newStatus,
         }
       );
-      if (memberNickName !== post.memberNickName) {
+      if (user?.nickname !== post.memberNickName) {
         const response = await axios.get(
           `http://localhost:8080/api/v1/boards/${postId}`
         );
@@ -107,14 +85,6 @@ const PostView = () => {
         setPriceProposal(updatePostData?.priceProposal);
         setPhotoUrls(updatePostData?.photoUrls || []);
       }
-      console.log(memberNickName);
-      console.log(post.memberNickName);
-      console.log(post.detailedLocation);
-      console.log(detailedLocation);
-      console.log(post.priceProposal);
-      console.log(priceProposal);
-      console.log(photoUrls);
-      console.log(post.photoUrls);
     } catch (error) {
       console.error("상태 변경 안됨!", error);
       alert("상태를 변경할 수 없습니다.");
@@ -129,7 +99,7 @@ const PostView = () => {
           ...post,
           priceType: post.priceType === "HOURLY" ? "시급" : "일급",
           detailedLocation: detailedLocation,
-          memberNickName: memberNickName,
+          memberId: user.id,
           priceProposal: post.priceProposal,
           photoUrls: post.photoUrls,
         },
@@ -360,7 +330,7 @@ const PostView = () => {
           onClose={() => setShowReportModal(false)}
           onSubmit={handlerReport}
           boardId={postId}
-          memberId={memberId}
+          loginUserId={user.id}
         />
       )}
     </div>
