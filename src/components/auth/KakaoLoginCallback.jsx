@@ -18,7 +18,7 @@ const KakaoLoginCallback = () => {
         setLoading(false);
       }, 60000);
 
-      axios.post('http://localhost:8080/api/v1/login/oauth', { code, provider: 'kakao' })
+      axios.get('http://localhost:8080//oauth2/authorization/kakao', { code, provider: 'kakao' })
       .then(response => {
         clearTimeout(timeoutId);
         const { email, name } = response.data;

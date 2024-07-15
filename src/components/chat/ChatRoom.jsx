@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
-import { format, parse } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { setChatrooms } from '../../store/ChatSlice';
 import default_user from '../../assets/default_user.png';
 import styled from "styled-components";

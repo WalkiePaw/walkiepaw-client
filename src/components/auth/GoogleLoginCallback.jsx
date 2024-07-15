@@ -1,35 +1,39 @@
-import React, { useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-
+// import React, { useEffect } from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { useNavigate } from 'react-router-dom';
+// import { socialLogin } from '../../store/AuthSlice.jsx';  // authSlice의 실제 경로로 수정해주세요
+//
 const GoogleLoginCallback = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-
-    if (code) {
-      axios
-      .post('http://localhost:8080/api/v1/user-info', { code, provider: 'google' })
-      .then(response => {
-        const { email, name } = response.data;
-        console.log('User info:', email, name);
-
-
-        // 로그인 상태 유지
-        localStorage.setItem('user', JSON.stringify(response.data));
-
-        // 이메일과 이름을 상태로 전달하며 회원가입 페이지로 이동
-        navigate('/signup', { state: { email, name, isSocialSignUp: true } });
-      })
-      .catch(error => {
-        console.error('Error during google login:', error);
-      });
-    }
-  }, [navigate]);
-
-  return <div>Loading...</div>;
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const { isLoggedIn, newUser, error, isLoading } = useSelector(state => state.auth);
+//
+//   useEffect(() => {
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const code = urlParams.get('code');
+//
+//     if (code) {
+//       dispatch(socialLogin({ code, provider: 'google' }));
+//     }
+//   }, [dispatch]);
+//
+//   useEffect(() => {
+//     if (isLoggedIn) {
+//       navigate('/'); // 로그인 성공 시 홈페이지로 이동
+//     } else if (newUser) {
+//       navigate('/signup', { state: { ...newUser, isSocialSignUp: true } });
+//       console.log('New user data:', newUser);  // 디버깅을 위해 추가
+//     } else if (error) {
+//       console.error('Error during google login:', error);
+//       navigate('/login'); // 에러 발생 시 로그인 페이지로 이동
+//     }
+//   }, [isLoggedIn, newUser, error, navigate]);
+//
+//   if (isLoading) {
+//     return <div>Loading...</div>;
+//   }
+//
+//   return null;
 };
-
+//
 export default GoogleLoginCallback;

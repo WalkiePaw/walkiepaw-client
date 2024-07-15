@@ -97,7 +97,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="/login/kakao" element={<KakaoLoginCallback />} />
           <Route path="/login/naver" element={<NaverLoginCallback />} />
-          <Route path="/login/google" element={<GoogleLoginCallback />} />
+          {/*<Route path="/login/google" element={<GoogleLoginCallback />} />*/}
           <Route path="signup" element={<SignUp />} />
 
           <Route element={<ProtectedChatRoute />}>

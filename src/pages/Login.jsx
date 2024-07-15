@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {useDispatch} from "react-redux";
 import {Button, Modal} from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import UserInput from '../components/UserInput';
 import UserButton from '../components/UserButton';
 import KakaoLogin from '../components/auth/KakaoLogin';
@@ -12,6 +13,71 @@ import FindPassword from "../components/auth/FindPassword.jsx";
 import pawpaw from '../assets/pawpaw.png';
 import { loginSuccess, loginFailure, setLoading } from "../store/AuthSlice.jsx";
 import {loginApi} from "../Api.jsx";
+import styled from "styled-components";
+
+const StyledModal = styled(Modal)`
+  .ant-modal-content {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  .ant-modal-header {
+    background-color: #43312A;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .ant-modal-title {
+    color: #E8C5A5;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1;
+    flex-grow: 1;
+  }
+  .ant-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+  }
+  .ant-modal-close-x {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: rgba(232, 197, 165, 0.2);
+    }
+  }
+  .anticon-close {
+    color: #E8C5A5;
+    font-size: 14px;
+  }
+  .ant-modal-body {
+    padding: 24px;
+    font-size: 16px;
+    text-align: center;
+  }
+  .ant-modal-footer {
+    border-top: 1px solid #f0f0f0;
+    padding: 10px 16px;
+  }
+  .ant-btn-primary {
+    background-color: #43312A;
+    border-color: #43312A;
+    &:hover, &:focus {
+      background-color: #5A443C;
+      border-color: #5A443C;
+    }
+  }
+`;
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -126,6 +192,8 @@ const Login = () => {
     },
   };
 
+
+
   return (
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div className="flex flex-col items-center py-8">
@@ -199,44 +267,42 @@ const Login = () => {
           </div>
         </div>
 
-        <Modal
+        <StyledModal
             title="이메일 찾기"
             open={isEmailModalVisible}
             onCancel={handleEmailModalCancel}
             footer={null}
-            style={modalStyle.content}
-            bodyStyle={modalStyle.body}
-            maskStyle={{ backgroundColor: 'rgba(67, 49, 42, 0.5)' }}
-            titleStyle={modalStyle.header}
+            width={400}
+            closeIcon={<CloseOutlined style={{ color: '#E8C5A5', fontSize: '14px' }} />}
         >
           <FindEmail onClose={handleEmailModalCancel} />
-        </Modal>
+        </StyledModal>
 
-        <Modal
+        <StyledModal
             title="비밀번호 찾기"
             open={isPasswordModalVisible}
             onCancel={handlePasswordModalCancel}
             footer={null}
-            style={modalStyle.content}
-            bodyStyle={modalStyle.body}
-            maskStyle={{ backgroundColor: 'rgba(67, 49, 42, 0.5)' }}
-            titleStyle={modalStyle.header}
+            width={400}
+            closeIcon={<CloseOutlined style={{ color: '#E8C5A5', fontSize: '14px' }} />}
         >
           <FindPassword onClose={handlePasswordModalCancel} />
-        </Modal>
+        </StyledModal>
 
-        <Modal
-            title={<span style={{ color: 'red' }}>로그인 오류</span>}
+        <StyledModal
+            title={<span style={{ color: '#E8C5A5' }}>로그인 오류</span>}
             open={isModalVisible}
             onOk={handleModalOk}
             onCancel={handleModalOk}
             okText="확인"
             cancelText="취소"
-            okButtonProps={{ style: { backgroundColor: 'red', borderColor: 'red' } }}
-            cancelButtonProps={{ style: { color: 'red', borderColor: 'red' } }}
+            okButtonProps={{ style: { backgroundColor: '#43312A', borderColor: '#43312A' } }}
+            cancelButtonProps={{ style: { color: '#43312A', borderColor: '#43312A' } }}
+            width={400}
+            closeIcon={<CloseOutlined style={{ color: '#E8C5A5', fontSize: '14px' }} />}
         >
           <p>{modalMessage}</p>
-        </Modal>
+        </StyledModal>
       </div>
   );
 };
