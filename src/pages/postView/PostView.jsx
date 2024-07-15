@@ -7,7 +7,6 @@ import PostReportModal from "../../components/reportModal/PostReportModal";
 import axios from "axios";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // Carousel 스타일 가져오기
-import { jwtDecode } from "jwt-decode";
 import { useSelector } from "react-redux";
 import { createChatroom } from "../../Api.jsx";
 import { toast } from "react-toastify";
@@ -138,7 +137,7 @@ const PostView = () => {
       const chatroom = await createChatroom(postId, user.id); // `postId`와 `user.id`를 인자로 전달
       console.log("새 채팅방 생성 성공:", chatroom);
       // 성공적으로 채팅방이 생성된 후의 로직
-      navigate("/chatpage", { state: { selectedChatroomId: chatroom.id } });
+      navigate("/chat", { state: { selectedChatroomId: chatroom.id } });
     } catch (error) {
       console.error("채팅방 생성 실패:", error.message);
       alert("채팅방을 생성할 수 없습니다.");
@@ -147,9 +146,14 @@ const PostView = () => {
 
   const formatTime = (dataTimeString) => {
     const date = new Date(dataTimeString);
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 월은 0부터 시작하므로 +1 필요
+    const day = date.getDate().toString().padStart(2, "0");
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`; // 날짜와 시간 모두 포함한 문자열로 변환
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
   const totalTime = (startTime, endTime) => {
