@@ -81,35 +81,34 @@ const ChatRoom = ({ onChatroomSelect }) => {
   }, [user, dispatch]);
 
   const formatTime = (timeString) => {
-    if (!timeString) return '시간 정보 없음';
+    if (!timeString) return '';
     try {
-      const time = parse(timeString, 'HH:mm:ss.SSSSSS', new Date());
-      return format(time, 'HH:mm:ss');
+      return timeString;
     } catch (error) {
       console.error('Invalid time format:', timeString);
-      return '유효하지 않은 시간';
+      return '';
     }
   };
+
 
   // 채팅방을 최신 메시지 시간 순으로 정렬
   const sortedChatrooms = useMemo(() => {
     return [...chatrooms]
-    .filter(chatroom => chatroom.latestTime) // 유효한 latestTime이 있는 채팅방만 필터링
+    .filter(chatroom => chatroom.latestTime)
     .sort((a, b) => new Date(b.latestTime) - new Date(a.latestTime));
   }, [chatrooms]);
-
 
   return (
       <SidebarContainer>
         <ConversationList>
-          {sortedChatrooms.length > 0 ? (
-              sortedChatrooms.map(chatroom => (
+          {chatrooms.length > 0 ? (
+              chatrooms.map(chatroom => (
                   <Conversation key={chatroom.id} onClick={() => onChatroomSelect(chatroom.id)}>
                     <Avatar src={default_user} alt={chatroom.location} />
                     <ConversationInfo>
                       <ConversationName>{`${chatroom.nickname} - ${chatroom.location}`}</ConversationName>
                       <ConversationLastMessage>
-                        {`${chatroom.latestMessage || '새로운 채팅방입니다.'} (${formatTime(chatroom.latestTime)})`}
+                        {`${chatroom.latestMessage || '새로운 채팅방입니다.'} ${formatTime(chatroom.latestTime)}`}
                       </ConversationLastMessage>
                     </ConversationInfo>
                     {chatroom.unreadCount > 0 && <UnreadDot />}
