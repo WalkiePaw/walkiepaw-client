@@ -1,45 +1,35 @@
-import { useEffect, useState } from "react";
-import "./MyTown.css";
+import { useState } from 'react';
+import './MyTown.css';
 
-const MyTown = ({ onSiChange, onGuChange, onDongChange, category }) => {
-  const [selectedSi, setSelectedSi] = useState("");
-  const [selectedGu, setSelectedGu] = useState("");
-  const [selectedDong, setSelectedDong] = useState("");
-
-  // 카테고리가 변경될 때 지역 선택 값을 초기화하는 useEffect
-  useEffect(() => {
-    setSelectedSi("");
-    setSelectedGu("");
-    setSelectedDong("");
-    onSiChange("");
-    onGuChange("");
-    onDongChange("");
-  }, [category, onSiChange, onGuChange, onDongChange]);
+const MyTown = ({ onSiChange, onGuChange, onDongChange }) => {
+  const [selectedSi, setSelectedSi] = useState('');
+  const [selectedGu, setSelectedGu] = useState('');
+  const [selectedDong, setSelectedDong] = useState('');
 
   const si = {
     서울: {
-      강남구: ["역삼동", "개포동", "청담동"],
-      강동구: ["천호동", "성내동", "암사동"],
-      강북구: ["미아동", "번동", "수유동"],
-      강서구: ["화곡동", "등촌동", "방화동"],
+      강남구: ['역삼동', '개포동', '청담동'],
+      강동구: ['천호동', '성내동', '암사동'],
+      강북구: ['미아동', '번동', '수유동'],
+      강서구: ['화곡동', '등촌동', '방화동'],
     },
     경기: {
-      수원시: ["장안구", "팔달구", "영통구"],
-      성남시: ["분당구", "수정구", "중원구"],
-      용인시: ["수지구", "기흥구", "처인구"],
-      안양시: ["동안구", "만안구"],
+      수원시: ['장안구', '팔달구', '영통구'],
+      성남시: ['분당구', '수정구', '중원구'],
+      용인시: ['수지구', '기흥구', '처인구'],
+      안양시: ['동안구', '만안구'],
     },
     인천: {
-      중구: ["도원동", "영종도"],
-      동구: ["송림동", "화수동"],
-      미추홀구: ["주안동", "도화동"],
-      연수구: ["송도동", "옥련동"],
+      중구: ['도원동', '영종도'],
+      동구: ['송림동', '화수동'],
+      미추홀구: ['주안동', '도화동'],
+      연수구: ['송도동', '옥련동'],
     },
     부산: {
-      중구: ["부평동", "남포동"],
-      서구: ["동대신동", "부민동"],
-      동구: ["좌천동", "초량동"],
-      남구: ["대연동", "용호동"],
+      중구: ['부평동', '남포동'],
+      서구: ['동대신동', '부민동'],
+      동구: ['좌천동', '초량동'],
+      남구: ['대연동', '용호동'],
     },
     // 시, 구, 동을 더 추가 할 수 있음
   };
@@ -47,15 +37,15 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange, category }) => {
   const handleSiChange = (e) => {
     const si = e.target.value;
     setSelectedSi(si);
-    setSelectedGu(""); // 구 리셋하기
-    setSelectedDong(""); // 동 리셋하기
+    setSelectedGu(''); // 구 리셋하기
+    setSelectedDong(''); // 동 리셋하기
     onSiChange(si);
   };
 
   const handleGuChange = (e) => {
     const gu = e.target.value;
     setSelectedGu(gu);
-    setSelectedDong(""); // 동 리셋하기
+    setSelectedDong(''); // 동 리셋하기
     onGuChange(gu);
   };
 
@@ -67,7 +57,7 @@ const MyTown = ({ onSiChange, onGuChange, onDongChange, category }) => {
 
   return (
     <div className="flex">
-      <h1 className="font-bold text-2xl" style={{ alignContent: "center" }}>
+      <h1 className="font-bold text-2xl" style={{ alignContent: 'center' }}>
         지역 선택
       </h1>
       {/* 시/도 선택 옵션 */}

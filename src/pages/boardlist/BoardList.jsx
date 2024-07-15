@@ -99,11 +99,8 @@ const BoardList = () => {
       setHasMore(true);
       setSearchKeyword("");
       setSearchResultMessage("");
-      setSelectedSi("");
-      setSelectedGu("");
-      setSelectedDong("");
     }
-  }, [category, location.pathname]); // 카테고리가 변경될 때마다 실행됨
+  }, [category, location.pathname]); // location.pathname이 변경될 때마다 실행됨
 
   // 카테고리, 지역, 검색어 필터링
   useEffect(() => {
@@ -229,6 +226,9 @@ const BoardList = () => {
       const onIntersect = async ([entry], observer) => {
         if (entry.isIntersecting) {
           await fetchPosts();
+          // console.log("나 패치포스트@@@@ =>", 11111);
+          // console.log("나 카테고리 =>", category);
+          // console.log("나 페이지 =>", page);
         }
       };
       observer = new IntersectionObserver(onIntersect, { threshold: 0.1 }); // 추가된 부분
@@ -236,6 +236,9 @@ const BoardList = () => {
     }
     return () => observer && observer.disconnect();
   }, [category, page]); // 의존성으로 fetchPosts를 넣으면 카테고리가 변경되었을 때 변경 전 카테고리의 남아있는 게시글도 가지고옴
+
+  // console.log("filteredPosts", filteredPosts);
+  // console.log("posts", posts);
 
   return (
     <>
@@ -248,7 +251,6 @@ const BoardList = () => {
           onSiChange={setSelectedSi}
           onGuChange={setSelectedGu}
           onDongChange={setSelectedDong}
-          category={category}
         />
         <div className="board-search-container">
           <select

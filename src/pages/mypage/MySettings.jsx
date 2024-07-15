@@ -6,11 +6,6 @@ const MyTown = () => {
   const [selectedPlaces, setSelectedPlaces] = useState([]);
 
   const handleSetLocation = (placeName) => {
-    if (selectedPlaces.length >= 5) {
-      alert('최대 5곳까지 선택할 수 있습니다.');
-      return;
-    }
-
     setLocation(placeName);
     setSelectedPlaces([...selectedPlaces, placeName]);
   };
