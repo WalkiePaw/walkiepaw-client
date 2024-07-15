@@ -56,12 +56,7 @@ const BoardList = () => {
         const response = await axios.get(
           `http://localhost:8080/api/v1/boards/list/${category}`,
           {
-            params: { 
-              page,
-              si: selectedSi,
-              gu: selectedGu,
-              dong: selectedDong
-            }, // 카테고리 변경시 페이지 0으로
+            params: { page }, // 카테고리 변경시 페이지 0으로
           }
         ); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
         const data = response?.data?.content ?? [];
@@ -81,7 +76,7 @@ const BoardList = () => {
         console.error("Failed to fetch posts", error);
       }
     },
-    [category, page, hasMore, selectedSi, selectedGu, selectedDong]
+    [category, page, hasMore]
   );
 
   // 페이지 경로에 따라 카테고리를 설정
@@ -107,25 +102,28 @@ const BoardList = () => {
     }
   }, [category, location.pathname]); // location.pathname이 변경될 때마다 실행됨
 
-  useEffect(() => {
-    setPosts([]);
-    setFilteredPosts([]);
-    setPage(0);
-    setHasMore(true);
-    fetchPosts(true);
-  }, [selectedSi, selectedGu, selectedDong, category]);
-
-
-  // // 카테고리, 지역, 검색어 필터링
+  // 카테고리, 지역, 검색어 필터링
   useEffect(() => {
     const filterPosts = () => {
       if (posts.length === 0) return; // 게시글이 없으면 필터링을 하지 않음
+
       let newFilteredPosts = posts;
 
-      if (searchKeyword) {
+      // 지역 필터링
+      if (selectedSi) {
+        // location이 Null일 때, includes()를 호출한다.
         newFilteredPosts = newFilteredPosts.filter((post) =>
-          post.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-          post.content.toLowerCase().includes(searchKeyword.toLowerCase())
+          post.location?.includes(selectedSi)
+        );
+      }
+      if (selectedGu) {
+        newFilteredPosts = newFilteredPosts.filter((post) =>
+          post.location?.includes(selectedGu)
+        );
+      }
+      if (selectedDong) {
+        newFilteredPosts = newFilteredPosts.filter((post) =>
+          post.location?.includes(selectedDong)
         );
       }
 
@@ -133,7 +131,7 @@ const BoardList = () => {
     };
 
     filterPosts();
-  }, [posts, searchKeyword]);
+  }, [selectedSi, selectedGu, selectedDong, posts, searchKeyword]);
 
   // 검색 옵션 변경 핸들러
   const handleOptionChange = (e) => {
@@ -331,4 +329,3 @@ const BoardList = () => {
 };
 
 export default BoardList;
-

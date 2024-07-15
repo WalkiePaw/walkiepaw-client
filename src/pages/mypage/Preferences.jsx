@@ -49,6 +49,12 @@ const Preferences = () => {
     );
   }, []);
 
+  // 동만 추출해서 가져오는 함수
+  const dongFromLocal = (location) => {
+    const match = location?.match(/[가-힣]+동/);
+    return match ? match[0] : location;
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (Object.keys(likeChanges).length > 0) {
@@ -103,7 +109,7 @@ const Preferences = () => {
               key={like.id}
               boardId={like.id}
               title={like.title}
-              location={like.location}
+              location={dongFromLocal(like.location)} // dongFromLocal 함수를 사용하여 '동' 이름 추출
               image={like.image}
               memberNickName={like.memberNickName}
               status={like.status}

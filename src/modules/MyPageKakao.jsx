@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import Swal from 'sweetalert2';
+import 'sweetalert2/src/sweetalert2.scss';
 
 const MapContainer = styled.div`
   position: relative;
@@ -14,7 +16,7 @@ const Map = styled.div`
 `;
 
 const SearchContainer = styled.div`
-  position: absolute;
+  position: flex;
   top: 10px;
   left: 10px;
   z-index: 1;
@@ -26,8 +28,57 @@ const SearchContainer = styled.div`
 
 const KeywordInput = styled.input`
   margin-right: 10px;
-  padding: 5px;
+  margin-left: 5px;
+  padding: 8px;
+  border: 2px solid #599468;
+  border-radius: 5px;
+
 `;
+
+const SearchButton = styled.button`
+  padding: 5px 10px;
+  margin-right: 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const ClearButton = styled.button`
+  display: inline-block;
+  padding: 5px 10px;
+  margin-top: 10px;
+  margin-right: 500px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #c82333;
+  }
+`;
+
+const SaveButton = styled.button`
+  padding: 5px 10px;
+  margin-left: 100px;
+  border: none;
+  background-color: #28a745;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
 
 const PlacesList = styled.ul`
   list-style: none;
@@ -37,10 +88,46 @@ const PlacesList = styled.ul`
   overflow-y: auto;
 `;
 
+const SelectedPlacesContainer = styled.div`
+  margin-top: 20px;
+`;
+
+const SelectedPlacesList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+
+  li {
+    margin-bottom: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+`;
+
 const Pagination = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 10px;
+
+  a {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #FFF;
+    color: black;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &.on {
+      background-color: #0056b3;
+    }
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
 `;
 
 const MyPageKakaoMap = ({ setLocation }) => {
@@ -49,6 +136,12 @@ const MyPageKakaoMap = ({ setLocation }) => {
   const [infowindow, setInfowindow] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [selectedPlaces, setSelectedPlaces] = useState([]);
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      searchPlaces();
+    }
+  };
 
   useEffect(() => {
     const initializeMap = () => {
@@ -126,7 +219,7 @@ const MyPageKakaoMap = ({ setLocation }) => {
       });
 
       window.kakao.maps.event.addListener(marker, 'click', () => {
-        handleSelectPlace(place.road_address_name || place.address_name);
+        handleSelectPlace(place);
       });
 
       itemEl.onmouseover = () => {
@@ -138,7 +231,7 @@ const MyPageKakaoMap = ({ setLocation }) => {
       };
 
       itemEl.onclick = () => {
-        handleSelectPlace(place.road_address_name || place.address_name);
+        handleSelectPlace(place);
       };
 
       newMarkers.push(marker);
@@ -179,16 +272,13 @@ const MyPageKakaoMap = ({ setLocation }) => {
 
   const getListItem = (index, place) => {
     const el = document.createElement('li');
-    el.className = 'item'; // Add this class for styling
+    el.className = 'item';
+    const parsedAddress = parseAddress(place.address_name);
     el.innerHTML = `
       <span class="markerbg marker_${index + 1}"></span>
       <div class="info">
         <h5>${place.place_name}</h5>
-        ${
-          place.road_address_name
-            ? `<span>${place.road_address_name}</span><span class="jibun gray">${place.address_name}</span>`
-            : `<span>${place.address_name}</span>`
-        }
+        <span>${parsedAddress}</span>
         <span class="tel">${place.phone}</span>
       </div>
     `;
@@ -235,43 +325,103 @@ const MyPageKakaoMap = ({ setLocation }) => {
     }
   };
 
-  const handleSelectPlace = (placeName) => {
-    // Check if the place is already selected
-    if (selectedPlaces.some((place) => place === placeName)) {
-      alert('이미 선택된 장소입니다.');
-      return;
+  const parseAddress = (address) => {
+    const parts = address.split(' ');
+    const city = parts[0];
+    const gu = parts[1];
+    const dong = parts[2];
+    return `${city} ${gu} ${dong}`;
+  };
+
+  const handleSelectPlace = (place) => {
+    const parsedAddress = parseAddress(place.address_name);
+  
+    // 중복 체크를 위해 Set 사용
+    setSelectedPlaces((prev) => {
+      // Check if any of the previously selected places have the same 시-구-동
+      const hasSameAddress = prev.some((address) => address === parsedAddress);
+      
+      if (prev.length >= 4) {
+        Swal.fire({
+          title: '장소 선택 제한',
+          text: '최대 4개까지만 선택할 수 있습니다.',
+          icon: 'warning',
+          confirmButtonText: '확인',
+        });
+        return prev;
+      }
+
+      if (!hasSameAddress) {
+        const updatedPlaces = [...prev, parsedAddress];
+        setLocation(parsedAddress); // 부모 컴포넌트 상태 업데이트
+        return updatedPlaces;
+      } else {
+        Swal.fire({
+          title: '이미 선택된 장소입니다.',
+          text: '해당 장소는 이미 선택된 목록에 있습니다.',
+          icon: 'warning',
+          confirmButtonText: '확인',
+        });
+        return prev;
+      }
+    });
+  };
+  
+
+  const handleClearPlaces = () => {
+    if (selectedPlaces.length > 0) {
+      Swal.fire({
+        title: '선택 초기화',
+        text: '이전에 선택한 장소를 모두 지우시겠습니까?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '확인',
+        cancelButtonText: '취소',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setSelectedPlaces([]);
+        }
+      });
     }
-
-    setSelectedPlaces((prev) => [...prev, placeName]);
-    setLocation(placeName); // Update parent component state
+  };
+  
+  const handleSavePlaces = () => {
+    // 여기에 저장 로직을 구현합니다.
+    // 선택된 장소(selectedPlaces)를 저장하는 로직을 작성
+    Swal.fire({
+      title: '저장 완료',
+      icon: 'success',
+      confirmButtonText: '확인'
+    })
   };
 
-  const handleClearSelectedPlaces = () => {
-    setSelectedPlaces([]);
-  };
   return (
-    <MapContainer>
-      <Map id="map" ref={mapRef}></Map>
-      <SearchContainer className="search-container">
-        <KeywordInput
-          type="text"
-          id="keyword"
-          placeholder="검색할 장소를 입력하세요"
-        />
-        <button onClick={searchPlaces}>검색</button>
-      </SearchContainer>
-      <PlacesList id="placesList" className="places-list"></PlacesList>
-      <Pagination id="pagination" className="pagination"></Pagination>
-      <div>
-        <h2 className='text-xl font-bold'>선택된 장소: </h2>
-        <ul>
+    <>
+      <MapContainer>
+        <SearchContainer>
+          <KeywordInput
+            type="text"
+            id="keyword"
+            onKeyDown={handleKeyDown}
+            placeholder="주소를 입력하세요"
+          />
+          <SearchButton onClick={searchPlaces}>검색</SearchButton>
+          <ClearButton onClick={handleClearPlaces}>선택 초기화</ClearButton>
+          <SaveButton onClick={handleSavePlaces}>저장</SaveButton>
+          <SelectedPlacesContainer>
+        <h2 className='text-xl font-bold ml-2'>선택된 장소: </h2>
+        <SelectedPlacesList>
           {selectedPlaces.map((place, index) => (
-            <li key={index}>{place}</li>
+            <li key={index}>{`${index + 1}. ${place}`}</li>
           ))}
-        </ul>
-        <button onClick={handleClearSelectedPlaces}>선택 초기화</button>
-      </div>
-    </MapContainer>
+        </SelectedPlacesList>
+      </SelectedPlacesContainer>
+          </SearchContainer>
+        <Map ref={mapRef} id="map"></Map>
+        <PlacesList id="placesList"></PlacesList>
+        <Pagination id="pagination"></Pagination>
+      </MapContainer>
+    </>
   );
 };
 
