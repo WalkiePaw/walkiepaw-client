@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
 
 const BoardList = () => {
   const ref = useRef(null);
@@ -32,7 +31,9 @@ const BoardList = () => {
   const [memberId, setMemberId] = useState(null); // 게시글 작성자의 아이디
   const [loginUserId, setLoginUserId] = useState(null); // 로그인한 맴버아이디
 
-  console.log("user", user);
+  useEffect(() => {
+    setPage(0); // 카테고리가 변경될 때 페이지 초기화
+  }, [category]);
 
   useEffect(() => {
     if (user && user.id) {
@@ -40,55 +41,66 @@ const BoardList = () => {
     }
   }, [user]);
 
-  console.log("loginUser", loginUserId);
-
   // location의 값에서 '동'이 포함된 값만 추출
   const dongFromLocal = (location) => {
     const match = location?.match(/[가-힣]+동/);
     return match ? match[0] : location;
   };
 
+  // 카테고리가 변경되면 해당 게시글의 정보를 가져와 게시글의 정보를 다시 저장
+  const fetchPosts = useCallback(
+    async (isCategoryChange = false) => {
+      try {
+        if (!category || !hasMore) return; // 카테고리가 없으면 요청하지 않도록 처리
+        setLoading(true);
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/boards/list/${category}`,
+          {
+            params: { page }, // 카테고리 변경시 페이지 0으로
+          }
+        ); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
+        const data = response?.data?.content ?? [];
+        if (isCategoryChange) {
+          setPosts(data);
+          setFilteredPosts(data);
+          setPage(0);
+        } else {
+          setPosts((prevPosts) => [...prevPosts, ...data]);
+          setFilteredPosts((prevPosts) => [...prevPosts, ...data]);
+          setPage((prevState) => prevState + 1); // 카테고리 변경이 아닌 경우에만 페이지 증가
+        }
+        setHasMore(!response.data.last);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        console.error("Failed to fetch posts", error);
+      }
+    },
+    [category, page, hasMore]
+  );
+
   // 페이지 경로에 따라 카테고리를 설정
   useEffect(() => {
-    const pathName = location.pathname;
-    if (pathName.includes("recruit")) {
-      setCategory("JOB_OPENING");
-    } else if (pathName.includes("jobs")) {
-      setCategory("JOB_SEARCH");
+    const pathName = location?.pathname;
+    let newCategory = "";
+
+    if (pathName?.includes("recruit")) {
+      newCategory = "JOB_OPENING";
+    } else if (pathName?.includes("jobs")) {
+      newCategory = "JOB_SEARCH";
     }
+
     // 페이지의 카테고리가 변경 될 때 마다 검색 키워드 초기화
-    setSearchKeyword("");
-    setFilteredPosts([]);
-    setSearchResultMessage("");
-  }, [location.pathname]);
-
-  // 카테고리가 변경되면 해당 게시글의 정보를 가져와 게시글의 정보를 다시 저장
-  const fetchPosts = async () => {
-    try {
-      if (!category || !hasMore) return; // 카테고리가 없으면 요청하지 않도록 처리
-      setLoading(true);
-      const response = await axios.get(
-        `http://localhost:8080/api/v1/boards/list/${category}`,
-        {
-          params: { page },
-        }
-      ); // 엔드포인트는 백엔드 서버의 게시글 목록을 반환해야 합니다.
-      const data = response?.data?.content ?? [];
-      setPosts((prevPosts) => [...prevPosts, ...data]);
-      setFilteredPosts((prevPosts) => [...prevPosts, ...data]);
-      setHasMore(!response.data.last);
-      setPage((prevState) => prevState + 1);
-      setLoading(false);
-      console.log("page!!!!!", page);
-    } catch (error) {
-      setLoading(false);
-      console.error("Failed to fetch posts", error);
+    if (newCategory !== category) {
+      setCategory(newCategory);
+      setPosts([]);
+      setFilteredPosts([]);
+      setPage(0);
+      setHasMore(true);
+      setSearchKeyword("");
+      setSearchResultMessage("");
     }
-  };
-
-  // useEffect(() => {
-  //   fetchPosts();
-  // }, [category, fetchPosts]);
+  }, [category, location.pathname]); // location.pathname이 변경될 때마다 실행됨
 
   // 카테고리, 지역, 검색어 필터링
   useEffect(() => {
@@ -152,7 +164,6 @@ const BoardList = () => {
         `http://localhost:8080/api/v1/boards/search`,
         { params }
       );
-      console.log(response.data);
 
       // 검색 결과가 없는 경우 처리
       if (response.data?.length === 0) {
@@ -211,24 +222,23 @@ const BoardList = () => {
 
   useEffect(() => {
     let observer;
-    // if (posts.length === 0) {
-    //   return;
-    // }
     if (ref.current) {
       const onIntersect = async ([entry], observer) => {
         if (entry.isIntersecting) {
           await fetchPosts();
-          console.log("나 패치포스트@@@@ =>", 11111);
+          // console.log("나 패치포스트@@@@ =>", 11111);
+          // console.log("나 카테고리 =>", category);
+          // console.log("나 페이지 =>", page);
         }
       };
       observer = new IntersectionObserver(onIntersect, { threshold: 0.1 }); // 추가된 부분
       observer.observe(ref.current);
     }
     return () => observer && observer.disconnect();
-  }, [category, page]);
+  }, [category, page]); // 의존성으로 fetchPosts를 넣으면 카테고리가 변경되었을 때 변경 전 카테고리의 남아있는 게시글도 가지고옴
 
-  console.log("filteredPosts", filteredPosts);
-  console.log("posts", posts);
+  // console.log("filteredPosts", filteredPosts);
+  // console.log("posts", posts);
 
   return (
     <>
@@ -279,12 +289,12 @@ const BoardList = () => {
                   priceType={post.priceType}
                   startTime={post.startTime}
                   endTime={post.endTime}
-                  photoUrls={post.photoUrls}
+                  photoUrls={[post.photoUrls]}
                   memberNickName={post.memberNickName}
                   status={post.status} // 구인중, 구인 대기중, 구인 완료 등 상태 정보
                   category={post.category} // 카테고리 정보 전달
                   memberPhoto={post.memberPhoto}
-                  loginUserId={loginUserId} // 로그인한 사용자의 ID를 전달
+                  loginUserId={loginUserId ?? 0} // 로그인한 사용자의 ID를 전달
                   initialLikeCount={post.likeCount} // 여기서 likeCount 전달
                 />
               </div>
