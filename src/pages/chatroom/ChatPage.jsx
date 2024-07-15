@@ -129,7 +129,9 @@ const ChatPage = () => {
                 <MessageContent $isOutgoing={msg.isOutgoing}>
                   <MessageSender>{msg.sender || msg.nickname}</MessageSender>
                   {msg.content}
-                  <MessageTime>{msg.sentTime}</MessageTime>
+                  <MessageTime>
+                    {msg.sentTime}
+                  </MessageTime>
                 </MessageContent>
               </MessageItem>
           ))}

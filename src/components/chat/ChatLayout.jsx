@@ -18,6 +18,8 @@ const MainChatArea = styled.div`
   flex: 1;
   overflow: auto;
 `;
+
+
 const ChatLayout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,7 +31,6 @@ const ChatLayout = () => {
     return () => dispatch(disconnectWebSocket());
   }, [dispatch]);
 
-
   const handleChatroomSelect = useCallback((chatroomId) => {
     navigate(`/chat/${chatroomId}`);
     if (!subscriptions[chatroomId] && webSocketConnected) {
@@ -38,7 +39,8 @@ const ChatLayout = () => {
   }, [navigate, dispatch, subscriptions, webSocketConnected]);
 
   const handleSendMessage = useCallback((chatroomId, content) => {
-    dispatch(sendWebSocketMessage({ chatroomId, content }));
+    dispatch(sendWebSocketMessage({ chatroomId, content }))
+    .catch(error => console.error('Failed to send message:', error));
   }, [dispatch]);
 
   return (

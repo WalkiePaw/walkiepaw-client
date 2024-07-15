@@ -46,9 +46,14 @@ export const subscribeToChat = createAsyncThunk(
         const { auth } = getState();
         const subscription = stompClient.subscribe(`/chats/${chatroomId}`, (message) => {
           const payload = JSON.parse(message.body);
+          const formattedMessage = {
+            ...payload,
+            isOutgoing: payload.writerId === auth.user.id,
+            sentTime: new Date(payload.createDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
           dispatch(receiveMessage({
             chatroomId,
-            message: {...payload, isOutgoing: payload.writerId === auth.user.id}
+            message: formattedMessage
           }));
         });
         return { chatroomId, subscriptionId: subscription.id };
@@ -60,24 +65,47 @@ export const subscribeToChat = createAsyncThunk(
 
 export const sendWebSocketMessage = createAsyncThunk(
     'chat/sendWebSocketMessage',
-    async ({ chatroomId, content }, { getState }) => {
+    async ({ chatroomId, content }, { getState, dispatch }) => {
+      const { auth } = getState();
+      if (!auth.user || !auth.user.id) {
+        throw new Error('User information not available');
+      }
+
+      const now = new Date();
+      const message = {
+        chatroomId: parseInt(chatroomId),
+        content,
+        writerId: auth.user.id,
+        nickname: auth.user.nickname,
+        sender: auth.user.username,
+        createDate: now.toISOString(),
+        sentTime: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isOutgoing: true
+      };
+
+      // 먼저 로컬에 메시지 추가
+      dispatch(addLocalMessage({ chatroomId, message }));
+
       if (stompClient && stompClient.connected) {
-        const { auth } = getState();
-        if (!auth.user || !auth.user.id) {
-          throw new Error('User information not available');
+        try {
+          await stompClient.send(`/api/v1/ws/chats/${chatroomId}`, {}, JSON.stringify(message));
+          dispatch(updateMessageStatus({ chatroomId, messageId: message.id, status: 'sent' }));
+
+          // 채팅방 정보 업데이트
+          dispatch(updateChatroom({
+            id: chatroomId,
+            latestMessage: content,
+            latestTime: now.toISOString(),
+          }));
+
+          return message;
+        } catch (error) {
+          // 메시지 전송 실패 시 상태 업데이트
+          dispatch(updateMessageStatus({ chatroomId, messageId: message.id, status: 'failed' }));
+          throw error;
         }
-        const message = {
-          chatroomId: parseInt(chatroomId),
-          content,
-          writerId: auth.user.id,
-          nickname: auth.user.nickname,
-          sender: auth.user.username,
-          sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isOutgoing: true  // 이 부분을 추가했습니다.
-        };
-        await stompClient.send(`/api/v1/ws/chats/${chatroomId}`, {}, JSON.stringify(message));
-        return message;
       } else {
+        dispatch(updateMessageStatus({ chatroomId, messageId: message.id, status: 'failed' }));
         throw new Error('WebSocket is not connected');
       }
     }
@@ -119,6 +147,28 @@ const chatSlice = createSlice({
     setChatrooms: (state, action) => {
       state.chatrooms = action.payload;
     },
+    updateChatroom: (state, action) => {
+      const updatedChatroom = action.payload;
+      const index = state.chatrooms.findIndex(room => room.id === updatedChatroom.id);
+      if (index !== -1) {
+        state.chatrooms[index] = { ...state.chatrooms[index], ...updatedChatroom };
+      }
+    },
+    addLocalMessage: (state, action) => {
+      const { chatroomId, message } = action.payload;
+      if (!state.messages[chatroomId]) {
+        state.messages[chatroomId] = [];
+      }
+      state.messages[chatroomId].push(message);
+    },
+    updateMessageStatus: (state, action) => {
+      const {chatroomId, messageId, status} = action.payload;
+      const message = state.messages[chatroomId].find(
+          msg => msg.id === messageId);
+      if (message) {
+        message.status = status;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -135,7 +185,9 @@ export const {
   receiveMessage,
   setMessages,
   setChatrooms,
-  addLocalMessage
+  updateChatroom,
+  addLocalMessage,
+  updateMessageStatus
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

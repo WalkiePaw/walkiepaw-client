@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { format, parse } from 'date-fns';
-import { setChatrooms } from '../../store/ChatSlice';  // 이 부분을 수정
+import { setChatrooms } from '../../store/ChatSlice';
 import default_user from '../../assets/default_user.png';
 import styled from "styled-components";
 
@@ -66,7 +66,7 @@ const ChatRoom = ({ onChatroomSelect }) => {
   const user = useSelector(state => state.auth.user);
 
   useEffect(() => {
-    if (user && user.id) {  // user가 존재하고 id가 있는지 확인
+    if (user && user.id) {
       axios.get('http://localhost:8080/api/v1/chatrooms', {
         params: { id: user.id }
       })
@@ -80,17 +80,30 @@ const ChatRoom = ({ onChatroomSelect }) => {
     }
   }, [user, dispatch]);
 
-
   const formatTime = (timeString) => {
-    const time = parse(timeString, 'HH:mm:ss.SSSSSS', new Date());
-    return format(time, 'HH:mm:ss');
+    if (!timeString) return '시간 정보 없음';
+    try {
+      const time = parse(timeString, 'HH:mm:ss.SSSSSS', new Date());
+      return format(time, 'HH:mm:ss');
+    } catch (error) {
+      console.error('Invalid time format:', timeString);
+      return '유효하지 않은 시간';
+    }
   };
+
+  // 채팅방을 최신 메시지 시간 순으로 정렬
+  const sortedChatrooms = useMemo(() => {
+    return [...chatrooms]
+    .filter(chatroom => chatroom.latestTime) // 유효한 latestTime이 있는 채팅방만 필터링
+    .sort((a, b) => new Date(b.latestTime) - new Date(a.latestTime));
+  }, [chatrooms]);
+
 
   return (
       <SidebarContainer>
         <ConversationList>
-          {chatrooms.length > 0 ? (
-              chatrooms.map(chatroom => (
+          {sortedChatrooms.length > 0 ? (
+              sortedChatrooms.map(chatroom => (
                   <Conversation key={chatroom.id} onClick={() => onChatroomSelect(chatroom.id)}>
                     <Avatar src={default_user} alt={chatroom.location} />
                     <ConversationInfo>
@@ -106,7 +119,6 @@ const ChatRoom = ({ onChatroomSelect }) => {
               <div>채팅방이 없습니다.</div>
           )}
         </ConversationList>
-        {/* 페이지네이션 UI를 여기에 추가할 수 있습니다 */}
       </SidebarContainer>
   );
 }
