@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {useDispatch} from "react-redux";
 import {Button, Modal} from 'antd';
@@ -93,7 +93,31 @@ const Login = () => {
   const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
 
+  useEffect(() => {
+    const handleSocialLoginMessage = (event) => {
+      if (event.data.type === 'SOCIAL_LOGIN_SUCCESS') {
+        const data = event.data.data;
+        if (data['account status'] === 'New Account') {
+          navigate('/signup', {
+            state: {
+              name: data.name,
+              email: data.email,
+              isSocialSignUp: true
+            }
+          });
+        } else {
+          dispatch(loginSuccess({ token: data.token }));
+          navigate('/');
+        }
+      }
+    };
 
+    window.addEventListener('message', handleSocialLoginMessage);
+
+    return () => {
+      window.removeEventListener('message', handleSocialLoginMessage);
+    };
+  }, [navigate, dispatch]);
 
   const handleInputChange = event => {
     const { name, value } = event.target;

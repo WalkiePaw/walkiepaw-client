@@ -19,6 +19,13 @@ export const verifyTokenApi = () => Api.get('/secured');
 
 export const loginApi = (credentials) => Api.post('api/v1/auth/login', credentials);
 
+// 일반 회원가입 API
+export const signUpApi = (userData) => Api.post('/api/v1/members', userData);
+
+// 소셜 회원가입 API
+export const socialSignUpApi = (userData) => Api.post('/api/v1/members/social-signup', userData);
+
+
 export const createChatroom = async (postId, memberId) => {
   const chatroomData = {
     boardId: postId,  // `boardId`를 `postId`로 받아 사용

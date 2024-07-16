@@ -1,40 +1,45 @@
-// store/actions/useSocialLogin.js
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect } from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../AuthSlice.jsx';
 
-const useSocialLogin = (provider) => {
+
+const UseSocialLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
-  const handleLogin = (authUrl) => {
-    const width = 500;
-    const height = 600;
-    const left = window.screenX + (window.outerWidth - width) / 2;
-    const top = window.screenY + (window.outerHeight - height) / 2.5;
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const socialLoginData = params.get('socialLoginData');
 
-    const popup = window.open(
-        authUrl,
-        `${provider} Login`,
-        `width=${width},height=${height},left=${left},top=${top}`
-    );
-
-    window.addEventListener('message', function(event) {
-      if (event.origin !== "http://localhost:8080") return;
-
-      const data = event.data;
-      if (data["account status"] === "New Account") {
-        navigate('/signup', { state: { name: data.name, email: data.email } });
-      } else {
-        dispatch(loginSuccess({ token: data.token }));
-        navigate('/');
+    if (socialLoginData) {
+      try {
+        const data = JSON.parse(decodeURIComponent(socialLoginData));
+        if (data['account status'] === 'New Account') {
+          navigate('/signup', {
+            state: {
+              name: data.name,
+              email: data.email,
+              isSocialSignUp: true
+            }
+          });
+        } else if (data['account status'] === 'Existing Account') {
+          dispatch(loginSuccess({ token: data.token }));
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error processing social login data:', error);
       }
+    }
+  }, [location, navigate, dispatch]);
 
-      popup.close();
-    }, false);
-  };
+  const handleSocialLogin = useCallback((provider) => {
+    const authUrl = `http://localhost:8080/oauth2/authorization/${provider}`;
+    window.location.href = authUrl;
+  }, []);
 
-  return handleLogin;
+  return handleSocialLogin;
 };
 
-export default useSocialLogin;
+export default UseSocialLogin;
