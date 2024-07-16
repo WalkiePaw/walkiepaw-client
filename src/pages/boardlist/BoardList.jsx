@@ -18,7 +18,7 @@ const BoardList = () => {
   const [searchOption, setSearchOption] = useState("title"); // 검색 옵션(제목 or 내용) 디폴트 값
   const [category, setCategory] = useState(""); // 게시글 카테고리를 저장
   const [searchResultMessage, setSearchResultMessage] = useState(""); // 검색 결과 메시지
-  const [page, setPage] = useState(0); // 기본값 1로 바꾸기
+  const [page, setPage] = useState(0); // 기본값 0으로 한다고함
   const [hasMore, setHasMore] = useState(true);
   const { user, isLoggedIn } = useSelector((state) => state.auth); // 로그인한 유저의 정보를 가져온다
   const [loading, setLoading] = useState(true); // 게시글이 출력되기 전 상태 표시
@@ -39,7 +39,7 @@ const BoardList = () => {
 
   useEffect(() => {
     setPage(0); // 카테고리가 변경될 때 페이지 초기화
-  }, [category]);
+      }, [category]);
 
   useEffect(() => {
     if (user && user.id) {

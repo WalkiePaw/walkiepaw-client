@@ -71,20 +71,32 @@ const ModifyPostForm = () => {
 
     // 모든 사진 파일을 읽은 후 이미지를 추가
     Promise.all(newImages).then((results) => {
-      uploadImages(files); // 첨부한 이미지를 서버에 업로드
-      setPhotos([...photos, ...results]);
+      uploadImages(files).then((urls) => {
+        setPhotos([...photos, ...results]); // 이미지 미리보기를 위한 상태 업데이트
+        setPhotoUrls((prevUrls) => [
+          ...prevUrls,
+          ...urls.map((url) => url.url),
+        ]); // 실제 이미지 URL을 상태 업데이트
+      }); // 첨부한 이미지를 서버에 업로드
     });
   };
 
-  const handleRemovePhoto = (index) => {
-    const updatedPhotos = [...photos];
-    updatedPhotos.splice(index, 1);
-    setPhotos(updatedPhotos);
+  const handleRemovePhoto = (slideIndex) => {
+    console.log(slideIndex);
+    const actualIndex = currentSlide * 4 + slideIndex;
+
+    setPhotos((prevPhotos) => prevPhotos.filter((_, i) => i !== actualIndex));
+    setPhotoUrls((prevUrls) => prevUrls.filter((_, i) => i !== actualIndex));
+
+    // 마지막 사진을 지웠을 때 현재 슬라이드 조정
+    if (actualIndex % 4 === 0 && actualIndex === photoUrls.length - 1) {
+      setCurrentSlide((prev) => Math.max(0, prev - 1));
+    }
   };
 
   const uploadImages = async (files) => {
     const urls = await Promise.all(files.map((file) => uploadImage(file)));
-    setPhotoUrls([...photoUrls, ...urls]);
+    return urls; // 이미지 업로드 후 받은 URL 배열 반환
   };
 
   const uploadImage = async (file) => {
@@ -101,7 +113,6 @@ const ModifyPostForm = () => {
           },
         }
       );
-      console.log(response.data);
       return response?.data;
     } catch (error) {
       console.error("이미지 업로드 에러!", error);
@@ -123,6 +134,8 @@ const ModifyPostForm = () => {
   // 폼 제출 처리 함수
   const handleSubmit = async (event) => {
     event.preventDefault(); // 페이지가 새로고침되는 걸 막아요.
+
+    console.log("수정 전 photoUrls:", photoUrls);
 
     // 수정된 게시글 정보를 생성
     const modifiedPost = {
@@ -208,20 +221,16 @@ const ModifyPostForm = () => {
             <div className="image-preview-container">
               {photoUrls
                 .slice(currentSlide * 4, currentSlide * 4 + 4)
-                .map((image, index) => (
+                .map((photoUrls, index) => (
                   <div key={index} className="image-preview-wrapper">
                     <img
                       key={index}
-                      src={image}
+                      src={[photoUrls]}
                       alt={`Uploaded Preview ${index}`}
                       className="image-preview"
                       style={{ aspectRatio: "1 / 1" }} // 이미지 비율을 1:1로 설정
                     />
-                    <button
-                      onClick={() =>
-                        handleRemovePhoto(currentSlide * 4 + index)
-                      }
-                    >
+                    <button onClick={() => handleRemovePhoto(index)}>
                       <FontAwesomeIcon
                         className="remove-image-button"
                         icon={faTimesCircle}
