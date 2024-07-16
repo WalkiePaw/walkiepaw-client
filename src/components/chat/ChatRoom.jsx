@@ -1,17 +1,18 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
-import { format, parseISO } from 'date-fns';
 import { setChatrooms } from '../../store/ChatSlice';
 import default_user from '../../assets/default_user.png';
 import styled from "styled-components";
-
+import LoadingComponent from "./LoadingComponent.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 
 const SidebarContainer = styled.div`
   width: 300px;
-  border-right: 1px solid #e0e0e0;
+  border-right: 1px solid #D7B392;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #F5E6D3;
   overflow-y: auto;
 `;
 
@@ -23,20 +24,45 @@ const ConversationList = styled.div`
 const Conversation = styled.div`
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 15px;
   cursor: pointer;
   transition: background-color 0.3s;
+  border-bottom: 1px solid #E8C5A5;
+  background-color: ${props => props.isSelected ? '#E8C5A5' : 'transparent'};
 
   &:hover {
-    background-color: #e8e8e8;
+    background-color: ${props => props.isSelected ? '#E8C5A5' : '#F0D9B5'};
   }
 `;
 
+const ConversationLastMessage = styled.div`
+  font-size: 0.9em;
+  color: #5A443C;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+`;
+
+const MessageText = styled.span`
+  color: #5A443C;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const MessageTime = styled.span`
+  color: #8B7B6B;
+  font-size: 0.8em;
+  margin-left: 10px;
+`;
+
 const Avatar = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right: 15px;
+  object-fit: cover;
 `;
 
 const ConversationInfo = styled.div`
@@ -45,22 +71,34 @@ const ConversationInfo = styled.div`
 
 const ConversationName = styled.div`
   font-weight: bold;
+  color: #43312A;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
 `;
 
-const ConversationLastMessage = styled.div`
-  font-size: 0.9em;
-  color: #666;
+const LocationIcon = styled(FontAwesomeIcon)`
+  color: #43312A;
+  font-size: 0.8rem;
+  margin: 0 5px;
 `;
+
 
 const UnreadDot = styled.div`
   width: 10px;
   height: 10px;
-  background-color: #007bff;
+  background-color: #43312A;
   border-radius: 50%;
   margin-left: 10px;
 `;
 
-const ChatRoom = ({ onChatroomSelect }) => {
+const dongFromLocal = (location) => {
+  const match = location?.match(/[가-힣]+동/);
+  return match ? match[0] : location;
+};
+
+
+const ChatRoom = ({ onChatroomSelect, selectedChatroomId }) => {
   const dispatch = useDispatch();
   const chatrooms = useSelector(state => state.chat.chatrooms);
   const user = useSelector(state => state.auth.user);
@@ -80,18 +118,15 @@ const ChatRoom = ({ onChatroomSelect }) => {
     }
   }, [user, dispatch]);
 
-  const formatTime = (timeString) => {
-    if (!timeString) return '';
-    try {
-      return timeString;
-    } catch (error) {
-      console.error('Invalid time format:', timeString);
-      return '';
-    }
-  };
+  function formatTime(timeString) {
+    const date = new Date(timeString);
+    return date.toLocaleTimeString('ko-KR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
 
-
-  // 채팅방을 최신 메시지 시간 순으로 정렬
   const sortedChatrooms = useMemo(() => {
     return [...chatrooms]
     .filter(chatroom => chatroom.latestTime)
@@ -103,23 +138,40 @@ const ChatRoom = ({ onChatroomSelect }) => {
         <ConversationList>
           {chatrooms.length > 0 ? (
               chatrooms.map(chatroom => (
-                  <Conversation key={chatroom.id} onClick={() => onChatroomSelect(chatroom.id)}>
-                    <Avatar src={default_user} alt={chatroom.location} />
+                  <Conversation
+                      key={chatroom.id}
+                      onClick={() => onChatroomSelect(chatroom.id)}
+                      isSelected={chatroom.id === selectedChatroomId}
+                  >
+                    <Avatar
+                        src={chatroom.memberPhoto ? chatroom.memberPhoto : default_user}
+                        alt={chatroom.nickname}
+                    />
                     <ConversationInfo>
-                      <ConversationName>{`${chatroom.nickname} - ${chatroom.location}`}</ConversationName>
+                      <ConversationName>
+                        {chatroom.nickname}
+                        <LocationIcon icon={faMapMarkerAlt} />
+                        {dongFromLocal(chatroom.location)}
+                      </ConversationName>
                       <ConversationLastMessage>
-                        {`${chatroom.latestMessage || '새로운 채팅방입니다.'} ${formatTime(chatroom.latestTime)}`}
+                        <MessageText>
+                          {chatroom.latestMessage || '새로운 채팅방입니다.'}
+                        </MessageText>
+                        <MessageTime>
+                          {formatTime(chatroom.latestTime)}
+                        </MessageTime>
                       </ConversationLastMessage>
                     </ConversationInfo>
                     {chatroom.unreadCount > 0 && <UnreadDot />}
                   </Conversation>
               ))
           ) : (
-              <div>채팅방이 없습니다.</div>
+              <LoadingComponent message="채팅방이 없습니다" />
           )}
         </ConversationList>
       </SidebarContainer>
   );
 }
+
 
 export default ChatRoom;

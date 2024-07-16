@@ -3,6 +3,8 @@ import { createSelector } from '@reduxjs/toolkit';
 import styled from 'styled-components';
 import axios from 'axios';
 import ChatInput from '../../components/chat/ChatInput';
+import ChatHeader from '../../components/chat/ChatHeader';
+import LoadingComponent from "../../components/chat/LoadingComponent.jsx";
 import { useParams, useOutletContext } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -22,7 +24,7 @@ const ChatArea = styled.div`
   height: 100%;
 `;
 
-const ChatHeader = styled.div`
+const StyledChatHeader = styled.div`
   background-color: #f0f0f0;
   padding: 10px;
   font-weight: bold;
@@ -75,7 +77,7 @@ const selectChatMessages = createSelector(
 
 const selectUser = (state) => state.auth.user;
 const selectSubscriptions = (state) => state.chat.subscriptions;
-
+const selectChatrooms = (state) => state.chat.chatrooms;
 
 
 const ChatPage = () => {
@@ -84,8 +86,13 @@ const ChatPage = () => {
   const messages = useSelector(state => selectChatMessages(state, chatroomId));
   const user = useSelector(selectUser);
   const subscriptions = useSelector(selectSubscriptions);
+  const chatrooms = useSelector(selectChatrooms);  // 채팅방 목록 가져오기
   const messageListRef = useRef(null);
   const { handleSendMessage } = useOutletContext();
+
+  // 현재 채팅방의 boardTitle 찾기
+  const currentChatroom = chatrooms.find(room => room.id === parseInt(chatroomId));
+  const boardTitle = currentChatroom ? currentChatroom.boardTitle : '채팅방';
 
   const fetchMessages = useCallback(async () => {
     if (!chatroomId || !user) return;
@@ -128,12 +135,12 @@ const ChatPage = () => {
   };
 
   if (!user) {
-    return <div>Loading user information...</div>;
+    return <LoadingComponent message="채팅방 정보를 불러오는 중" />;
   }
 
   return (
       <ChatArea>
-        <ChatHeader>Chat Room {chatroomId}</ChatHeader>
+        <ChatHeader boardTitle={boardTitle} />
         <MessageListContainer ref={messageListRef}>
           {messages.map((msg, index) => (
               <MessageItem key={index} $isOutgoing={msg.isOutgoing}>
