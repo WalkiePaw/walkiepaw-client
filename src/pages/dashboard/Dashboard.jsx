@@ -1,11 +1,12 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
+import { useParams, Outlet } from 'react-router-dom';
 
 const Dashboard = () => {
+  const { nickname } = useParams();
   return (
-    <DashboardLayout>
-      <Outlet />
+    <DashboardLayout nickname={nickname}>
+      <Outlet context={{ nickname }} />
     </DashboardLayout>
   );
 };

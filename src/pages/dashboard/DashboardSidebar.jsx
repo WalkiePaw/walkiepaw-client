@@ -11,17 +11,16 @@ import ImageUpload from "../../components/ImageUpload";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faStar, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const DashboardSidebar = () => {
+const DashboardSidebar = ( {nickname}) => {
   const [memberData, setMemberData] = useState(null);
   const [score, setScore] = useState(0);
   const [counts, setCounts] = useState({ recruitCount: 0, researchCount: 0 });
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
-    const memberId = 1; // 사용자의 ID를 가져옴
-
-    if (memberId) {
-      axios.get(`http://localhost:8080/api/v1/members/${memberId}/profile`)
+    console.log(nickname);
+    if (nickname) {
+      axios.get(`http://localhost:8080/api/v1/members/${encodeURIComponent(nickname)}/dashboard`)
         .then(response => {
           setMemberData(response.data);
           if (response.data.photo) {
@@ -33,32 +32,15 @@ const DashboardSidebar = () => {
         .catch((error) => {
           console.error("회원 정보를 가져오던 도중 오류 발생:", error);
         });
-
-      axios.get(`http://localhost:8080/api/v1/members/${memberId}/score`)
-        .then(response => {
-          setScore(response.data.score);
-        })
-        .catch(error => {
-          console.error('평점 정보를 가져오던 도중 오류 발생:', error);
-        });
-
-      axios.get(`http://localhost:8080/api/v1/members/${memberId}/RRCount`)
-        .then(response => {
-          setCounts(response.data);
-        })
-        .catch(error => {
-          console.error('산책/알바 횟수 정보를 가져오던 도중 오류 발생:', error);
-        });
     } else {
-      console.error('No user ID found in local storage.');
+      console.error('닉네임을 찾을 수 없음');
     }
-  }, []);
+  }, [nickname]);
 
   return (
     <div className="w-80 bg-gray-100 p-4 h-screen overflow-y-auto">
         <div className="text-center mt-5mb-3">
           <ImageUpload
-            // onImageUpload={handleImageUpload} //
             initialImage={profileImage}
             readOnly={!!profileImage} 
           />

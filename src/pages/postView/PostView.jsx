@@ -242,18 +242,23 @@ const PostView = () => {
           </div>
         )}
         <div className="post-header">
-          <NavLink>
-            <div className="author-info">
-              <img
-                src={memberPhoto || "/src/assets/default_user.png"}
-                alt="Author"
-                className="author-image"
-              />
-              <div className="author-details">
-                <span className="author-name">{post.memberNickName}</span>
-              </div>
+        <NavLink
+          to={{
+            pathname: "/dashboard",
+            search: `?nickname=${encodeURIComponent(post.memberNickName)}`,
+          }}
+        >
+          <div className="author-info">
+            <img
+              src={memberPhoto || "/src/assets/default_user.png"}
+              alt="Author"
+              className="author-image"
+            />
+            <div className="author-details">
+              <span className="author-name">{post.memberNickName}</span>
             </div>
-          </NavLink>
+          </div>
+        </NavLink>
           <div className="rating">
             <img src={pawpaw} alt="Rating" className="Rating-photoUrls" /> 5.0{" "}
             {/* 서버에서 평균값을 받아서 출력해야함 */}

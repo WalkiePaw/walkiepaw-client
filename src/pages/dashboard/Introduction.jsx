@@ -35,27 +35,26 @@ const TopButton = styled.button`
   }
 `;
 
-const Introduction = () => {
+const Introduction = ( {nickname} ) => {
   const [memberData, setMemberData] = useState(null);
   const [postCount, setPostCount] = useState(); //  보여줄 초기 게시글 개수
   const [reviewCount, setReviewCount] = useState(); // 보여줄 초기 리뷰 개수
   const [activeTab, setActiveTab] = useState("JOB_SEARCH");
-
   useEffect(() => {
-    const memberId = 1; 
+    console.log("Introduction nickname:", nickname); // 디버깅용 로그
 
-    if (memberId) {
-      axios.get(`http://localhost:8080/api/v1/members/${memberId}`)
+    if (nickname) {
+      axios.get(`http://localhost:8080/api/v1/members/${encodeURIComponent(nickname)}/dashboard`)
         .then(response => {
-          setMemberData(response.data); // 사용자 데이터를 state에 저장
+          setMemberData(response.data);
         })
-        .catch(error => {
-          console.error('회원 정보를 가져오던 도중 오류 발생:', error);
+        .catch((error) => {
+          console.error("회원 정보를 가져오던 도중 오류 발생:", error);
         });
     } else {
-      console.error('로컬 저장소에서 회원 아이디를 찾을 수 없음');
+      console.error('닉네임을 찾을 수 없음');
     }
-  }, []);
+  }, [nickname]);
 
   // 상단으로 올라가기
   const scrollToTop = () => {
