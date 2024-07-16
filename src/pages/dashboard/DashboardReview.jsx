@@ -3,6 +3,7 @@ import pawpaw from '../../assets/pawpaw.png';
 import axios from 'axios';
 
 const DashboardReview = ({ id, reviewCount }) => {
+  // id는 대시보드 회원(글 작성자 또는 채팅 상대방)의 번호
   const [activeTab, setActiveTab] = useState("JOB_OPENING");
   const [reviews, setReviews] = useState([]);
   const [visibleReviews, setVisibleReviews] = useState(5);
