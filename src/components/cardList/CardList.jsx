@@ -7,193 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
 import axios from "axios";
-
-const CardList = ({
-  boardId,
-  title,
-  location,
-  photoUrls,
-  memberNickName,
-  memberPhoto,
-  status,
-  category,
-  price,
-  priceType,
-  startTime,
-  endTime,
-  onCardClick,
-  initialLiked,
-  onLikeChange,
-  initialLikeCount,
-  id,
-}) => {
-  const [liked, setLiked] = useState(initialLiked);
-  const [likeCount, setLikeCount] = useState(initialLikeCount);
-  const [likeChangeTimeout, setLikeChangeTimeout] = useState(null);
-
-  const handleLike = useCallback(
-    (e) => {
-      e.stopPropagation();
-      const newLikedState = !liked;
-      setLiked(newLikedState);
-      setLikeCount((prevCount) =>
-        newLikedState ? prevCount + 1 : prevCount - 1
-      );
-
-      // 기존의 타이머를 취소
-      if (likeChangeTimeout) {
-        clearTimeout(likeChangeTimeout);
-      }
-
-      // 새로운 타이머 설정
-      const newTimeout = setTimeout(() => {
-        updateLikeToServer(newLikedState);
-      }, 3000);
-
-      setLikeChangeTimeout(newTimeout);
-    }
-  );
-
-  const updateLikeToServer = async (isLiked) => {
-    try {
-      if (isLiked) {
-        await axios.post(`http://localhost:8080/api/v1/boards-like`, {
-          id,
-          boardId,
-        });
-      } else {
-        await axios.delete(`http://localhost:8080/api/v1/boards-like`, {
-          data: { id, boardId },
-        });
-      }
-    } catch (error) {
-      console.error("Failed to update like", error);
-      // 에러 발생 시 UI를 원래 상태로 되돌림
-      setLiked(!isLiked);
-      setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (likeChangeTimeout) {
-        clearTimeout(likeChangeTimeout);
-      }
-    };
-  }, [likeChangeTimeout]);
-
-  // 시간 계산
-  const formatTime = (timeString) => {
-    const date = new Date(timeString);
-    const hours = date.getHours().toString().padStart(2, "0"); // padStart(2, '0')은 9:00을 09:00으로 표시해주는 기능
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`;
-  };
-
-  const totalTime = (startTime, endTime) => {
-    const start = new Date(startTime);
-    const end = new Date(endTime);
-    let totalMinutes = (end - start) / (1000 * 60);
-
-    if (totalMinutes < 0) {
-      totalMinutes += 24 * 60; // 종료 시간이 다음날인 경우
-    }
-
-    const days = Math.floor(totalMinutes / (24 * 60));
-    totalMinutes %= 24 * 60; // 전체 분에서 날짜 단위 분을 제외
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    let result = "";
-    if (days > 0) {
-      result = `${days}일`;
-    }
-    if (hours > 0) {
-      result = `${hours}시간`;
-    }
-    if (minutes > 0) {
-      result = `${minutes}분`;
-    }
-    return result.trim();
-  };
-
-  const formatToKRW = (value) => {
-    return new Intl.NumberFormat("ko-KR", {
-      style: "decimal",
-    }).format(value);
-  };
-
-  return (
-    <CardStyled onClick={onCardClick}>
-      <Locals>
-        <MemberInfo>
-          <AuthorImage
-            src={memberPhoto || "/src/assets/default_user.png"}
-            alt="Author"
-          />
-          <MemberNickName>{memberNickName}</MemberNickName>
-        </MemberInfo>
-        <Local>📍{location}</Local>
-      </Locals>
-      <Title>
-        <PostStatus
-          className={`post-status ${status?.toLowerCase()?.replace(" ", "-")}`}
-        >
-          {status === "RECRUITING" && "모집중"}
-          {status === "RESERVED" && "예약"}
-          {status === "COMPLETED" && "구인 완료"}
-        </PostStatus>
-        {` ${title}`}
-      </Title>
-      <CardImageBox>
-        {photoUrls && photoUrls.length > 0 ? (
-          <CardImage src={photoUrls} alt="card" />
-        ) : (
-          <NoImagePlaceholder>No Image Available</NoImagePlaceholder>
-        )}
-      </CardImageBox>
-      <Time>
-        시간: {formatTime(startTime)} - {formatTime(endTime)} (총{" "}
-        {totalTime(startTime, endTime)})
-      </Time>
-      <Price>
-        {priceType === "HOURLY" && "시급"} {priceType === "DAILY" && "일급"}: ₩
-        {formatToKRW(price)}
-      </Price>
-      <Icons>
-        <Icon onClick={handleLike}>
-          <FontAwesomeIcon
-            icon={liked ? solidHeart : regularHeart}
-            color={liked ? "red" : "gray"}
-          />
-          <span>{likeCount}</span>
-        </Icon>
-      </Icons>
-    </CardStyled>
-  );
-};
-
-CardList.propTypes = {
-  initialLiked: PropTypes.bool,
-  onLikeChange: PropTypes.func,
-  boardId: PropTypes.number.isRequired,
-  initialLikeCount: PropTypes.number.isRequired,
-  id: PropTypes.number.isRequired,
-  title: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired,
-  photoUrls: PropTypes.array,
-  memberNickName: PropTypes.string.isRequired,
-  memberPhoto: PropTypes.string,
-  status: PropTypes.string.isRequired,
-  category: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired,
-  priceType: PropTypes.string.isRequired,
-  startTime: PropTypes.string.isRequired,
-  endTime: PropTypes.string.isRequired,
-};
-
-
-export default CardList;
+import { useDispatch, useSelector } from "react-redux";
+import { verifyToken } from "../../store/AuthSlice";
 
 // styled-components를 이용한 스타일 정의
 const CardStyled = styled.div`
@@ -299,7 +114,14 @@ const CardImage = styled.img`
 
 const NoImagePlaceholder = styled.div`
   color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
 `;
+
 
 const Icons = styled.div`
   display: flex;
@@ -316,3 +138,212 @@ const Icon = styled.div`
     margin-left: 4px;
   }
 `;
+
+const CardList = ({
+  boardId,
+  title,
+  location,
+  photoUrls,
+  memberNickName,
+  memberPhoto,
+  status,
+  category,
+  price,
+  priceType,
+  startTime,
+  endTime,
+  onCardClick,
+  initialLiked,
+  onLikeChange,
+  initialLikeCount,
+  loginUserId,
+}) => {
+  const [liked, setLiked] = useState(initialLiked);
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const [likeChangeTimeout, setLikeChangeTimeout] = useState(null);
+  const hasValidImage = photoUrls && photoUrls.length > 0 && photoUrls[0];
+
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      dispatch(verifyToken());
+    }
+  }, [dispatch, isLoggedIn]);
+
+  const updateLikeToServer = useCallback(
+    async (isLiked) => {
+      try {
+        if (isLiked) {
+          await axios.post(`http://localhost:8080/api/v1/boards-like`, {
+            loginUserId,
+            boardId,
+          });
+        } else {
+          await axios.delete(`http://localhost:8080/api/v1/boards-like`, {
+            data: { loginUserId, boardId },
+          });
+        }
+      } catch (error) {
+        console.error("Failed to update like", error);
+        // 에러 발생 시 UI를 원래 상태로 되돌림
+        setLiked(!isLiked);
+        setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
+      }
+    },
+    [boardId, loginUserId]
+  );
+
+  const handleLike = useCallback(
+    (e) => {
+      e.stopPropagation();
+      const newLikedState = !liked;
+      setLiked(newLikedState);
+      setLikeCount((prevCount) =>
+        newLikedState ? prevCount + 1 : prevCount - 1
+      );
+
+      // 기존의 타이머를 취소
+      if (likeChangeTimeout) {
+        clearTimeout(likeChangeTimeout);
+      }
+
+      // 새로운 타이머 설정
+      const newTimeout = setTimeout(() => {
+        updateLikeToServer(newLikedState);
+      }, 3000);
+
+      setLikeChangeTimeout(newTimeout);
+    },
+    [liked, likeChangeTimeout, updateLikeToServer]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (likeChangeTimeout) {
+        clearTimeout(likeChangeTimeout);
+      }
+    };
+  }, [likeChangeTimeout]);
+
+  // 시간 계산
+  const formatTime = (timeString) => {
+    const date = new Date(timeString);
+    const hours = date.getHours().toString().padStart(2, "0"); // padStart(2, '0')은 9:00을 09:00으로 표시해주는 기능
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  const totalTime = (startTime, endTime) => {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    let totalMinutes = (end - start) / (1000 * 60);
+
+    if (totalMinutes < 0) {
+      totalMinutes += 24 * 60; // 종료 시간이 다음날인 경우
+    }
+
+    const days = Math.floor(totalMinutes / (24 * 60));
+    totalMinutes %= 24 * 60; // 전체 분에서 날짜 단위 분을 제외
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    let result = "";
+    if (days > 0) {
+      result = `${days}일`;
+    }
+    if (hours > 0) {
+      result = `${hours}시간`;
+    }
+    if (minutes > 0) {
+      result = `${minutes}분`;
+    }
+    return result.trim();
+  };
+
+  const formatToKRW = (value) => {
+    return new Intl.NumberFormat("ko-KR", {
+      style: "decimal",
+    }).format(value);
+  };
+
+  return (
+    <CardStyled onClick={onCardClick}>
+      <Locals>
+        <MemberInfo>
+          <AuthorImage
+            src={memberPhoto || "/src/assets/default_user.png"}
+            alt="Author"
+          />
+          <MemberNickName>{memberNickName}</MemberNickName>
+        </MemberInfo>
+        <Local>📍{location}</Local>
+      </Locals>
+      <Title>
+        <PostStatus
+          className={`post-status ${status?.toLowerCase()?.replace(" ", "-")}`}
+        >
+          {status === "RECRUITING" && "모집중"}
+          {status === "RESERVED" && "예약"}
+          {status === "COMPLETED" && "구인 완료"}
+        </PostStatus>
+        {` ${title}`}
+      </Title>
+      <CardImageBox>
+        {hasValidImage ? (
+          <CardImage 
+            src={photoUrls[0]} 
+            alt="card" 
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.parentNode.innerHTML = '<div class="no-image-placeholder">No Image Available</div>';
+            }}
+          />
+        ) : (
+          <NoImagePlaceholder>No Image Available</NoImagePlaceholder>
+        )}
+      </CardImageBox>
+      <Time>
+        시간: {formatTime(startTime)} - {formatTime(endTime)} (총{" "}
+        {totalTime(startTime, endTime)})
+      </Time>
+      <Price>
+        {priceType === "HOURLY" && "시급"} {priceType === "DAILY" && "일급"}: ₩
+        {formatToKRW(price)}
+      </Price>
+      {isLoggedIn && (
+        <Icons>
+          <Icon onClick={handleLike}>
+            <FontAwesomeIcon
+              icon={liked ? solidHeart : regularHeart}
+              color={liked ? "red" : "gray"}
+            />
+            <span>{likeCount}</span>
+          </Icon>
+        </Icons>
+      )}
+    </CardStyled>
+  );
+};
+
+CardList.propTypes = {
+  initialLiked: PropTypes.bool,
+  onLikeChange: PropTypes.func,
+  boardId: PropTypes.number.isRequired,
+  initialLikeCount: PropTypes.number.isRequired,
+  loginUserId: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  location: PropTypes.string.isRequired,
+  photoUrls: PropTypes.array,
+  memberNickName: PropTypes.string.isRequired,
+  memberPhoto: PropTypes.string,
+  status: PropTypes.string.isRequired,
+  category: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
+  priceType: PropTypes.string.isRequired,
+  startTime: PropTypes.string.isRequired,
+  endTime: PropTypes.string.isRequired,
+};
+
+export default CardList;

@@ -49,6 +49,12 @@ const Preferences = () => {
     );
   }, []);
 
+  // 동만 추출해서 가져오는 함수
+  const dongFromLocal = (location) => {
+    const match = location?.match(/[가-힣]+동/);
+    return match ? match[0] : location;
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (Object.keys(likeChanges).length > 0) {
@@ -65,12 +71,12 @@ const Preferences = () => {
           boardId = Number(boardId);
           if (isLiked) {
             return axios.post(`http://localhost:8080/api/v1/boards-like`, {
-              memberId: id,
+              loginUserId: id,
               boardId,
             });
           } else {
             return axios.delete(`http://localhost:8080/api/v1/boards-like`, {
-              data: { memberId: id, boardId },
+              data: { loginUserId: id, boardId },
             });
           }
         }
@@ -103,7 +109,7 @@ const Preferences = () => {
               key={like.id}
               boardId={like.id}
               title={like.title}
-              location={like.location}
+              location={dongFromLocal(like.location)} // dongFromLocal 함수를 사용하여 '동' 이름 추출
               image={like.image}
               memberNickName={like.memberNickName}
               status={like.status}
@@ -114,7 +120,7 @@ const Preferences = () => {
               endTime={like.endTime}
               initialLiked={true}
               likeCount={like.likeCount}
-              memberId={id}
+              loginUserId={id}
               initialLikeCount={like.likeCount}
               onLikeChange={handleLikeChange}
             />

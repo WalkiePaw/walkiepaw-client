@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import MyPageKakaoMap from '../../modules/MyPageKakao';
-
-const MyTown = () => {
+import { useDispatch } from 'react-redux';
+import { setSelectedPlaces } from '../../store/selectedPlaceSlice';
+const MySettings = () => {
   const [location, setLocation] = useState('');
   const [selectedPlaces, setSelectedPlaces] = useState([]);
+  const dispatch = useDispatch();
 
   const handleSetLocation = (placeName) => {
-    if (selectedPlaces.length >= 5) {
-      alert('최대 5곳까지 선택할 수 있습니다.');
-      return;
+    if (selectedPlaces.length < 4 && !selectedPlaces.includes(placeName)) {
+      const newSelectedPlaces = [...selectedPlaces, placeName];
+      setSelectedPlaces(newSelectedPlaces);
+      dispatch(setSelectedPlaces(newSelectedPlaces)); // Redux 상태 업데이트
     }
-
-    setLocation(placeName);
-    setSelectedPlaces([...selectedPlaces, placeName]);
   };
-  
+
   return (
     <div>
       <h1 className="font-bold text-3xl mb-3">지역 선택</h1>
@@ -30,4 +30,4 @@ const MyTown = () => {
   );
 };
 
-export default MyTown;
+export default MySettings;
