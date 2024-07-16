@@ -63,7 +63,7 @@ const DashboardSidebar = () => {
             readOnly={!!profileImage} 
           />
           <div className="mt-3 mb-5 text-xl font-bold">
-            {memberData ? memberData.name : ''}
+            {memberData ? memberData.nickname : ''}
           </div>
       </div>
       <div className="p-4 bg-white rounded-lg shadow mb-5">

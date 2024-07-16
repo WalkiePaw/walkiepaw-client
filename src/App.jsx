@@ -43,6 +43,7 @@ import PostView from './pages/postView/PostView.jsx';
 import ProtectedChatRoute from './store/ProtectedChatRoute.jsx';
 import ChatLayout from "./components/chat/ChatLayout.jsx";
 import UseSocialLogin from "./store/actions/UseSocailLogin.jsx";
+import DashboardReview from './pages/dashboard/DashboardReview.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -106,7 +107,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<Introduction />} />
             <Route path="postlist" element={<PostList />} />
-            <Route path="review" element={<Review />} />
+            <Route path="review" element={<DashboardReview />} />
           </Route>
 
           <Route path="/admin" element={<Admin />}>

@@ -64,7 +64,7 @@ import axios from "axios";
           readOnly={!!profileImage} 
         />
         <div className="mt-3 mb-5 text-xl font-bold">
-          {memberData ? memberData.name : ""}
+          {memberData ? memberData.nickname : ""}
         </div>
         <div className="p-4 bg-white rounded-lg shadow mb-6">
           <div className="grid grid-cols-3 gap-4 text-center">
