@@ -114,7 +114,14 @@ const CardImage = styled.img`
 
 const NoImagePlaceholder = styled.div`
   color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
 `;
+
 
 const Icons = styled.div`
   display: flex;
@@ -154,6 +161,7 @@ const CardList = ({
   const [liked, setLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [likeChangeTimeout, setLikeChangeTimeout] = useState(null);
+  const hasValidImage = photoUrls && photoUrls.length > 0 && photoUrls[0];
 
   const { isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -283,8 +291,15 @@ const CardList = ({
         {` ${title}`}
       </Title>
       <CardImageBox>
-        {photoUrls && photoUrls.length > 0 ? (
-          <CardImage src={photoUrls} alt="card" />
+        {hasValidImage ? (
+          <CardImage 
+            src={photoUrls[0]} 
+            alt="card" 
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.parentNode.innerHTML = '<div class="no-image-placeholder">No Image Available</div>';
+            }}
+          />
         ) : (
           <NoImagePlaceholder>No Image Available</NoImagePlaceholder>
         )}

@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import CardList from "../../components/cardList/CardList";
 import "./BoardList.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import MyTown from "../myTown/MyTown";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
@@ -15,9 +14,6 @@ const BoardList = () => {
   const ref = useRef(null);
   const [posts, setPosts] = useState([]); // 게시글 목록을 저장
   const [filteredPosts, setFilteredPosts] = useState([]); // 필터링된 게시글 목록을 저장
-  const [selectedSi, setSelectedSi] = useState("");
-  const [selectedGu, setSelectedGu] = useState("");
-  const [selectedDong, setSelectedDong] = useState("");
   const [searchKeyword, setSearchKeyword] = useState(""); // 검색어를 저장
   const [searchOption, setSearchOption] = useState("title"); // 검색 옵션(제목 or 내용) 디폴트 값
   const [category, setCategory] = useState(""); // 게시글 카테고리를 저장
@@ -31,6 +27,7 @@ const BoardList = () => {
   const [memberPhoto, setMemberPhoto] = useState(null);
   const [memberId, setMemberId] = useState(null); // 게시글 작성자의 아이디
   const [loginUserId, setLoginUserId] = useState(null); // 로그인한 맴버아이디
+  const selectedPlaces = useSelector((state) => state.selectedPlaces) || [];
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -114,25 +111,13 @@ const BoardList = () => {
   // 카테고리, 지역, 검색어 필터링
   useEffect(() => {
     const filterPosts = () => {
-      if (posts.length === 0) return; // 게시글이 없으면 필터링을 하지 않음
-
+      if (posts.length === 0) return;
       let newFilteredPosts = posts;
 
-      // 지역 필터링
-      if (selectedSi) {
-        // location이 Null일 때, includes()를 호출한다.
+      // 선택된 동네들로 필터링
+      if (selectedPlaces.length > 0) {
         newFilteredPosts = newFilteredPosts.filter((post) =>
-          post.location?.includes(selectedSi)
-        );
-      }
-      if (selectedGu) {
-        newFilteredPosts = newFilteredPosts.filter((post) =>
-          post.location?.includes(selectedGu)
-        );
-      }
-      if (selectedDong) {
-        newFilteredPosts = newFilteredPosts.filter((post) =>
-          post.location?.includes(selectedDong)
+          selectedPlaces.some((place) => post.location?.includes(place))
         );
       }
 
@@ -140,7 +125,7 @@ const BoardList = () => {
     };
 
     filterPosts();
-  }, [selectedSi, selectedGu, selectedDong, posts, searchKeyword]);
+  }, [selectedPlaces, posts, searchKeyword]);
 
   // 검색 옵션 변경 핸들러
   const handleOptionChange = (e) => {
@@ -259,11 +244,6 @@ const BoardList = () => {
         <img src={imageUrl} className="listTop-img" />
       </div>
       <div className="filter-container">
-        <MyTown
-          onSiChange={setSelectedSi}
-          onGuChange={setSelectedGu}
-          onDongChange={setSelectedDong}
-        />
         <div className="board-search-container">
           <select
             className="search-filter"
