@@ -29,9 +29,6 @@ import ModifyPostForm from './pages/post/modify/ModifyPostForm.jsx';
 import CustomerService from './pages/mypage/CustomerService';
 
 import MyTransaction from './pages/mypage/MyTransaction.jsx';
-import KakaoLoginCallback from './components/auth/KakaoLoginCallback.jsx';
-import NaverLoginCallback from './components/auth/NaverLoginCallback.jsx';
-import GoogleLoginCallback from './components/auth/GoogleLoginCallback.jsx';
 import Review from './components/Review.jsx';
 import SignUp from './pages/auth/SignUp.jsx';
 import ChatPage from './pages/chatroom/ChatPage.jsx';
@@ -44,6 +41,8 @@ import ReportManagement from './admin/ReportManagement.jsx';
 import ParticleCursor from './components/ParticleCursor.jsx';
 import PostView from './pages/postView/PostView.jsx';
 import ProtectedChatRoute from './store/ProtectedChatRoute.jsx';
+import ChatLayout from "./components/chat/ChatLayout.jsx";
+import UseSocialLogin from "./store/actions/UseSocailLogin.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -94,13 +93,14 @@ function App() {
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
           <Route path="post/:postId" element={<PostView />} />
           <Route path="login" element={<Login />} />
-          <Route path="/login/kakao" element={<KakaoLoginCallback />} />
-          <Route path="/login/naver" element={<NaverLoginCallback />} />
-          <Route path="/login/google" element={<GoogleLoginCallback />} />
           <Route path="signup" element={<SignUp />} />
+          <Route path="/oauth2/redirect" element={<UseSocialLogin />} />
 
           <Route element={<ProtectedChatRoute />}>
-            <Route path="chatpage" element={<ChatPage />} />
+            <Route path="chat" element={<ChatLayout />}>
+              <Route index element={<ChatPage />} />
+              <Route path=":chatroomId" element={<ChatPage />} />
+            </Route>
           </Route>
 
           <Route path="/dashboard" element={<Dashboard />}>

@@ -1,8 +1,8 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import styled from "styled-components";
-import logo from "../assets/logo.png";
-import AuthButton from "../../src/components/auth/AuthButton"; //
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import styled from 'styled-components';
+import logo from '../assets/logo.png';
+import AuthButton from '../../src/components/auth/AuthButton'; //
 
 const HeaderContainer = styled.header`
   position: relative;
@@ -13,7 +13,7 @@ const HeaderContainer = styled.header`
   z-index: 50;
   background-color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-family: "TTLaundryGothicB";
+  font-family: 'TTLaundryGothicB';
 
   .container {
     display: flex;
@@ -29,7 +29,7 @@ const HeaderContainer = styled.header`
     flex-grow: 1;
     justify-content: center;
   }
-
+  
   img {
     height: 3rem;
     max-width: 100%;
@@ -102,11 +102,11 @@ const Menus = styled.ul`
       transition: color 0.3s;
 
       &.active {
-        color: #6d4c41;
+        color: #007bff;
       }
 
       &:hover {
-        color: #6d4c41;
+        color: #007bff;
       }
     }
   }
@@ -118,36 +118,38 @@ const Menus = styled.ul`
   }
 `;
 
+
 const Header = () => {
+
   return (
     <HeaderContainer>
       <div className="container">
         <NavLink to="/" className="flex-shrink-0">
-          <img src={logo} alt="Logo" />
+          <img src={logo} alt="Logo"/>
         </NavLink>
 
         <nav>
           <Menus>
             <li>
-              <NavLink
-                to="/recruit"
-                className={({ isActive }) => (isActive ? "active" : "")}
+              <NavLink 
+                to="/recruit" 
+                className={({ isActive }) => (isActive ? 'active' : '')}
               >
                 산책인 모집글
               </NavLink>
             </li>
             <li>
-              <NavLink
-                to="/jobs"
-                className={({ isActive }) => (isActive ? "active" : "")}
+              <NavLink 
+                to="/jobs" 
+                className={({ isActive }) => (isActive ? 'active' : '')}
               >
                 알바 구직글
               </NavLink>
             </li>
             <li>
-              <NavLink
-                to="/chatpage"
-                className={({ isActive }) => (isActive ? "active" : "")}
+              <NavLink 
+                to="/chat"
+                className={({ isActive }) => (isActive ? 'active' : '')}
               >
                 채팅
               </NavLink>
@@ -156,7 +158,7 @@ const Header = () => {
         </nav>
 
         <div className="buttons">
-          <AuthButton />
+          <AuthButton/>
         </div>
       </div>
     </HeaderContainer>

@@ -10,6 +10,7 @@ import EmailVerificationButton from '../../components/auth/EmailVerification.jsx
 import React, { useState, useEffect } from "react";
 import BirthDatePicker from '../../components/BirthDatePicker.jsx';
 import NicknameDoublecheck from "../../components/auth/NicknameDoublechck.jsx";
+import { signUpApi, socialSignUpApi } from '../../Api.jsx';
 import {Modal} from "antd";
 
 const Label = styled.label`
@@ -102,6 +103,7 @@ const SignUp = () => {
     }
   }, [location.state, setValue]);
 
+
   const submitSignUp = async (data) => {
     try {
       const formattedPhoneNumber = data.phoneNumber.replace(/-/g, '');
@@ -109,10 +111,16 @@ const SignUp = () => {
       const signUpData = {
         ...data,
         photo,
-        phoneNumber: formattedPhoneNumber  // 하이픈이 제거된 전화번호 사용
+        phoneNumber: formattedPhoneNumber
       };
 
-      const response = await axios.post('http://localhost:8080/api/v1/members', signUpData);
+      let response;
+      if (isSocialSignUp) {
+        response = await socialSignUpApi(signUpData);
+      } else {
+        response = await signUpApi(signUpData);
+      }
+
       console.log('회원가입 성공:', response.data);
       setIsSuccessModalVisible(true);
     } catch (error) {
@@ -123,6 +131,7 @@ const SignUp = () => {
       });
     }
   };
+
 
   const handleSignUp = async () => {
     const result = await trigger();

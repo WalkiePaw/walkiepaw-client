@@ -3,6 +3,8 @@ import { jwtDecode } from 'jwt-decode';
 import {verifyTokenApi, loginApi} from "../Api.jsx";
 
 
+
+
 export const verifyToken = createAsyncThunk(
     'auth/verifyToken',
     async (_, { rejectWithValue, getState }) => {
@@ -42,20 +44,18 @@ const AuthSlice = createSlice({
     user: null,
     token: localStorage.getItem('token'),
     error: null,
+    newUser: null,
   },
   reducers: {
     loginSuccess: (state, action) => {
       state.isLoggedIn = true;
       state.isLoading = false;
       state.token = action.payload.token;
-
-      // JWT 토큰 디코딩
       const decodedToken = jwtDecode(action.payload.token);
-
       state.user = {
-        id: decodedToken.id,  // 또는 decodedToken.memberId, 토큰에 사용된 키에 따라 다름
-        email: decodedToken.email,  // JWT에서 일반적으로 'sub'는 subject를 의미하며, 여기서는 이메일로 사용됨
-        authorities: decodedToken.role,  // 권한 정보가 필요한 경우
+        id: decodedToken.id,
+        email: decodedToken.email,
+        authorities: decodedToken.role,
         nickname: decodedToken.nickname
       };
       state.error = null;
@@ -79,7 +79,6 @@ const AuthSlice = createSlice({
     setLoading: (state, action) => {
       state.isLoading = action.payload;
     },
-    // 여기에 setInitialState 리듀서를 추가합니다
     setInitialState: (state) => {
       const token = localStorage.getItem('token');
       if (token) {
@@ -94,7 +93,6 @@ const AuthSlice = createSlice({
             authorities: decodedToken.role
           };
         } catch (error) {
-          // 토큰 디코딩 실패 시 처리
           state.isLoggedIn = false;
           state.user = null;
           localStorage.removeItem('token');
@@ -131,10 +129,10 @@ const AuthSlice = createSlice({
       state.token = action.payload.token;
       const decodedToken = jwtDecode(action.payload.token);
       state.user = {
-        id: decodedToken.id,  // 또는 decodedToken.memberId
+        id: decodedToken.id,
         email: decodedToken.email,
         nickname: decodedToken.nickname,
-        authorities: decodedToken.role  // 권한 정보가 필요한 경우
+        authorities: decodedToken.role
       };
       state.error = null;
       localStorage.setItem('token', action.payload.token);
@@ -145,7 +143,7 @@ const AuthSlice = createSlice({
       state.user = null;
       state.token = null;
       state.error = action.payload;
-    });
+    })
   },
 });
 
@@ -154,5 +152,7 @@ export const {
   loginFailure,
   logout,
   setLoading,
-  setInitialState  } = AuthSlice.actions;
+  setInitialState
+} = AuthSlice.actions;
+
 export default AuthSlice.reducer;

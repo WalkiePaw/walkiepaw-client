@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -34,13 +34,14 @@ const StyledAuthButton = styled.div`
 
 const DropdownMenu = styled(motion.div)`
   position: absolute;
-  top: 100%;
+  top: calc(100% + 5px);  // 이미지 아래로 5px 간격을 둠
   right: 0;
   background-color: white;
   border-radius: 0.375rem;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   overflow: hidden;
-  min-width: 120px;  // 추가: 최소 너비 설정
+  min-width: 120px;
+  z-index: 1000;  // 다른 요소들 위에 표시되도록 z-index 추가
 `;
 
 const MenuItem = styled(motion.div)`
@@ -53,6 +54,14 @@ const MenuItem = styled(motion.div)`
   }
 `;
 
+const WelcomeMessage = styled(motion.span)`
+  margin-left: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #4a4a4a;
+`;
+
+
 
 const AuthButton = () => {
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
@@ -60,6 +69,7 @@ const AuthButton = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -69,8 +79,21 @@ const AuthButton = () => {
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-      <StyledAuthButton>
+      <StyledAuthButton ref={dropdownRef}>
         {isLoggedIn ? (
             <>
               <img
@@ -79,6 +102,18 @@ const AuthButton = () => {
                   onClick={toggleDropdown}
               />
               <AnimatePresence>
+                {user && (
+                    <WelcomeMessage
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                      {user.nickname}님 반갑습니다!
+                    </WelcomeMessage>
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
                 {isOpen && (
                     <DropdownMenu
                         initial={{ opacity: 0, y: -10 }}
@@ -86,7 +121,7 @@ const AuthButton = () => {
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
                     >
-                      <MenuItem onClick={() => navigate('/mypage/settings')}>
+                      <MenuItem onClick={() => { navigate('/mypage/settings'); setIsOpen(false); }}>
                         마이페이지
                       </MenuItem>
                       <MenuItem onClick={handleLogout}>
@@ -104,5 +139,6 @@ const AuthButton = () => {
       </StyledAuthButton>
   );
 };
+
 
 export default AuthButton;
