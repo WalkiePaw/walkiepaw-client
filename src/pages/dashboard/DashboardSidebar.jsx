@@ -18,10 +18,10 @@ const DashboardSidebar = () => {
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
-    const memberId = 1; // 로그인한 사용자의 ID를 가져옴
+    const memberId = 1; // 사용자의 ID를 가져옴
 
     if (memberId) {
-      axios.get(`http://localhost:8080/api/v1/members/${memberId}`)
+      axios.get(`http://localhost:8080/api/v1/members/${memberId}/profile`)
         .then(response => {
           setMemberData(response.data);
           if (response.data.photo) {
@@ -53,10 +53,6 @@ const DashboardSidebar = () => {
       console.error('No user ID found in local storage.');
     }
   }, []);
-
-  //   const handleImageUpload = (newImageUrl) => {
-  //   setProfileImage(newImageUrl);
-  // };
 
   return (
     <div className="w-80 bg-gray-100 p-4 h-screen overflow-y-auto">

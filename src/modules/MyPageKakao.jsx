@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
+import axios from 'axios';
 
 const MapContainer = styled.div`
   position: relative;
@@ -130,7 +131,7 @@ const Pagination = styled.div`
   }
 `;
 
-const MyPageKakaoMap = ({ setLocation }) => {
+const MyPageKakaoMap = ({ setLocation, id}) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [infowindow, setInfowindow] = useState(null);
@@ -367,6 +368,13 @@ const MyPageKakaoMap = ({ setLocation }) => {
     });
   };
   
+  const handleRemovePlace = (indexToRemove) => {
+    setSelectedPlaces((prev) => {
+      const updatedPlaces = prev.filter((_, index) => index !== indexToRemove);
+      setLocation(updatedPlaces); // 부모 컴포넌트 상태 업데이트
+      return updatedPlaces;
+    });
+  };
 
   const handleClearPlaces = () => {
     if (selectedPlaces.length > 0) {
@@ -385,15 +393,32 @@ const MyPageKakaoMap = ({ setLocation }) => {
     }
   };
   
-  const handleSavePlaces = () => {
-    // 여기에 저장 로직을 구현합니다.
-    // 선택된 장소(selectedPlaces)를 저장하는 로직을 작성
-    Swal.fire({
-      title: '저장 완료',
-      icon: 'success',
-      confirmButtonText: '확인'
-    })
-  };
+  const handleSavePlaces = async () => {
+    if (selectedPlaces.length === 0) {
+      Swal.fire({
+        title: '저장 실패',
+        text: '선택된 장소가 없습니다.',
+        icon: 'error',
+        confirmButtonText: '확인'
+      });
+      return;
+    }
+
+  try {
+    // 선택된 주소들을 문자열로 변환
+    const addressesString = selectedPlaces.join(',');
+    await axios.patch(`http://localhost:8080/api/v1/members/${id}/selected-addresses`, {
+      selectedAddresses: addressesString
+    });
+    Swal.fire('성공', '선택한 장소가 저장되었습니다.', 'success');
+    
+    // 부모 컴포넌트 상태 업데이트
+    setLocation(selectedPlaces);
+  } catch (error) {
+    console.error('장소 저장에 실패했습니다:', error);
+    Swal.fire('오류', '장소 저장에 실패했습니다.', 'error');
+  }
+};
 
   return (
     <>
@@ -411,9 +436,17 @@ const MyPageKakaoMap = ({ setLocation }) => {
           <SelectedPlacesContainer>
         <h2 className='text-xl font-bold ml-2'>선택된 장소: </h2>
         <SelectedPlacesList>
-          {selectedPlaces.map((place, index) => (
-            <li key={index}>{`${index + 1}. ${place}`}</li>
-          ))}
+              {selectedPlaces.map((place, index) => (
+                <li key={index}>
+                  {place}
+                  <button
+                    onClick={() => handleRemovePlace(index)}
+                    className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    X
+                  </button>
+                </li>
+              ))}
         </SelectedPlacesList>
       </SelectedPlacesContainer>
           </SearchContainer>
