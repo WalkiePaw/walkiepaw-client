@@ -145,6 +145,39 @@ const MyPageKakaoMap = ({ setLocation, id}) => {
   };
 
   useEffect(() => {
+    const fetchSelectedAddresses = async () => {
+      try {
+        console.log('주소 데이터 요청 시작');
+        const response = await axios.get(`http://localhost:8080/api/v1/members/${id}/addresses`);
+        console.log('받은 응답:', response);
+        
+        console.log('response.data:', response.data);
+        console.log('response.data.selectedAddrs:', response.data.selectedAddrs);
+  
+        if (response.data && response.data.selectedAddrs) {
+          console.log('selectedAddrs 타입:', typeof response.data.selectedAddrs);
+          
+          if (typeof response.data.selectedAddrs === 'string') {
+            const addresses = response.data.selectedAddrs.split(',');
+            console.log('파싱된 주소:', addresses);
+            setSelectedPlaces(addresses);
+            setLocation(addresses); // 부모 컴포넌트 상태 업데이트
+          } else {
+            console.log('selectedAddrs가 문자열이 아닙니다.');
+          }
+        } else {
+          console.log('선택된 주소가 없거나 데이터 형식이 잘못되었습니다.');
+        }
+      } catch (error) {
+        console.error('선택된 주소를 가져오는데 실패했습니다:', error);
+      }
+    };
+  
+    fetchSelectedAddresses();
+  }, [id]);
+
+
+  useEffect(() => {
     const initializeMap = () => {
       if (window.kakao && window.kakao.maps) {
         const container = mapRef.current;
@@ -333,15 +366,13 @@ const MyPageKakaoMap = ({ setLocation, id}) => {
     const dong = parts[2];
     return `${city} ${gu} ${dong}`;
   };
-
   const handleSelectPlace = (place) => {
     const parsedAddress = parseAddress(place.address_name);
   
-    // 중복 체크를 위해 Set 사용
     setSelectedPlaces((prev) => {
-      // Check if any of the previously selected places have the same 시-구-동
-      const hasSameAddress = prev.some((address) => address === parsedAddress);
-      
+      // 중복 체크
+      const hasSameAddress = prev.includes(parsedAddress);
+  
       if (prev.length >= 4) {
         Swal.fire({
           title: '장소 선택 제한',
@@ -351,10 +382,10 @@ const MyPageKakaoMap = ({ setLocation, id}) => {
         });
         return prev;
       }
-
+  
       if (!hasSameAddress) {
         const updatedPlaces = [...prev, parsedAddress];
-        setLocation(parsedAddress); // 부모 컴포넌트 상태 업데이트
+        setLocation(updatedPlaces); // 부모 컴포넌트 상태 업데이트
         return updatedPlaces;
       } else {
         Swal.fire({
