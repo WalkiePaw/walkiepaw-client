@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useLocation, useNavigate, NavLink } from "react-router-dom";
 import "./PostView.css";
 import KakaoWithoutSearch from "../../modules/KakaoWithoutSearch";
 import pawpaw from "./../../assets/pawpaw.png";
@@ -28,9 +28,6 @@ const PostView = () => {
   const [photoUrls, setPhotoUrls] = useState([]); // 사진을 빈배열로 셋팅
   const { user, isLoggedIn } = useSelector((state) => state.auth);
 
-  // BoardList에서 로그인한 유저의 id와 nickname을 가져옴
-
-  const [loginUserNickName, setLoginUserNickname] = useState(null);
   const [memberPhoto, setMemberPhoto] = useState(null);
 
   useEffect(() => {
@@ -44,7 +41,7 @@ const PostView = () => {
         setStatus(postData?.status);
         setPriceProposal(postData?.priceProposal);
         setDetailedLocation(postData?.detailedLocation);
-        setPhotoUrls(postData?.photoUrls);
+        setPhotoUrls(postData?.photoUrls || []);
         setMemberPhoto(postData?.memberPhoto);
       } catch (error) {
         console.error("게시글을 가져오는 중 오류 발생", error);
@@ -76,7 +73,7 @@ const PostView = () => {
         const response = await axios.get(
           `http://localhost:8080/api/v1/boards/${postId}`
         );
-        const updatePostData = response?.data || {};
+        const updatePostData = response?.data || [];
         console.log("상태 변경 됐니?!", response);
         setDetailedLocation(updatePostData?.detailedLocation);
         setPost(updatePostData);
@@ -245,17 +242,18 @@ const PostView = () => {
           </div>
         )}
         <div className="post-header">
-          <div className="author-info">
-            <img
-              src={memberPhoto || "/src/assets/default_user.png"}
-              alt="Author"
-              className="author-image"
-            />
-            <div className="author-details">
-              <span className="author-name">{post.memberNickName}</span>
-              <span className="post-location">{post.local}</span>
+          <NavLink>
+            <div className="author-info">
+              <img
+                src={memberPhoto || "/src/assets/default_user.png"}
+                alt="Author"
+                className="author-image"
+              />
+              <div className="author-details">
+                <span className="author-name">{post.memberNickName}</span>
+              </div>
             </div>
-          </div>
+          </NavLink>
           <div className="rating">
             <img src={pawpaw} alt="Rating" className="Rating-photoUrls" /> 5.0{" "}
             {/* 서버에서 평균값을 받아서 출력해야함 */}
