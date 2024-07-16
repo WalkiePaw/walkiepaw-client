@@ -6,7 +6,7 @@ import axios from "axios";
 // 게시글 목록 받아오기
 import PostList from './PostList'; 
 // 리뷰 목록 받아오기
-import Review from '../../components/Review';
+import DashboardReview from './DashboardReview';
 import styled from 'styled-components';
 // font-awesome: scroll to top 버튼
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -71,7 +71,7 @@ const Introduction = () => {
       <p className="p-4 bg-white rounded-lg border border-gray-300">{memberData ? memberData.profile : ''}</p>
       <div className="border-t-2 mt-4 mb-5 border-gray-300" />
       {/* 리뷰 목록: 최신순으로 정렬할 예정 */}
-      <Review activeTab={activeTab} reviewCount={reviewCount} />
+      <DashboardReview activeTab={activeTab} reviewCount={reviewCount} />
       <div className="border-t-2 mt-5 mb-5 border-gray-300" />
       {/* 게시글 목록: 최신순으로 정렬할 예정 */}
       <PostList activeTab={activeTab} postCount={postCount} />
