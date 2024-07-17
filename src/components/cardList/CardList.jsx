@@ -122,7 +122,6 @@ const NoImagePlaceholder = styled.div`
   font-size: 16px;
 `;
 
-
 const Icons = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -153,15 +152,15 @@ const CardList = ({
   startTime,
   endTime,
   onCardClick,
-  initialLiked,
   onLikeChange,
+  initialLiked,
   initialLikeCount,
   loginUserId,
 }) => {
-  const [liked, setLiked] = useState(initialLiked);
+  const [isLiked, setIsLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [likeChangeTimeout, setLikeChangeTimeout] = useState(null);
-  const hasValidImage = photoUrls && photoUrls.length > 0;
+  const hasValidImage = photoUrls && photoUrls.length > 0 && photoUrls[0];
 
   const { isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -171,6 +170,12 @@ const CardList = ({
       dispatch(verifyToken());
     }
   }, [dispatch, isLoggedIn]);
+
+  // // props를 확인하는 console.log 추가
+  // useEffect(() => {
+  //   console.log("initialLiked:", initialLiked);
+  //   console.log("initialLikeCount:", initialLikeCount);
+  // }, [initialLiked, initialLikeCount]);
 
   const updateLikeToServer = useCallback(
     async (isLiked) => {
@@ -185,24 +190,28 @@ const CardList = ({
             data: { loginUserId, boardId },
           });
         }
+        console.log(isLiked);
+        console.log(likeCount);
       } catch (error) {
         console.error("Failed to update like", error);
         // 에러 발생 시 UI를 원래 상태로 되돌림
-        setLiked(!isLiked);
+        setIsLiked(!isLiked);
         setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
       }
     },
-    [boardId, loginUserId]
+    [boardId, loginUserId, likeCount]
   );
 
   const handleLike = useCallback(
     (e) => {
       e.stopPropagation();
-      const newLikedState = !liked;
-      setLiked(newLikedState);
+      const newLikedState = !isLiked;
+      setIsLiked(newLikedState);
       setLikeCount((prevCount) =>
         newLikedState ? prevCount + 1 : prevCount - 1
       );
+
+      console.log("isLikec 상태 변경", newLikedState);
 
       // 기존의 타이머를 취소
       if (likeChangeTimeout) {
@@ -216,7 +225,7 @@ const CardList = ({
 
       setLikeChangeTimeout(newTimeout);
     },
-    [liked, likeChangeTimeout, updateLikeToServer]
+    [isLiked, likeChangeTimeout, updateLikeToServer]
   );
 
   useEffect(() => {
@@ -268,8 +277,6 @@ const CardList = ({
     }).format(value);
   };
 
-  // console.log("받은 photoUrls:", photoUrls);
-  
   return (
     <CardStyled onClick={onCardClick}>
       <Locals>
@@ -294,12 +301,13 @@ const CardList = ({
       </Title>
       <CardImageBox>
         {hasValidImage ? (
-          <CardImage 
-            src={photoUrls} 
-            alt="card" 
+          <CardImage
+            src={photoUrls}
+            alt="card"
             onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.parentNode.innerHTML = '<div class="no-image-placeholder"></div>';
+              e.target.style.display = "none";
+              e.target.parentNode.innerHTML =
+                '<div class="no-image-placeholder">No Image Available</div>';
             }}
           />
         ) : (
@@ -318,8 +326,8 @@ const CardList = ({
         <Icons>
           <Icon onClick={handleLike}>
             <FontAwesomeIcon
-              icon={liked ? solidHeart : regularHeart}
-              color={liked ? "red" : "gray"}
+              icon={isLiked ? solidHeart : regularHeart}
+              color={isLiked ? "red" : "gray"}
             />
             <span>{likeCount}</span>
           </Icon>
@@ -337,7 +345,7 @@ CardList.propTypes = {
   loginUserId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
-  photoUrls: PropTypes.string,
+  photoUrls: PropTypes.array,
   memberNickName: PropTypes.string.isRequired,
   memberPhoto: PropTypes.string,
   status: PropTypes.string.isRequired,
