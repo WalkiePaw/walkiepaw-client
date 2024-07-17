@@ -98,22 +98,26 @@ const selectChatrooms = (state) => state.chat.chatrooms;
 const formatDate = (dateString) => {
   if (!dateString) return '날짜 없음';
   try {
-    const date = typeof dateString === 'string' ? parseISO(dateString) : new Date(dateString);
-    return format(date, 'yyyy년 M월 d일', { locale: ko });
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR');
   } catch (error) {
     console.error('Invalid date:', dateString);
-    return '유효하지 않은 날짜';
+    return '날짜 없음';
   }
 };
 
 const formatTime = (dateString) => {
   if (!dateString) return '시간 없음';
   try {
-    const date = typeof dateString === 'string' ? parseISO(dateString) : new Date(dateString);
-    return format(date, 'a h:mm', { locale: ko });
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('ko-KR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true  // 오전/오후 표시를 위해
+    });
   } catch (error) {
     console.error('Invalid time:', dateString);
-    return '유효하지 않은 시간';
+    return '시간 없음';
   }
 };
 
@@ -203,7 +207,7 @@ const ChatPage = () => {
             {dateDivider}
             <MessageItem $isOutgoing={msg.isOutgoing}>
               <MessageContent $isOutgoing={msg.isOutgoing}>
-                <MessageSender>{msg.sender}</MessageSender>
+                <MessageSender>{msg.nickname || msg.sender}</MessageSender>
                 {msg.content}
                 <MessageTime>
                   {msg.createDate ? formatTime(msg.createDate) : '시간 없음'}

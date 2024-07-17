@@ -72,11 +72,14 @@ export const sendWebSocketMessage = createAsyncThunk(
         throw new Error('User information not available');
       }
 
+      const currentTime = new Date().toISOString();
+
       const message = {
         chatroomId: parseInt(chatroomId),
         content,
         writerId: auth.user.id,
         nickname: auth.user.nickname,
+        createDate: currentTime,
         isOutgoing: true
       };
 
@@ -141,22 +144,36 @@ const chatSlice = createSlice({
     },
     receiveMessage: (state, action) => {
       const { chatroomId, message } = action.payload;
+      console.log('Received message:', message);  // 디버깅을 위한 로그
       if (!state.messages[chatroomId]) {
         state.messages[chatroomId] = [];
       }
-      const isDuplicate = state.messages[chatroomId].some(
-          msg => msg.content === message.content &&
-              msg.createDate === message.createDate &&
-              msg.writerId === message.writerId
-      );
+      const formattedMessage = {
+        ...message,
+        createDate: message.createDate || new Date().toISOString(),
+        nickname: message.nickname || 'Unknown User',  // 닉네임 추가
+      };
+      const isDuplicate = state.messages[chatroomId].some(msg => {
+        const msgDate = new Date(msg.createDate);
+        const newMsgDate = new Date(formattedMessage.createDate);
+        return msg.content === formattedMessage.content &&
+            msg.writerId === formattedMessage.writerId &&
+            msgDate.getFullYear() === newMsgDate.getFullYear() &&
+            msgDate.getMonth() === newMsgDate.getMonth() &&
+            msgDate.getDate() === newMsgDate.getDate() &&
+            msgDate.getHours() === newMsgDate.getHours() &&
+            msgDate.getMinutes() === newMsgDate.getMinutes();
+      });
+
       if (!isDuplicate) {
-        state.messages[chatroomId].push(message);
+        state.messages[chatroomId].push(formattedMessage);
         const chatroomIndex = state.chatrooms.findIndex(room => room.id === chatroomId);
         if (chatroomIndex !== -1) {
           state.chatrooms[chatroomIndex] = {
             ...state.chatrooms[chatroomIndex],
-            latestMessage: message.content,
-            latestTime: message.createDate
+            latestMessage: formattedMessage.content,
+            latestTime: formattedMessage.createDate,
+            latestSender: formattedMessage.nickname,
           };
           state.chatrooms.sort((a, b) => {
             const timeA = a.latestTime ? new Date(a.latestTime).getTime() : 0;
