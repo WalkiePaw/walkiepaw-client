@@ -7,7 +7,7 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout nickname={nickname}>
-      <Outlet context={{ nickname}} />
+      <Outlet context={{ nickname }} />
     </DashboardLayout>
   );
 };
