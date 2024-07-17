@@ -19,6 +19,7 @@ const PostView = () => {
     location.state?.post?.detailedLocation || ""
   );
   const [post, setPost] = useState(location?.state?.post || {}); // 게시글 상태.  초기 상태를 null로 설정
+  const [memberId, setMemberId] = useState(location?.state?.post?.memberId || null);
   const [showReportModal, setShowReportModal] = useState(false); // 신고 모달 표시 상태
   const [status, setStatus] = useState(post?.status || "모집중");
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 이미지 슬라이드 인덱스
@@ -27,7 +28,6 @@ const PostView = () => {
   ); // 가격 협의 상태
   const [photoUrls, setPhotoUrls] = useState([]); // 사진을 빈배열로 셋팅
   const { user, isLoggedIn } = useSelector((state) => state.auth);
-  const [memberId, setMemberId] = useState(null);
   const [memberPhoto, setMemberPhoto] = useState(null);
 
   useEffect(() => {
@@ -43,17 +43,19 @@ const PostView = () => {
         setDetailedLocation(postData?.detailedLocation);
         setPhotoUrls(postData?.photoUrls || []);
         setMemberPhoto(postData?.memberPhoto);
-        setMemberId(postData?.memberId); // 회원 ID 설정
+        setMemberId(postData?.memberId);
       } catch (error) {
         console.error("게시글을 가져오는 중 오류 발생", error);
       }
     };
-
-    fetchPost();
-  }, [postId]);
-
+  
+    if (!post || !memberId) {
+      fetchPost();
+    }
+  }, [postId, post, memberId]);
+  
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
-
+  
   const handlerReport = (reason) => {
     console.log("신고 이유: ", reason);
   };

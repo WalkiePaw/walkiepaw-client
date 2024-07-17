@@ -8,7 +8,6 @@ const DashboardSidebar = ({ nickname }) => {
   const [memberData, setMemberData] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const [memberId, setMemberId] = useState(null);
-  const location = useLocation();
 
   useEffect(() => {
     console.log('nickname:', nickname);
@@ -68,7 +67,7 @@ const DashboardSidebar = ({ nickname }) => {
         </div>
       </div>
       <div className="flex flex-col items-center mb-5">
-        <h1 className="text-xl font-bold mt-3 mb-3">{"\"소개\""}</h1>
+        <h1 className="text-xl font-bold mt-3 mb-3">소개</h1>
           <p className="p-4 bg-white rounded-lg border border-gray-300 text-sm w-full">
             {memberData && memberData.profile ? memberData.profile : '소개가 없습니다.'}
           </p>
