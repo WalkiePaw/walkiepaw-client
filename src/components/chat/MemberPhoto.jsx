@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
+import default_user from '../../assets/default_user.png'
 
 const MemberPhotoWrapper = styled(NavLink)`
   width: 40px;
@@ -24,7 +25,7 @@ const MemberPhoto = ({ memberPhoto, memberNickName }) => {
             search: memberNickName ? `?nickname=${encodeURIComponent(memberNickName)}` : '',
           }}
       >
-        <MemberImage src={memberPhoto || '/default-user-image.jpg'} alt={memberNickName || 'User'} />
+        <MemberImage src={memberPhoto || default_user} alt={memberNickName || 'User'} />
       </MemberPhotoWrapper>
   );
 };
