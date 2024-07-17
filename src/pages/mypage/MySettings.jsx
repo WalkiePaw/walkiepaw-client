@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import MyPageKakaoMap from '../../modules/MyPageKakao';
-import Swal from 'sweetalert2';
 import axios from 'axios';
 
 // Redux 액션 생성자 함수
@@ -37,21 +36,6 @@ const MySettings = () => {
     setSelectedPlaces(places);
     dispatch(setSelectedPlacesAction(places));
   };
-
-  // const handleSavePlaces = async () => {
-  //   try {
-  //     // 선택된 주소들을 문자열로 변환
-  //     const addressesString = selectedPlaces.join(',');
-      
-  //     await axios.patch(`http://localhost:8080/api/v1/members/${id}/selected-addresses`, {
-  //       selectedAddresses: addressesString
-  //     });
-  //     Swal.fire('성공', '선택한 장소가 저장되었습니다.', 'success');
-  //   } catch (error) {
-  //     console.error('장소 저장에 실패했습니다:', error);
-  //     Swal.fire('오류', '장소 저장에 실패했습니다.', 'error');
-  //   }
-  // };
 
   return (
     <div>

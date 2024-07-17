@@ -23,6 +23,7 @@ const Preferences = () => {
           `http://localhost:8080/api/v1/boards-like/${id}?page=0`
       );
       setLikes(response.data.content);
+      console.log('서버 응답: ', response.data);
     } catch (error) {
       console.error("Failed to fetch liked posts", error);
       MySwal.fire({
@@ -103,14 +104,15 @@ const Preferences = () => {
       <h1 className="font-bold text-3xl mb-6">내 관심 목록</h1>
       <div className="w-full overflow-hidden rounded-lg border border-gray-300">
       {likes.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {likes.map((like) => (
+        <div className="ml-3 mr-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {likes.map((like, index) => (
             <CardList
-              key={like.id}
+              key={`${like.id}-${index}`}
               boardId={like.id}
               title={like.title}
               location={dongFromLocal(like.location)} // dongFromLocal 함수를 사용하여 '동' 이름 추출
-              image={like.image}
+              memberPhoto={like.memberPhoto}
+              photoUrls={like.photoUrls}
               memberNickName={like.memberNickName}
               status={like.status}
               category={like.category}
@@ -129,8 +131,9 @@ const Preferences = () => {
       ) : (
         <div className="px-6 py-4 text-center text-gray-500">
         내 관심 목록이 없습니다
-      </div>      )}
-    </div>
+        </div>      
+      )}
+      </div>
     </div>
   );
 };

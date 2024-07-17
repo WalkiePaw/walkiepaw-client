@@ -53,7 +53,8 @@ const HeaderContainer = styled.header`
     transition: background-color 0.3s;
 
     &:hover {
-      background-color: #e8c5a5;
+      background-color: #43312A;
+      color: white;
     }
 
     a {
@@ -147,7 +148,7 @@ const Header = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink 
+              <NavLink
                 to="/chat"
                 className={({ isActive }) => (isActive ? 'active' : '')}
               >

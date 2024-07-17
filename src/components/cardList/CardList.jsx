@@ -161,7 +161,7 @@ const CardList = ({
   const [liked, setLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [likeChangeTimeout, setLikeChangeTimeout] = useState(null);
-  const hasValidImage = photoUrls && photoUrls.length > 0 && photoUrls[0];
+  const hasValidImage = photoUrls && photoUrls.length > 0;
 
   const { isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -268,6 +268,8 @@ const CardList = ({
     }).format(value);
   };
 
+  // console.log("받은 photoUrls:", photoUrls);
+  
   return (
     <CardStyled onClick={onCardClick}>
       <Locals>
@@ -293,11 +295,11 @@ const CardList = ({
       <CardImageBox>
         {hasValidImage ? (
           <CardImage 
-            src={photoUrls[0]} 
+            src={photoUrls} 
             alt="card" 
             onError={(e) => {
               e.target.style.display = 'none';
-              e.target.parentNode.innerHTML = '<div class="no-image-placeholder">No Image Available</div>';
+              e.target.parentNode.innerHTML = '<div class="no-image-placeholder"></div>';
             }}
           />
         ) : (
@@ -335,7 +337,7 @@ CardList.propTypes = {
   loginUserId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
-  photoUrls: PropTypes.array,
+  photoUrls: PropTypes.string,
   memberNickName: PropTypes.string.isRequired,
   memberPhoto: PropTypes.string,
   status: PropTypes.string.isRequired,
