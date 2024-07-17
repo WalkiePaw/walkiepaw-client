@@ -3,8 +3,6 @@ import axios from 'axios';
 import { Link, useLocation } from 'react-router-dom';
 import { getProfileImage } from "../../util/profile-img";
 import ImageUpload from "../../components/ImageUpload";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faStar, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const DashboardSidebar = ({ nickname }) => {
   const [memberData, setMemberData] = useState(null);
@@ -69,57 +67,12 @@ const DashboardSidebar = ({ nickname }) => {
           </div>
         </div>
       </div>
-      <ul className="space-y-4">
-        <li>
-          <Link
-            to={`/dashboard?nickname=${encodeURIComponent(nickname)}`}
-            className={`flex items-center space-x-2 ${
-              location.pathname === "/dashboard"
-                ? "text-blue-600"
-                : "text-gray-700"
-            }`}
-          >
-            <FontAwesomeIcon icon={faHome} />
-            <span>홈</span>
-          </Link>
-        </li>
-        <li>
-          <Link
-            to={{
-              pathname: `/dashboard/review`,
-              search: `?nickname=${encodeURIComponent(nickname)}`,
-              state: { memberId: memberId },
-            }}
-            onClick={() => console.log('Linking with memberId:', memberId)} // 링크 클릭 시 memberId 로그
-            className={`flex items-center space-x-2 ${
-              location.pathname === "/dashboard/review"
-                ? "text-blue-600"
-                : "text-gray-700"
-            }`}
-          >
-            <FontAwesomeIcon icon={faStar} />
-            <span>리뷰</span>
-          </Link>
-        </li>
-        <li>
-          <Link
-            to={{
-              pathname: `/dashboard/postlist`,
-              search: `?nickname=${encodeURIComponent(nickname)}`,
-              state: { memberId: memberId },
-            }}
-            onClick={() => console.log('Linking with memberId:', memberId)} // 링크 클릭 시 memberId 로그
-            className={`flex items-center space-x-2 ${
-              location.pathname === "/dashboard/postlist"
-                ? "text-blue-600"
-                : "text-gray-700"
-            }`}
-          >
-            <FontAwesomeIcon icon={faEdit} />
-            <span>게시글</span>
-          </Link>
-        </li>
-      </ul>
+      <div className="flex flex-col items-center mb-5">
+        <h1 className="text-xl font-bold mt-3 mb-3">{"\"소개\""}</h1>
+          <p className="p-4 bg-white rounded-lg border border-gray-300 text-sm w-full">
+            {memberData && memberData.profile ? memberData.profile : '소개가 없습니다.'}
+          </p>
+      </div>
     </div>
   );
 }
