@@ -5,11 +5,9 @@ import ProtectedAdminRoute from "../store/ProtectedAdminRoute";
 
 const Admin = () => {
   return (
-    <ProtectedAdminRoute>
       <AdminLayout>
         <Outlet />
       </AdminLayout>
-    </ProtectedAdminRoute>
   );
 };
 

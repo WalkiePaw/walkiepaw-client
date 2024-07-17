@@ -49,6 +49,7 @@ const AuthSlice = createSlice({
       state.isLoading = false;
       state.token = action.payload.token;
       const decodedToken = jwtDecode(action.payload.token);
+
       state.user = {
         id: decodedToken.id,
         email: decodedToken.email,
