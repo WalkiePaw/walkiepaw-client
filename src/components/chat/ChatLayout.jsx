@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import ChatRoom from './ChatRoom';
 import ChatHeader from './ChatHeader';  // ChatHeader import 추가
+import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 import {
   connectWebSocket,
@@ -66,6 +67,7 @@ const ChatLayout = () => {
 
   return (
       <ChatLayoutContainer>
+        <ToastContainer />
         <ChatRoom
             onChatroomSelect={handleChatroomSelect}
             selectedChatroomId={selectedChatroomId}
@@ -78,6 +80,9 @@ const ChatLayout = () => {
                   revieweeId={currentChatroom.memberId}  // 또는 상대방의 ID를 나타내는 적절한 필드
                   memberPhoto={currentChatroom.memberPhoto}
                   memberNickName={currentChatroom.nickname}
+                  boardWriter={currentChatroom.boardWriter}
+                  initialBoardStatus={currentChatroom.boardStatus}
+                  category={currentChatroom.category}
               />
           )}
           <ChatContent>

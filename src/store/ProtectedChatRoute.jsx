@@ -15,9 +15,7 @@ const ProtectedChatRoute = () => {
       dispatch(setInitialState());
       dispatch(verifyToken()).unwrap()
       .catch(() => {
-        toast.error('채팅을 위해서는 로그인이 필요합니다.', {
-          autoClose: 3000 // 3초 동안 표시
-        });
+        toast.error('채팅을 위해서는 로그인이 필요합니다.');
         // 토큰 검증 실패 시 로그인 페이지로 리디렉션
         window.location.href = `/login?redirect=${encodeURIComponent(location.pathname)}`;
       });
