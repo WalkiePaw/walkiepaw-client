@@ -83,14 +83,12 @@ export const sendWebSocketMessage = createAsyncThunk(
         isOutgoing: true
       };
 
-      // 로컬 상태 업데이트
       dispatch(addLocalMessage({ chatroomId, message }));
       dispatch(updateLocalChatroom({
         chatroomId,
         latestMessage: content,
-        latestTime: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        latestTime: now.toISOString()
       }));
-
 
       if (stompClient && stompClient.connected) {
         try {
@@ -105,6 +103,17 @@ export const sendWebSocketMessage = createAsyncThunk(
         dispatch(updateMessageStatus({ chatroomId, messageId: message.id, status: 'failed' }));
         throw new Error('WebSocket is not connected');
       }
+    }
+);
+
+export const setChatroomsThunk = createAsyncThunk(
+    'chat/setChatroomsThunk',
+    async (chatrooms, { dispatch }) => {
+      const formattedChatrooms = chatrooms.map(room => ({
+        ...room,
+        boardTitle: room.boardTitle || '제목 없음',
+      }));
+      dispatch(setChatrooms(formattedChatrooms));
     }
 );
 
@@ -135,15 +144,13 @@ const chatSlice = createSlice({
       );
       if (!isDuplicate) {
         state.messages[chatroomId].push(message);
-        // 채팅방 정보 업데이트 (상대방 메시지와 내 메시지 모두 처리)
         const chatroomIndex = state.chatrooms.findIndex(room => room.id === chatroomId);
         if (chatroomIndex !== -1) {
           state.chatrooms[chatroomIndex] = {
             ...state.chatrooms[chatroomIndex],
             latestMessage: message.content,
-            latestTime: message.sentTime // message.createDate 대신 sentTime 사용
+            latestTime: message.sentTime
           };
-          // 채팅방 목록을 최신 메시지 시간 순으로 정렬
           state.chatrooms.sort((a, b) => {
             const timeA = a.latestTime ? new Date(`1970-01-01T${a.latestTime}`) : new Date(0);
             const timeB = b.latestTime ? new Date(`1970-01-01T${b.latestTime}`) : new Date(0);
@@ -175,10 +182,9 @@ const chatSlice = createSlice({
           latestMessage,
           latestTime
         };
-        // 채팅방 목록을 최신 메시지 시간 순으로 정렬
         state.chatrooms.sort((a, b) => {
-          const timeA = a.latestTime ? new Date(`1970-01-01T${a.latestTime}`) : new Date(0);
-          const timeB = b.latestTime ? new Date(`1970-01-01T${b.latestTime}`) : new Date(0);
+          const timeA = a.latestTime ? new Date(a.latestTime) : new Date(0);
+          const timeB = b.latestTime ? new Date(b.latestTime) : new Date(0);
           return timeB - timeA;
         });
       }
@@ -197,7 +203,6 @@ const chatSlice = createSlice({
       if (message) {
         message.status = status;
       }
-
     },
   },
   extraReducers: (builder) => {
