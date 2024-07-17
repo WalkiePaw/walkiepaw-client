@@ -110,7 +110,11 @@ const formatTime = (dateString) => {
   if (!dateString) return '시간 없음';
   try {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('ko-KR');
+    return date.toLocaleTimeString('ko-KR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true  // 오전/오후 표시를 위해
+    });
   } catch (error) {
     console.error('Invalid time:', dateString);
     return '시간 없음';
