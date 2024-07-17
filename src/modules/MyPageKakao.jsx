@@ -147,15 +147,15 @@ const MyPageKakaoMap = ({ setLocation, id}) => {
   useEffect(() => {
     const fetchSelectedAddresses = async () => {
       try {
-        console.log('주소 데이터 요청 시작');
+        // console.log('주소 데이터 요청 시작');
         const response = await axios.get(`http://localhost:8080/api/v1/members/${id}/addresses`);
-        console.log('받은 응답:', response);
+        // console.log('받은 응답:', response);
         
-        console.log('response.data:', response.data);
-        console.log('response.data.selectedAddrs:', response.data.selectedAddrs);
+        // console.log('response.data:', response.data);
+        // console.log('response.data.selectedAddrs:', response.data.selectedAddrs);
   
         if (response.data && response.data.selectedAddrs) {
-          console.log('selectedAddrs 타입:', typeof response.data.selectedAddrs);
+          // console.log('selectedAddrs 타입:', typeof response.data.selectedAddrs);
           
           if (typeof response.data.selectedAddrs === 'string') {
             const addresses = response.data.selectedAddrs.split(',');
@@ -169,7 +169,7 @@ const MyPageKakaoMap = ({ setLocation, id}) => {
           console.log('선택된 주소가 없거나 데이터 형식이 잘못되었습니다.');
         }
       } catch (error) {
-        console.error('선택된 주소를 가져오는데 실패했습니다:', error);
+        // console.error('선택된 주소를 가져오는데 실패했습니다:', error);
       }
     };
   

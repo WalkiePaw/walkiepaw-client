@@ -44,6 +44,7 @@ import ProtectedChatRoute from './store/ProtectedChatRoute.jsx';
 import ChatLayout from "./components/chat/ChatLayout.jsx";
 import UseSocialLogin from "./store/actions/UseSocailLogin.jsx";
 import DashboardReview from './pages/dashboard/DashboardReview.jsx';
+import ProtectedAdminRoute from './store/ProtectedAdminRoute.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -110,11 +111,14 @@ function App() {
             <Route path="review" element={<DashboardReview />} />
           </Route>
 
-          <Route path="/admin" element={<Admin />}>
-            <Route path="member-list" element={<MemberList />} />
-            <Route path="report-mngmt" element={<ReportManagement />} />
-            <Route path="cs-mngmt" element={<CSManagement />} />
+          <Route element={<ProtectedAdminRoute />}>
+            <Route path="/admin" element={<Admin />}>
+              <Route path="member-list" element={<MemberList />} />
+              <Route path="report-mngmt" element={<ReportManagement />} />
+              <Route path="cs-mngmt" element={<CSManagement />} />
+            </Route>
           </Route>
+
         </Route>
       </Routes>
     </>

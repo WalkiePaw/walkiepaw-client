@@ -2,9 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { jwtDecode } from 'jwt-decode';
 import {verifyTokenApi, loginApi} from "../Api.jsx";
 
-
-
-
 export const verifyToken = createAsyncThunk(
     'auth/verifyToken',
     async (_, { rejectWithValue, getState }) => {

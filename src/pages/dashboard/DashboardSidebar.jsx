@@ -1,20 +1,13 @@
-// src/pages/Dashboard/DashboardSidebar.jsx
-
 import React, { useEffect, useState } from 'react';
-// axios 임포트
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-// 프로필이 없는 경우: 기본 이미지
 import { getProfileImage } from "../../util/profile-img";
-// 프로필 사진이 있는 경우
 import ImageUpload from "../../components/ImageUpload";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faStar, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const DashboardSidebar = ( {nickname}) => {
+const DashboardSidebar = ({ nickname }) => {
   const [memberData, setMemberData] = useState(null);
-  const [score, setScore] = useState(0);
-  const [counts, setCounts] = useState({ recruitCount: 0, researchCount: 0 });
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
@@ -23,10 +16,10 @@ const DashboardSidebar = ( {nickname}) => {
       axios.get(`http://localhost:8080/api/v1/members/${encodeURIComponent(nickname)}/dashboard`)
         .then(response => {
           setMemberData(response.data);
-          if (response.data.photo) {
-            setProfileImage(response.data.photo); 
+          if (response.data.member_photo) {
+            setProfileImage(response.data.member_photo);
           } else {
-            setProfileImage(getProfileImage(1)); 
+            setProfileImage(getProfileImage(1));
           }
         })
         .catch((error) => {
@@ -39,28 +32,28 @@ const DashboardSidebar = ( {nickname}) => {
 
   return (
     <div className="w-80 bg-gray-100 p-4 h-screen overflow-y-auto">
-        <div className="text-center mt-5mb-3">
-          <ImageUpload
-            initialImage={profileImage}
-            readOnly={!!profileImage} 
-          />
-          <div className="mt-3 mb-5 text-xl font-bold">
-            {memberData ? memberData.nickname : ''}
-          </div>
+      <div className="text-center mt-5 mb-3">
+        <ImageUpload
+          initialImage={profileImage}
+          readOnly={!!profileImage} 
+        />
+        <div className="mt-3 mb-5 text-xl font-bold">
+          {memberData ? memberData.nickname : ''}
+        </div>
       </div>
       <div className="p-4 bg-white rounded-lg shadow mb-5">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-gray-500">산책</div>
-            <div className="text-lg font-bold">{counts.recruitCount}회</div>
+            <div className="text-lg font-bold">{memberData ? memberData.recruitCount : 0}회</div>
           </div>
           <div>
             <div className="text-gray-500">알바</div>
-            <div className="text-lg font-bold">{counts.researchCount}</div>
+            <div className="text-lg font-bold">{memberData ? memberData.researchCount : 0}</div>
           </div>
           <div>
             <div className="text-gray-500">리뷰 평균</div>
-            <div className="text-lg font-bold text-yellow-500">★ {score.toFixed(1)}</div>
+            <div className="text-lg font-bold text-yellow-500">★ {memberData ? memberData.score.toFixed(1) : '0.0'}</div>
           </div>
         </div>
       </div>
