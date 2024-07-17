@@ -151,6 +151,7 @@ const chatSlice = createSlice({
       const formattedMessage = {
         ...message,
         createDate: message.createDate || new Date().toISOString(),
+        nickname: message.nickname || 'Unknown User',  // 닉네임 추가
       };
       const isDuplicate = state.messages[chatroomId].some(
           msg => msg.content === formattedMessage.content &&
@@ -164,7 +165,8 @@ const chatSlice = createSlice({
           state.chatrooms[chatroomIndex] = {
             ...state.chatrooms[chatroomIndex],
             latestMessage: formattedMessage.content,
-            latestTime: formattedMessage.createDate
+            latestTime: formattedMessage.createDate,
+            latestSender: formattedMessage.nickname,
           };
           state.chatrooms.sort((a, b) => {
             const timeA = a.latestTime ? new Date(a.latestTime).getTime() : 0;

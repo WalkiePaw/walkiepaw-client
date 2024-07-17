@@ -207,7 +207,7 @@ const ChatPage = () => {
             {dateDivider}
             <MessageItem $isOutgoing={msg.isOutgoing}>
               <MessageContent $isOutgoing={msg.isOutgoing}>
-                <MessageSender>{msg.sender}</MessageSender>
+                <MessageSender>{msg.nickname || msg.sender}</MessageSender>
                 {msg.content}
                 <MessageTime>
                   {msg.createDate ? formatTime(msg.createDate) : '시간 없음'}
