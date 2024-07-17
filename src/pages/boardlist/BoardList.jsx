@@ -9,12 +9,14 @@ import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { verifyToken } from "../../store/AuthSlice";
+import Swal from "sweetalert2";
 
 const BoardList = () => {
   const [posts, setPosts] = useState([]); // 게시글 목록을 저장
   const [filteredPosts, setFilteredPosts] = useState([]); // 필터링된 게시글 목록을 저장
   const [searchKeyword, setSearchKeyword] = useState(""); // 검색어를 저장
   const [searchOption, setSearchOption] = useState("title"); // 검색 옵션(제목 or 내용) 디폴트 값
+  const [searchLoading, setSearchLoading] = useState(false);
   const [category, setCategory] = useState(""); // 게시글 카테고리를 저장
   const [searchResultMessage, setSearchResultMessage] = useState(""); // 검색 결과 메시지
   const [page, setPage] = useState(0); // 기본값 0으로 한다고함
@@ -75,6 +77,7 @@ const BoardList = () => {
       });
     } catch (error) {
       console.error("사용자 주소 가져오기 오류!", error);
+      showError("사용자 주소를 가져오는 데 실패했습니다.");
     }
   }, [loginUserId]);
 
@@ -107,6 +110,7 @@ const BoardList = () => {
         setHasMore(!response.data.last);
       } catch (error) {
         console.error("Failed to fetch posts", error);
+        showError("게시글을 불러오는 데 실패했습니다.");
       } finally {
         setLoading(false);
       }
@@ -124,7 +128,51 @@ const BoardList = () => {
   };
 
   const handleSearch = async () => {
-    // ... (기존 코드 유지)
+    setSearchLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (loginUserId) params.append('memberId', loginUserId);
+      if (searchOption === 'title') params.append('title', searchKeyword);
+      if (searchOption === 'content') params.append('content', searchKeyword);
+      params.append('category', category);
+
+      const response = await axios.get(`http://localhost:8080/api/v1/boards/search?${params.toString()}`);
+      const searchResults = response.data?.content;
+
+      const filteredResults = filterPostsByLocation(searchResults);
+
+      console.log(filteredResults);
+
+      setFilteredPosts(filteredResults);
+      setPosts(filteredResults);
+      setPage(0);
+      setHasMore(!response.data?.last);
+
+      if (filteredResults.length === 0) {
+        Swal.fire ({
+          icon: 'info',
+          title: '검색 결과',
+          text: '검색 결과가 없습니다.',
+        });
+      }
+    } catch (error) {
+      console.error("검색 중 오류 발생:", error);
+      Swal.fire ({
+        icon: 'error',
+        title: '오류',
+        text: '검색 중 오류가 발생했습니다.',
+      });
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  const showError = (message) => {
+    Swal.fire ({
+      icon: 'error',
+      title: '오류',
+      text: message,
+    });
   };
 
   const handleKeyDown = (e) => {
@@ -242,6 +290,8 @@ const BoardList = () => {
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
           />
+          <button onClick={handleSearch} disabled={searchLoading}>
+          </button>
         </div>
       </div>
       <div
