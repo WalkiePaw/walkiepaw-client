@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
+import axios from 'axios';
 
 const MapContainer = styled.div`
   position: relative;
@@ -130,7 +131,7 @@ const Pagination = styled.div`
   }
 `;
 
-const MyPageKakaoMap = ({ setLocation }) => {
+const MyPageKakaoMap = ({ setLocation, id}) => {
   const mapRef = useRef(null);
   const [map, setMap] = useState(null);
   const [infowindow, setInfowindow] = useState(null);
@@ -142,6 +143,39 @@ const MyPageKakaoMap = ({ setLocation }) => {
       searchPlaces();
     }
   };
+
+  useEffect(() => {
+    const fetchSelectedAddresses = async () => {
+      try {
+        console.log('주소 데이터 요청 시작');
+        const response = await axios.get(`http://localhost:8080/api/v1/members/${id}/addresses`);
+        console.log('받은 응답:', response);
+        
+        console.log('response.data:', response.data);
+        console.log('response.data.selectedAddrs:', response.data.selectedAddrs);
+  
+        if (response.data && response.data.selectedAddrs) {
+          console.log('selectedAddrs 타입:', typeof response.data.selectedAddrs);
+          
+          if (typeof response.data.selectedAddrs === 'string') {
+            const addresses = response.data.selectedAddrs.split(',');
+            console.log('파싱된 주소:', addresses);
+            setSelectedPlaces(addresses);
+            setLocation(addresses); // 부모 컴포넌트 상태 업데이트
+          } else {
+            console.log('selectedAddrs가 문자열이 아닙니다.');
+          }
+        } else {
+          console.log('선택된 주소가 없거나 데이터 형식이 잘못되었습니다.');
+        }
+      } catch (error) {
+        console.error('선택된 주소를 가져오는데 실패했습니다:', error);
+      }
+    };
+  
+    fetchSelectedAddresses();
+  }, [id]);
+
 
   useEffect(() => {
     const initializeMap = () => {
@@ -332,15 +366,13 @@ const MyPageKakaoMap = ({ setLocation }) => {
     const dong = parts[2];
     return `${city} ${gu} ${dong}`;
   };
-
   const handleSelectPlace = (place) => {
     const parsedAddress = parseAddress(place.address_name);
   
-    // 중복 체크를 위해 Set 사용
     setSelectedPlaces((prev) => {
-      // Check if any of the previously selected places have the same 시-구-동
-      const hasSameAddress = prev.some((address) => address === parsedAddress);
-      
+      // 중복 체크
+      const hasSameAddress = prev.includes(parsedAddress);
+  
       if (prev.length >= 4) {
         Swal.fire({
           title: '장소 선택 제한',
@@ -350,10 +382,10 @@ const MyPageKakaoMap = ({ setLocation }) => {
         });
         return prev;
       }
-
+  
       if (!hasSameAddress) {
         const updatedPlaces = [...prev, parsedAddress];
-        setLocation(parsedAddress); // 부모 컴포넌트 상태 업데이트
+        setLocation(updatedPlaces); // 부모 컴포넌트 상태 업데이트
         return updatedPlaces;
       } else {
         Swal.fire({
@@ -367,6 +399,13 @@ const MyPageKakaoMap = ({ setLocation }) => {
     });
   };
   
+  const handleRemovePlace = (indexToRemove) => {
+    setSelectedPlaces((prev) => {
+      const updatedPlaces = prev.filter((_, index) => index !== indexToRemove);
+      setLocation(updatedPlaces); // 부모 컴포넌트 상태 업데이트
+      return updatedPlaces;
+    });
+  };
 
   const handleClearPlaces = () => {
     if (selectedPlaces.length > 0) {
@@ -385,15 +424,32 @@ const MyPageKakaoMap = ({ setLocation }) => {
     }
   };
   
-  const handleSavePlaces = () => {
-    // 여기에 저장 로직을 구현합니다.
-    // 선택된 장소(selectedPlaces)를 저장하는 로직을 작성
-    Swal.fire({
-      title: '저장 완료',
-      icon: 'success',
-      confirmButtonText: '확인'
-    })
-  };
+  const handleSavePlaces = async () => {
+    if (selectedPlaces.length === 0) {
+      Swal.fire({
+        title: '저장 실패',
+        text: '선택된 장소가 없습니다.',
+        icon: 'error',
+        confirmButtonText: '확인'
+      });
+      return;
+    }
+
+  try {
+    // 선택된 주소들을 문자열로 변환
+    const addressesString = selectedPlaces.join(',');
+    await axios.patch(`http://localhost:8080/api/v1/members/${id}/selected-addresses`, {
+      selectedAddresses: addressesString
+    });
+    Swal.fire('성공', '선택한 장소가 저장되었습니다.', 'success');
+    
+    // 부모 컴포넌트 상태 업데이트
+    setLocation(selectedPlaces);
+  } catch (error) {
+    console.error('장소 저장에 실패했습니다:', error);
+    Swal.fire('오류', '장소 저장에 실패했습니다.', 'error');
+  }
+};
 
   return (
     <>
@@ -411,9 +467,17 @@ const MyPageKakaoMap = ({ setLocation }) => {
           <SelectedPlacesContainer>
         <h2 className='text-xl font-bold ml-2'>선택된 장소: </h2>
         <SelectedPlacesList>
-          {selectedPlaces.map((place, index) => (
-            <li key={index}>{`${index + 1}. ${place}`}</li>
-          ))}
+              {selectedPlaces.map((place, index) => (
+                <li key={index}>
+                  {place}
+                  <button
+                    onClick={() => handleRemovePlace(index)}
+                    className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    X
+                  </button>
+                </li>
+              ))}
         </SelectedPlacesList>
       </SelectedPlacesContainer>
           </SearchContainer>

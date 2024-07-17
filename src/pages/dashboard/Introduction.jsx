@@ -6,7 +6,7 @@ import axios from "axios";
 // 게시글 목록 받아오기
 import PostList from './PostList'; 
 // 리뷰 목록 받아오기
-import Review from '../../components/Review';
+import DashboardReview from './DashboardReview';
 import styled from 'styled-components';
 // font-awesome: scroll to top 버튼
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -35,27 +35,26 @@ const TopButton = styled.button`
   }
 `;
 
-const Introduction = () => {
+const Introduction = ( {nickname} ) => {
   const [memberData, setMemberData] = useState(null);
   const [postCount, setPostCount] = useState(); //  보여줄 초기 게시글 개수
   const [reviewCount, setReviewCount] = useState(); // 보여줄 초기 리뷰 개수
   const [activeTab, setActiveTab] = useState("JOB_SEARCH");
-
   useEffect(() => {
-    const memberId = 1; 
+    console.log("Introduction nickname:", nickname); // 디버깅용 로그
 
-    if (memberId) {
-      axios.get(`http://localhost:8080/api/v1/members/${memberId}`)
+    if (nickname) {
+      axios.get(`http://localhost:8080/api/v1/members/${encodeURIComponent(nickname)}/dashboard`)
         .then(response => {
-          setMemberData(response.data); // 사용자 데이터를 state에 저장
+          setMemberData(response.data);
         })
-        .catch(error => {
-          console.error('회원 정보를 가져오던 도중 오류 발생:', error);
+        .catch((error) => {
+          console.error("회원 정보를 가져오던 도중 오류 발생:", error);
         });
     } else {
-      console.error('로컬 저장소에서 회원 아이디를 찾을 수 없음');
+      console.error('닉네임을 찾을 수 없음');
     }
-  }, []);
+  }, [nickname]);
 
   // 상단으로 올라가기
   const scrollToTop = () => {
@@ -71,7 +70,7 @@ const Introduction = () => {
       <p className="p-4 bg-white rounded-lg border border-gray-300">{memberData ? memberData.profile : ''}</p>
       <div className="border-t-2 mt-4 mb-5 border-gray-300" />
       {/* 리뷰 목록: 최신순으로 정렬할 예정 */}
-      <Review activeTab={activeTab} reviewCount={reviewCount} />
+      <DashboardReview activeTab={activeTab} reviewCount={reviewCount} />
       <div className="border-t-2 mt-5 mb-5 border-gray-300" />
       {/* 게시글 목록: 최신순으로 정렬할 예정 */}
       <PostList activeTab={activeTab} postCount={postCount} />
