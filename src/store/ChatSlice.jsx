@@ -153,11 +153,18 @@ const chatSlice = createSlice({
         createDate: message.createDate || new Date().toISOString(),
         nickname: message.nickname || 'Unknown User',  // 닉네임 추가
       };
-      const isDuplicate = state.messages[chatroomId].some(
-          msg => msg.content === formattedMessage.content &&
-              msg.createDate === formattedMessage.createDate &&
-              msg.writerId === formattedMessage.writerId
-      );
+      const isDuplicate = state.messages[chatroomId].some(msg => {
+        const msgDate = new Date(msg.createDate);
+        const newMsgDate = new Date(formattedMessage.createDate);
+        return msg.content === formattedMessage.content &&
+            msg.writerId === formattedMessage.writerId &&
+            msgDate.getFullYear() === newMsgDate.getFullYear() &&
+            msgDate.getMonth() === newMsgDate.getMonth() &&
+            msgDate.getDate() === newMsgDate.getDate() &&
+            msgDate.getHours() === newMsgDate.getHours() &&
+            msgDate.getMinutes() === newMsgDate.getMinutes();
+      });
+
       if (!isDuplicate) {
         state.messages[chatroomId].push(formattedMessage);
         const chatroomIndex = state.chatrooms.findIndex(room => room.id === chatroomId);
