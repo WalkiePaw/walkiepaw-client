@@ -98,22 +98,22 @@ const selectChatrooms = (state) => state.chat.chatrooms;
 const formatDate = (dateString) => {
   if (!dateString) return '날짜 없음';
   try {
-    const date = typeof dateString === 'string' ? parseISO(dateString) : new Date(dateString);
-    return format(date, 'yyyy년 M월 d일', { locale: ko });
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR');
   } catch (error) {
     console.error('Invalid date:', dateString);
-    return '유효하지 않은 날짜';
+    return '날짜 없음';
   }
 };
 
 const formatTime = (dateString) => {
   if (!dateString) return '시간 없음';
   try {
-    const date = typeof dateString === 'string' ? parseISO(dateString) : new Date(dateString);
-    return format(date, 'a h:mm', { locale: ko });
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('ko-KR');
   } catch (error) {
     console.error('Invalid time:', dateString);
-    return '유효하지 않은 시간';
+    return '시간 없음';
   }
 };
 

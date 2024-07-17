@@ -72,11 +72,14 @@ export const sendWebSocketMessage = createAsyncThunk(
         throw new Error('User information not available');
       }
 
+      const currentTime = new Date().toISOString();
+
       const message = {
         chatroomId: parseInt(chatroomId),
         content,
         writerId: auth.user.id,
         nickname: auth.user.nickname,
+        createDate: currentTime,
         isOutgoing: true
       };
 
@@ -141,22 +144,27 @@ const chatSlice = createSlice({
     },
     receiveMessage: (state, action) => {
       const { chatroomId, message } = action.payload;
+      console.log('Received message:', message);  // 디버깅을 위한 로그
       if (!state.messages[chatroomId]) {
         state.messages[chatroomId] = [];
       }
+      const formattedMessage = {
+        ...message,
+        createDate: message.createDate || new Date().toISOString(),
+      };
       const isDuplicate = state.messages[chatroomId].some(
-          msg => msg.content === message.content &&
-              msg.createDate === message.createDate &&
-              msg.writerId === message.writerId
+          msg => msg.content === formattedMessage.content &&
+              msg.createDate === formattedMessage.createDate &&
+              msg.writerId === formattedMessage.writerId
       );
       if (!isDuplicate) {
-        state.messages[chatroomId].push(message);
+        state.messages[chatroomId].push(formattedMessage);
         const chatroomIndex = state.chatrooms.findIndex(room => room.id === chatroomId);
         if (chatroomIndex !== -1) {
           state.chatrooms[chatroomIndex] = {
             ...state.chatrooms[chatroomIndex],
-            latestMessage: message.content,
-            latestTime: message.createDate
+            latestMessage: formattedMessage.content,
+            latestTime: formattedMessage.createDate
           };
           state.chatrooms.sort((a, b) => {
             const timeA = a.latestTime ? new Date(a.latestTime).getTime() : 0;
