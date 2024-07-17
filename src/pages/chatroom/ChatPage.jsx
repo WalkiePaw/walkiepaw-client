@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import { createSelector } from '@reduxjs/toolkit';
 import styled from 'styled-components';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import ChatInput from '../../components/chat/ChatInput';
 import LoadingComponent from "../../components/chat/LoadingComponent.jsx";
@@ -12,7 +12,7 @@ import {
   setMessages,
   subscribeToChat,
   sendWebSocketMessage,
-  receiveMessage
+  receiveMessage, webSocketConnected, connectWebSocket
 } from '../../store/ChatSlice';
 
 const ChatArea = styled.div`
@@ -96,11 +96,25 @@ const selectSubscriptions = (state) => state.chat.subscriptions;
 const selectChatrooms = (state) => state.chat.chatrooms;
 
 const formatDate = (dateString) => {
-  return format(new Date(dateString), 'yyyy년 M월 d일', { locale: ko });
+  if (!dateString) return '날짜 없음';
+  try {
+    const date = typeof dateString === 'string' ? parseISO(dateString) : new Date(dateString);
+    return format(date, 'yyyy년 M월 d일', { locale: ko });
+  } catch (error) {
+    console.error('Invalid date:', dateString);
+    return '유효하지 않은 날짜';
+  }
 };
 
 const formatTime = (dateString) => {
-  return format(new Date(dateString), 'a h:mm', { locale: ko });
+  if (!dateString) return '시간 없음';
+  try {
+    const date = typeof dateString === 'string' ? parseISO(dateString) : new Date(dateString);
+    return format(date, 'a h:mm', { locale: ko });
+  } catch (error) {
+    console.error('Invalid time:', dateString);
+    return '유효하지 않은 시간';
+  }
 };
 
 const ChatPage = () => {
@@ -123,7 +137,7 @@ const ChatPage = () => {
       const formattedMessages = response.data.map(msg => ({
         id: msg.id,
         content: msg.content,
-        createDate: msg.createDate,
+        createDate: msg.createDate, // 서버에서 보내는 그대로 사용
         sender: msg.nickname,
         isOutgoing: msg.writerId === user.id
       }));
@@ -148,18 +162,35 @@ const ChatPage = () => {
     }
   }, [messages]);
 
-  const onSendMessage = (content) => {
+  useEffect(() => {
+    console.log('ChatPage mounted');
+    return () => console.log('ChatPage unmounted');
+  }, []);
+  useEffect(() => {
+    const reconnectWebSocket = () => {
+      if (!webSocketConnected) {
+        dispatch(connectWebSocket());
+      }
+    };
+
+    const intervalId = setInterval(reconnectWebSocket, 5000); // 5초마다 연결 상태 확인
+
+    return () => clearInterval(intervalId);
+  }, [webSocketConnected, dispatch]);
+
+  const onSendMessage = useCallback((content) => {
+    console.log('Sending message:', content);
     if (chatroomId && user && user.id) {
-      handleSendMessage(chatroomId, content);
+      dispatch(sendWebSocketMessage({ chatroomId, content }));
     } else {
       console.error('No chatroomId or user available');
     }
-  };
+  }, [chatroomId, user, dispatch]);
 
   const renderMessages = () => {
     let currentDate = null;
     return messages.map((msg, index) => {
-      const formattedDate = formatDate(msg.createDate);
+      const formattedDate = msg.createDate ? formatDate(msg.createDate) : '날짜 없음';
 
       let dateDivider = null;
       if (formattedDate !== currentDate) {
@@ -175,7 +206,7 @@ const ChatPage = () => {
                 <MessageSender>{msg.sender}</MessageSender>
                 {msg.content}
                 <MessageTime>
-                  {formatTime(msg.createDate)}
+                  {msg.createDate ? formatTime(msg.createDate) : '시간 없음'}
                 </MessageTime>
               </MessageContent>
             </MessageItem>

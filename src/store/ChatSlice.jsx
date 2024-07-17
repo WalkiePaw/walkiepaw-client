@@ -50,7 +50,7 @@ export const subscribeToChat = createAsyncThunk(
           const formattedMessage = {
             ...payload,
             isOutgoing: payload.writerId === auth.user.id,
-            sentTime: payload.sentTime
+            createDate: payload.createDate
           };
           dispatch(receiveMessage({
             chatroomId,
@@ -72,36 +72,23 @@ export const sendWebSocketMessage = createAsyncThunk(
         throw new Error('User information not available');
       }
 
-      const now = new Date();
       const message = {
         chatroomId: parseInt(chatroomId),
         content,
         writerId: auth.user.id,
         nickname: auth.user.nickname,
-        sender: auth.user.username,
-        createDate: now.toISOString(),
-        sentTime: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         isOutgoing: true
       };
-
-      dispatch(addLocalMessage({ chatroomId, message }));
-      dispatch(updateLocalChatroom({
-        chatroomId,
-        latestMessage: content,
-        latestTime: now.toISOString()
-      }));
 
       if (stompClient && stompClient.connected) {
         try {
           await stompClient.send(`/api/v1/ws/chats/${chatroomId}`, {}, JSON.stringify(message));
-          dispatch(updateMessageStatus({ chatroomId, messageId: message.id, status: 'sent' }));
           return message;
         } catch (error) {
-          dispatch(updateMessageStatus({ chatroomId, messageId: message.id, status: 'failed' }));
+          console.error('Failed to send message:', error);
           throw error;
         }
       } else {
-        dispatch(updateMessageStatus({ chatroomId, messageId: message.id, status: 'failed' }));
         throw new Error('WebSocket is not connected');
       }
     }
@@ -159,7 +146,7 @@ const chatSlice = createSlice({
       }
       const isDuplicate = state.messages[chatroomId].some(
           msg => msg.content === message.content &&
-              msg.sentTime === message.sentTime &&
+              msg.createDate === message.createDate &&
               msg.writerId === message.writerId
       );
       if (!isDuplicate) {
@@ -169,11 +156,11 @@ const chatSlice = createSlice({
           state.chatrooms[chatroomIndex] = {
             ...state.chatrooms[chatroomIndex],
             latestMessage: message.content,
-            latestTime: message.sentTime
+            latestTime: message.createDate
           };
           state.chatrooms.sort((a, b) => {
-            const timeA = a.latestTime ? new Date(`1970-01-01T${a.latestTime}`) : new Date(0);
-            const timeB = b.latestTime ? new Date(`1970-01-01T${b.latestTime}`) : new Date(0);
+            const timeA = a.latestTime ? new Date(a.latestTime).getTime() : 0;
+            const timeB = b.latestTime ? new Date(b.latestTime).getTime() : 0;
             return timeB - timeA;
           });
         }
@@ -193,50 +180,23 @@ const chatSlice = createSlice({
         state.chatrooms[index] = { ...state.chatrooms[index], ...updatedChatroom };
       }
     },
-    updateLocalChatroom: (state, action) => {
-      const { chatroomId, latestMessage, latestTime } = action.payload;
-      const index = state.chatrooms.findIndex(room => room.id === chatroomId);
-      if (index !== -1) {
-        state.chatrooms[index] = {
-          ...state.chatrooms[index],
-          latestMessage,
-          latestTime
-        };
-        state.chatrooms.sort((a, b) => {
-          const timeA = a.latestTime ? new Date(a.latestTime) : new Date(0);
-          const timeB = b.latestTime ? new Date(b.latestTime) : new Date(0);
-          return timeB - timeA;
-        });
-      }
-    },
-    addLocalMessage: (state, action) => {
-      const { chatroomId, message } = action.payload;
-      if (!state.messages[chatroomId]) {
-        state.messages[chatroomId] = [];
-      }
-      state.messages[chatroomId].push(message);
-    },
-    updateMessageStatus: (state, action) => {
-      const {chatroomId, messageId, status} = action.payload;
-      const message = state.messages[chatroomId].find(
-          msg => msg.id === messageId);
-      if (message) {
-        message.status = status;
-      }
-    },
   },
   extraReducers: (builder) => {
     builder
     .addCase(subscribeToChat.fulfilled, (state, action) => {
       const { chatroomId, subscriptionId } = action.payload;
       state.subscriptions[chatroomId] = subscriptionId;
-    });
-    builder.addCase(updateChatroomStatus.fulfilled, (state, action) => {
+    })
+    .addCase(updateChatroomStatus.fulfilled, (state, action) => {
       const { chatroomId, status } = action.payload;
       const chatroom = state.chatrooms.find(room => room.id === chatroomId);
       if (chatroom) {
         chatroom.boardStatus = status;
       }
+    })
+    .addCase(sendWebSocketMessage.fulfilled, (state, action) => {
+      // 메시지 전송 성공 시 아무 작업도 하지 않음
+      // 웹소켓을 통해 받은 메시지로 상태를 업데이트할 것임
     });
   },
 });

@@ -17,12 +17,21 @@ const MemberImage = styled.img`
   object-fit: cover;
 `;
 
-const MemberPhoto = ({ memberPhoto, memberNickName }) => {
+const MemberPhoto = ({ memberPhoto, memberNickName, revieweeId }) => {
+  // URL 쿼리 파라미터 생성
+  const searchParams = new URLSearchParams();
+  if (memberNickName) {
+    searchParams.set('nickname', memberNickName);
+  }
+  if (revieweeId) {
+    searchParams.set('memberId', revieweeId);
+  }
+
   return (
       <MemberPhotoWrapper
           to={{
             pathname: "/dashboard",
-            search: memberNickName ? `?nickname=${encodeURIComponent(memberNickName)}` : '',
+            search: searchParams.toString()
           }}
       >
         <MemberImage src={memberPhoto || default_user} alt={memberNickName || 'User'} />
