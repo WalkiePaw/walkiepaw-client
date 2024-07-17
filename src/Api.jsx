@@ -25,7 +25,6 @@ export const signUpApi = (userData) => Api.post('/api/v1/members', userData);
 // 소셜 회원가입 API
 export const socialSignUpApi = (userData) => Api.post('/api/v1/members/social-signup', userData);
 
-
 export const createChatroom = async (postId, memberId) => {
   const chatroomData = {
     boardId: postId,  // `boardId`를 `postId`로 받아 사용
@@ -37,6 +36,16 @@ export const createChatroom = async (postId, memberId) => {
     return response.data;
   } catch (error) {
     throw new Error('채팅방 생성 실패:', error);
+  }
+};
+
+export const submitReview = async (reviewData) => {
+  try {
+    const response = await Api.post('/api/v1/reviews', reviewData);
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting review:', error.response?.data || error.message);
+    throw error;
   }
 };
 

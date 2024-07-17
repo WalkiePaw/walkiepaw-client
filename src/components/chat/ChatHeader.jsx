@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPaw,
@@ -9,8 +9,13 @@ import {
   faTimes
 } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ReviewForm from "../ReviewForm.jsx";
 import MemberPhoto  from "./MemberPhoto.jsx";
+import BoardStatusDropdown from "./BoardStatusDropdown.jsx";
+import { updateChatroomStatus } from '../../store/ChatSlice';
+import {submitReview} from "../../Api.jsx";
 import axios from 'axios';
 
 const HeaderContainer = styled.div`
@@ -42,6 +47,7 @@ const Title = styled.span`
 const ButtonContainer = styled.div`
   display: flex;
   align-items: center;
+  margin-left: auto; // 이 줄을 추가하여 버튼 컨테이너를 오른쪽으로 밀어냅니다.
 `;
 
 const ReviewButton = styled(motion.button)`
@@ -54,12 +60,13 @@ const ReviewButton = styled(motion.button)`
   display: flex;
   align-items: center;
   font-weight: bold;
-  margin-right: 10px;
+  margin-right: 10px; // 이 줄을 제거하거나 주석 처리합니다.
 `;
 
 const ChatIcon = styled(FontAwesomeIcon)`
   color: #43312A;
   font-size: 1.2rem;
+  margin-left: 10px; // 이 줄을 추가하여 채팅 아이콘과 리뷰 버튼 사이에 간격을 줍니다.
 `;
 
 const ModalOverlay = styled(motion.div)`
@@ -101,13 +108,42 @@ const CloseButton = styled(motion.button)`
   color: #43312A;
 `;
 
-const ChatHeader = ({ boardTitle, chatroomId, revieweeId, memberPhoto, memberNickName }) => {
+const TitleStatusContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const ChatHeader = ({
+  boardTitle,
+  chatroomId,
+  revieweeId,
+  memberPhoto,
+  memberNickName,
+  boardWriter,
+  initialBoardStatus,
+  category
+}) => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const currentUser = useSelector(state => state.auth.user);
+  const dispatch = useDispatch();
+  const boardStatus = useSelector(state =>
+      state.chat.chatrooms.find(room => room.id === chatroomId)?.boardStatus || initialBoardStatus
+  );
 
-  const handleReviewClick = () => {
-    setIsReviewModalOpen(true);
-  };
+  const handleReviewClick = useCallback(() => {
+    if (boardStatus === 'COMPLETED') {
+      setIsReviewModalOpen(true);
+    } else {
+      toast.warn('거래가 완료된 후에만 리뷰를 작성할 수 있습니다.', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  }, [boardStatus]);
 
   const handleSubmitReview = async ({ points, content }) => {
     if (!currentUser) {
@@ -116,32 +152,49 @@ const ChatHeader = ({ boardTitle, chatroomId, revieweeId, memberPhoto, memberNic
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post('/api/v1/reviews', {
+      const reviewData = {
         reviewerId: currentUser.id,
         revieweeId: revieweeId,
-        rating: points,
+        point: points,
         content: content,
-        chatroomId: chatroomId
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      console.log('Review submitted successfully', response.data);
+        chatroomId: chatroomId,
+        category: category
+      };
+
+      const response = await submitReview(reviewData);
+      console.log('Review submitted:', response);
       setIsReviewModalOpen(false);
+      toast.success('리뷰가 성공적으로 제출되었습니다!', {
+        position: "top-center",
+        autoClose: 3000,
+      });
     } catch (error) {
       console.error('Error submitting review:', error);
+      toast.error('리뷰 제출 중 오류가 발생했습니다. 다시 시도해주세요.', {
+        position: "top-center",
+        autoClose: 3000,
+      });
     }
   };
 
+  const handleStatusChange = (newStatus) => {
+    dispatch(updateChatroomStatus({ chatroomId, status: newStatus }));
+  };
 
   return (
       <HeaderContainer>
         <TitleContainer>
           <MemberPhoto memberPhoto={memberPhoto} memberNickName={memberNickName} />
           <Icon icon={faPaw} />
-          <Title>{boardTitle || '채팅방'}</Title>
+          <TitleStatusContainer>
+            <Title>{boardTitle || '채팅방'}</Title>
+            <BoardStatusDropdown
+                status={boardStatus}
+                isBoardWriter={boardWriter}
+                chatroomId={chatroomId}
+                onStatusChange={handleStatusChange}
+            />
+          </TitleStatusContainer>
         </TitleContainer>
         <ButtonContainer>
           <ReviewButton
@@ -174,7 +227,7 @@ const ChatHeader = ({ boardTitle, chatroomId, revieweeId, memberPhoto, memberNic
                     <FontAwesomeIcon icon={faTimes} />
                   </CloseButton>
                   <ModalTitle>리뷰 작성</ModalTitle>
-                  <ReviewForm onSubmit={handleSubmitReview} />
+                  <ReviewForm onSubmit={handleSubmitReview} category={category}/>
                 </ModalContent>
               </ModalOverlay>
           )}

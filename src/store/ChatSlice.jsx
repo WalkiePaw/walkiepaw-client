@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import axios from "axios";
 
 let stompClient = null;
 
@@ -117,6 +118,25 @@ export const setChatroomsThunk = createAsyncThunk(
     }
 );
 
+export const updateChatroomStatus = createAsyncThunk(
+    'chat/updateChatroomStatus',
+    async ({ chatroomId, status }, { rejectWithValue }) => {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.patch('http://localhost:8080/api/v1/chatrooms/change-status', {
+          chatroomId,
+          status
+        }, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return { chatroomId, status };
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+);
+
+
 const chatSlice = createSlice({
   name: 'chat',
   initialState: {
@@ -210,6 +230,13 @@ const chatSlice = createSlice({
     .addCase(subscribeToChat.fulfilled, (state, action) => {
       const { chatroomId, subscriptionId } = action.payload;
       state.subscriptions[chatroomId] = subscriptionId;
+    });
+    builder.addCase(updateChatroomStatus.fulfilled, (state, action) => {
+      const { chatroomId, status } = action.payload;
+      const chatroom = state.chatrooms.find(room => room.id === chatroomId);
+      if (chatroom) {
+        chatroom.boardStatus = status;
+      }
     });
   },
 });

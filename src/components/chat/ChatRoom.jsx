@@ -21,17 +21,19 @@ const ConversationList = styled.div`
   flex-direction: column;
 `;
 
-const Conversation = styled.div`
+const Conversation = styled.div.attrs(props => ({
+  onClick: props.onClick
+}))`
   display: flex;
   align-items: center;
   padding: 15px;
   cursor: pointer;
   transition: background-color 0.3s;
   border-bottom: 1px solid #E8C5A5;
-  background-color: ${props => props.isSelected ? '#E8C5A5' : 'transparent'};
+  background-color: ${props => props.$isSelected ? '#E8C5A5' : 'transparent'};
 
   &:hover {
-    background-color: ${props => props.isSelected ? '#E8C5A5' : '#F0D9B5'};
+    background-color: ${props => props.$isSelected ? '#E8C5A5' : '#F0D9B5'};
   }
 `;
 
@@ -141,7 +143,7 @@ const ChatRoom = ({ onChatroomSelect, selectedChatroomId }) => {
                   <Conversation
                       key={chatroom.id}
                       onClick={() => onChatroomSelect(chatroom.id)}
-                      isSelected={chatroom.id === selectedChatroomId}
+                      $isSelected={chatroom.id === selectedChatroomId}
                   >
                     <Avatar
                         src={chatroom.memberPhoto ? chatroom.memberPhoto : default_user}
