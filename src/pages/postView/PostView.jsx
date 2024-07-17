@@ -10,7 +10,6 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // Carousel 스�
 import { useSelector } from "react-redux";
 import { createChatroom } from "../../Api.jsx";
 import { toast } from "react-toastify";
-import DashboardReview from "../dashboard/DashboardReview.jsx";
 
 const PostView = () => {
   const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
@@ -263,8 +262,6 @@ const PostView = () => {
               </div>
             </div>
           </NavLink>
-          {post.memberId && <DashboardReview id={post.memberId} />}
-
           <div className="rating">
             <img src={pawpaw} alt="Rating" className="Rating-photoUrls" /> 5.0{" "}
             {/* 서버에서 평균값을 받아서 출력해야함 */}

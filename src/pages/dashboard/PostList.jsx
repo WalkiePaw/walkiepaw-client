@@ -13,11 +13,12 @@ const PostList = ( ) => {
   const [visiblePosts, setVisiblePosts] = useState(); // 처음 보일 게시글 수
   const [showNoMorePosts, setShowNoMorePosts] = useState(false);
   const MySwal = withReactContent(Swal);
+
   const location = useLocation();
-  const memberId = location.state?.memberId;
+  const queryParams = new URLSearchParams(location.search);
+  const memberId = queryParams.get('memberId');
 
-  console.log("memberId from URL:", memberId); // 디버깅을 위한 로그
-
+    console.log("memberId from URL:", memberId); // 디버깅을 위한 로그
 
   const CATEGORY_JOB_SEARCH = 'JOB_SEARCH';
   const CATEGORY_JOB_OPENING = 'JOB_OPENING';

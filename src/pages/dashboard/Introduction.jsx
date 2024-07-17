@@ -66,9 +66,6 @@ const Introduction = ( {nickname} ) => {
 
   return (
     <div className='flex-1 p-4'>
-      <h1 className="text-3xl font-bold mt-3 mb-5">소개</h1>
-      <p className="p-4 bg-white rounded-lg border border-gray-300">{memberData ? memberData.profile : ''}</p>
-      <div className="border-t-2 mt-4 mb-5 border-gray-300" />
       {/* 리뷰 목록: 최신순으로 정렬할 예정 */}
       <DashboardReview activeTab={activeTab} reviewCount={reviewCount} />
       <div className="border-t-2 mt-5 mb-5 border-gray-300" />
