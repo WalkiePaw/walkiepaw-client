@@ -3,7 +3,6 @@ import { createSelector } from '@reduxjs/toolkit';
 import styled from 'styled-components';
 import axios from 'axios';
 import ChatInput from '../../components/chat/ChatInput';
-import ChatHeader from '../../components/chat/ChatHeader';
 import LoadingComponent from "../../components/chat/LoadingComponent.jsx";
 import { useParams, useOutletContext } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -24,11 +23,6 @@ const ChatArea = styled.div`
   height: 100%;
 `;
 
-const StyledChatHeader = styled.div`
-  background-color: #f0f0f0;
-  padding: 10px;
-  font-weight: bold;
-`;
 
 const MessageListContainer = styled.div`
   flex: 1;
@@ -86,11 +80,10 @@ const ChatPage = () => {
   const messages = useSelector(state => selectChatMessages(state, chatroomId));
   const user = useSelector(selectUser);
   const subscriptions = useSelector(selectSubscriptions);
-  const chatrooms = useSelector(selectChatrooms);  // 채팅방 목록 가져오기
+  const chatrooms = useSelector(selectChatrooms);
   const messageListRef = useRef(null);
   const { handleSendMessage } = useOutletContext();
 
-  // 현재 채팅방의 boardTitle 찾기
   const currentChatroom = chatrooms.find(room => room.id === parseInt(chatroomId));
   const boardTitle = currentChatroom ? currentChatroom.boardTitle : '채팅방';
 
@@ -140,7 +133,6 @@ const ChatPage = () => {
 
   return (
       <ChatArea>
-        <ChatHeader boardTitle={boardTitle} />
         <MessageListContainer ref={messageListRef}>
           {messages.map((msg, index) => (
               <MessageItem key={index} $isOutgoing={msg.isOutgoing}>

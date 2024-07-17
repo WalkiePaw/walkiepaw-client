@@ -2,8 +2,15 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaw, faComments, faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPaw,
+  faComments,
+  faStar,
+  faTimes
+} from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import ReviewForm from "../ReviewForm.jsx";
+import MemberPhoto  from "./MemberPhoto.jsx";
 import axios from 'axios';
 
 const HeaderContainer = styled.div`
@@ -55,26 +62,65 @@ const ChatIcon = styled(FontAwesomeIcon)`
   font-size: 1.2rem;
 `;
 
-const ChatHeader = ({ boardTitle, chatroomId, revieweeId }) => {
+const ModalOverlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled(motion.div)`
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 350px;
+  position: relative;
+`;
+
+const ModalTitle = styled.h2`
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #43312A;
+`;
+
+const CloseButton = styled(motion.button)`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #43312A;
+`;
+
+const ChatHeader = ({ boardTitle, chatroomId, revieweeId, memberPhoto, memberNickName }) => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const currentUser = useSelector(state => state.auth.user); // 현재 로그인한 사용자 정보 가져오기
+  const currentUser = useSelector(state => state.auth.user);
 
   const handleReviewClick = () => {
     setIsReviewModalOpen(true);
   };
 
-  const handleSubmitReview = async (rating, content) => {
+  const handleSubmitReview = async ({ points, content }) => {
     if (!currentUser) {
       console.error('User not logged in');
       return;
     }
 
     try {
-      const token = localStorage.getItem('token'); // 또는 Redux store에서 토큰을 가져옵니다
+      const token = localStorage.getItem('token');
       const response = await axios.post('/api/v1/reviews', {
         reviewerId: currentUser.id,
         revieweeId: revieweeId,
-        rating: rating,
+        rating: points,
         content: content,
         chatroomId: chatroomId
       }, {
@@ -88,9 +134,12 @@ const ChatHeader = ({ boardTitle, chatroomId, revieweeId }) => {
       console.error('Error submitting review:', error);
     }
   };
+
+
   return (
       <HeaderContainer>
         <TitleContainer>
+          <MemberPhoto memberPhoto={memberPhoto} memberNickName={memberNickName} />
           <Icon icon={faPaw} />
           <Title>{boardTitle || '채팅방'}</Title>
         </TitleContainer>
@@ -107,69 +156,30 @@ const ChatHeader = ({ boardTitle, chatroomId, revieweeId }) => {
         </ButtonContainer>
         <AnimatePresence>
           {isReviewModalOpen && (
-              <ReviewModal
-                  onClose={() => setIsReviewModalOpen(false)}
-                  onSubmit={handleSubmitReview}
-              />
+              <ModalOverlay
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+              >
+                <ModalContent
+                    initial={{ y: -50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -50, opacity: 0 }}
+                >
+                  <CloseButton
+                      onClick={() => setIsReviewModalOpen(false)}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                  >
+                    <FontAwesomeIcon icon={faTimes} />
+                  </CloseButton>
+                  <ModalTitle>리뷰 작성</ModalTitle>
+                  <ReviewForm onSubmit={handleSubmitReview} />
+                </ModalContent>
+              </ModalOverlay>
           )}
         </AnimatePresence>
       </HeaderContainer>
-  );
-};
-
-const ReviewModal = ({ onClose, onSubmit }) => {
-  const [rating, setRating] = useState(0);
-  const [content, setContent] = useState('');
-
-  return (
-      <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-      >
-        <motion.div
-            initial={{ y: -50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -50, opacity: 0 }}
-            style={{
-              background: 'white',
-              padding: '20px',
-              borderRadius: '10px',
-              width: '300px'
-            }}
-        >
-          <h2>리뷰 작성</h2>
-          <div>
-            {[1, 2, 3, 4, 5].map((star) => (
-                <FontAwesomeIcon
-                    key={star}
-                    icon={faStar}
-                    style={{ color: star <= rating ? 'gold' : 'gray', cursor: 'pointer' }}
-                    onClick={() => setRating(star)}
-                />
-            ))}
-          </div>
-          <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="리뷰 내용을 입력하세요"
-              style={{ width: '100%', height: '100px', margin: '10px 0' }}
-          />
-          <button onClick={() => onSubmit(rating, content)}>제출</button>
-          <button onClick={onClose}>취소</button>
-        </motion.div>
-      </motion.div>
   );
 };
 

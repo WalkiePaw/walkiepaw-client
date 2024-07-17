@@ -76,6 +76,8 @@ const ChatLayout = () => {
                   boardTitle={currentChatroom.boardTitle}
                   chatroomId={currentChatroom.id}
                   revieweeId={currentChatroom.memberId}  // 또는 상대방의 ID를 나타내는 적절한 필드
+                  memberPhoto={currentChatroom.memberPhoto}
+                  memberNickName={currentChatroom.nickname}
               />
           )}
           <ChatContent>
