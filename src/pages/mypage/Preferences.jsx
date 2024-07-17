@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -10,6 +10,7 @@ const Preferences = () => {
   const [likes, setLikes] = useState([]);
   const [likeChanges, setLikeChanges] = useState({});
   const MySwal = withReactContent(Swal);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -99,6 +100,10 @@ const Preferences = () => {
     }
   };
 
+  const handleCardClick = (boardId) => {
+    navigate(`/post/${boardId}`);  // PostView 페이지로 이동
+  };
+
   return (
     <div>
       <h1 className="font-bold text-3xl mb-6">내 관심 목록</h1>
@@ -106,26 +111,27 @@ const Preferences = () => {
       {likes.length > 0 ? (
         <div className="ml-3 mr-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {likes.map((like, index) => (
-            <CardList
-              key={`${like.id}-${index}`}
-              boardId={like.id}
-              title={like.title}
-              location={dongFromLocal(like.location)} // dongFromLocal 함수를 사용하여 '동' 이름 추출
-              memberPhoto={like.memberPhoto}
-              photoUrls={like.photoUrls}
-              memberNickName={like.memberNickName}
-              status={like.status}
-              category={like.category}
-              price={like.price}
-              priceType={like.priceType}
-              startTime={like.startTime}
-              endTime={like.endTime}
-              initialLiked={true}
-              likeCount={like.likeCount}
-              loginUserId={id}
-              initialLikeCount={like.likeCount}
-              onLikeChange={handleLikeChange}
-            />
+            <div onClick={() => handleCardClick(like.id)} key={`${like.id}-${index}`}>
+              <CardList
+                boardId={like.id}
+                title={like.title}
+                location={dongFromLocal(like.location)}
+                memberPhoto={like.memberPhoto}
+                photoUrls={like.photoUrls}
+                memberNickName={like.memberNickName}
+                status={like.status}
+                category={like.category}
+                price={like.price}
+                priceType={like.priceType}
+                startTime={like.startTime}
+                endTime={like.endTime}
+                initialLiked={true}
+                likeCount={like.likeCount}
+                loginUserId={id}
+                initialLikeCount={like.likeCount}
+                onLikeChange={handleLikeChange}
+              />
+            </div>
           ))}
         </div>
       ) : (
@@ -137,5 +143,4 @@ const Preferences = () => {
     </div>
   );
 };
-
 export default Preferences;

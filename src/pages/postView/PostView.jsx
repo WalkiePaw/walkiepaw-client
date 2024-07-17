@@ -10,6 +10,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // Carousel 스�
 import { useSelector } from "react-redux";
 import { createChatroom } from "../../Api.jsx";
 import { toast } from "react-toastify";
+import DashboardReview from "../dashboard/DashboardReview.jsx";
 
 const PostView = () => {
   const { postId } = useParams(); // URL에서 postId 파라미터를 가져옴
@@ -27,7 +28,7 @@ const PostView = () => {
   ); // 가격 협의 상태
   const [photoUrls, setPhotoUrls] = useState([]); // 사진을 빈배열로 셋팅
   const { user, isLoggedIn } = useSelector((state) => state.auth);
-
+  const [memberId, setMemberId] = useState(null);
   const [memberPhoto, setMemberPhoto] = useState(null);
 
   useEffect(() => {
@@ -43,6 +44,7 @@ const PostView = () => {
         setDetailedLocation(postData?.detailedLocation);
         setPhotoUrls(postData?.photoUrls || []);
         setMemberPhoto(postData?.memberPhoto);
+        setMemberId(postData?.memberId); // 회원 ID 설정
       } catch (error) {
         console.error("게시글을 가져오는 중 오류 발생", error);
       }
@@ -242,23 +244,27 @@ const PostView = () => {
           </div>
         )}
         <div className="post-header">
-        <NavLink
-          to={{
-            pathname: "/dashboard",
-            search: `?nickname=${encodeURIComponent(post.memberNickName)}`,
-          }}
-        >
-          <div className="author-info">
-            <img
-              src={memberPhoto || "/src/assets/default_user.png"}
-              alt="Author"
-              className="author-image"
-            />
-            <div className="author-details">
-              <span className="author-name">{post.memberNickName}</span>
+          <NavLink
+            to={{
+              pathname: "/dashboard",
+              search: `?nickname=${encodeURIComponent(post.memberNickName)}&memberId=${post.memberId}`,
+            }}
+            state={{ id: post.memberId }} // 회원 ID를 state로 전달
+          >
+            {console.log("Sending memberId:", post.memberId)}
+            <div className="author-info">
+              <img
+                src={memberPhoto || "/src/assets/default_user.png"}
+                alt="Author"
+                className="author-image"
+              />
+              <div className="author-details">
+                <span className="author-name">{post.memberNickName}</span>
+              </div>
             </div>
-          </div>
-        </NavLink>
+          </NavLink>
+          {post.memberId && <DashboardReview id={post.memberId} />}
+
           <div className="rating">
             <img src={pawpaw} alt="Rating" className="Rating-photoUrls" /> 5.0{" "}
             {/* 서버에서 평균값을 받아서 출력해야함 */}

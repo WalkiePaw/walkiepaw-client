@@ -5,26 +5,34 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 // axios 임포트
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
-
-const PostList = ( {postCount} ) => {
+const PostList = ( ) => {
   const [activeTab, setActiveTab] = useState('JOB_SEARCH');
   const [posts, setPosts] = useState([]);
   const [visiblePosts, setVisiblePosts] = useState(); // 처음 보일 게시글 수
   const [showNoMorePosts, setShowNoMorePosts] = useState(false);
   const MySwal = withReactContent(Swal);
-  const memberId = 1;
+  const location = useLocation();
+  const memberId = location.state?.memberId;
+
+  console.log("memberId from URL:", memberId); // 디버깅을 위한 로그
+
 
   const CATEGORY_JOB_SEARCH = 'JOB_SEARCH';
   const CATEGORY_JOB_OPENING = 'JOB_OPENING';
 
   useEffect(() => {
-    setVisiblePosts(5); // 탭 변경 시 보이는 게시글 수 초기화
-    setShowNoMorePosts(false);
-    fetchPosts(activeTab);
-  }, [activeTab]);
+    if (memberId) { // memberId가 있을 때만 게시글 불러오기
+      setVisiblePosts(5);
+      setShowNoMorePosts(false);
+      fetchPosts(activeTab);
+    }
+  }, [activeTab, memberId]);
+
 
   const fetchPosts = async (category) => {
+    if (!memberId) return; // memberId가 없으면 함수 종료
     try {
       const response = await axios.get(
         `http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}?page=0&size=100`

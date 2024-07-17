@@ -70,6 +70,7 @@ const AuthButton = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const userRole = useSelector(state => state.auth.user?.authorities);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -116,18 +117,23 @@ const AuthButton = () => {
               <AnimatePresence>
                 {isOpen && (
                     <DropdownMenu
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                    >
-                      <MenuItem onClick={() => { navigate('/mypage/settings'); setIsOpen(false); }}>
-                        마이페이지
-                      </MenuItem>
-                      <MenuItem onClick={handleLogout}>
-                        로그아웃
-                      </MenuItem>
-                    </DropdownMenu>
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                >
+                  <MenuItem onClick={() => { navigate('/mypage/settings'); setIsOpen(false); }}>
+                    마이페이지
+                  </MenuItem>
+                  {userRole === 'ADMIN' && (
+                    <MenuItem onClick={() => { navigate('/admin'); setIsOpen(false); }}>
+                      관리자 페이지
+                    </MenuItem>
+                  )}
+                  <MenuItem onClick={handleLogout}>
+                    로그아웃
+                  </MenuItem>
+                </DropdownMenu>
                 )}
               </AnimatePresence>
             </>

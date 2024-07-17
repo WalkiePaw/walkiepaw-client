@@ -10,19 +10,29 @@ import formatTime from "../util/formatTime";
 const CSManagement = () => {
   const [qnaList, setQnaList] = useState([]);
   const [selectedQna, setSelectedQna] = useState(null);
-  // const [replyContent, setReplyContent] = useState("");
   const [unresolvedOnly, setUnresolvedOnly] = useState(true); // 처리되지 않은 항목만 보기 여부
+  const [status, setStatus] = useState("UNRESOLVED");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     fetchQnaList();
-  }, []);
+  }, [status, currentPage, pageSize]);
 
   // 목록 불러오기
   const fetchQnaList = () => {
     axios
-      .get("http://localhost:8080/api/v1/qna")
+      .get("http://localhost:8080/api/v1/qna/list", {
+        params: {
+          status: status,
+          page: currentPage,
+          size: pageSize,
+        },
+      })
       .then((response) => {
-        setQnaList(response.data);
+        setQnaList(response.data.content);
+        setTotalPages(response.data.totalPages);
       })
       .catch((error) => {
         console.error("Error fetching Q&A list:", error);
@@ -113,79 +123,116 @@ const CSManagement = () => {
 
   // 필터링된 목록만 불러오기 (미처리)
   const filteredQnaList = unresolvedOnly
-  ? qnaList.filter((qna) => qna.status === "WAITING")
-  : qnaList;
+    ? qnaList.filter((qna) => qna.status === "WAITING")
+    : qnaList;
+
+  const handleStatusChange = (newStatus) => {
+    setStatus(newStatus);
+    setCurrentPage(0);
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-7">1:1 문의 내역 관리</h1>
-      <div>
-          <label className="ml-3">
-            <input 
-              type="checkbox"
-              checked={unresolvedOnly}
-              onChange={() => setUnresolvedOnly(!unresolvedOnly)}
-              className="mr-1"
-            />
-            처리되지 않은 항목만 보기
-          </label>
-        </div>
-        {filteredQnaList.length === 0 ? (
-        <p className="text-center text-gray-500">모든 항목에 대한 답변이 완료되었습니다.</p>
+      <div className="mb-4">
+        <select
+          value={status}
+          onChange={(e) => handleStatusChange(e.target.value)}
+          className="mr-4 p-2 border rounded"
+        >
+          <option value="UNRESOLVED">미처리</option>
+          <option value="RESOLVED">처리완료</option>
+          <option value="">전체</option>
+        </select>
+        <select
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
+          className="p-2 border rounded"
+        >
+          <option value={10}>10개씩 보기</option>
+          <option value={20}>20개씩 보기</option>
+          <option value={50}>50개씩 보기</option>
+        </select>
+      </div>
+      {qnaList.length === 0 ? (
+        <p className="text-center text-gray-500">표시할 항목이 없습니다.</p>
       ) : (
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              번호
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              회원 ID
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              회원명
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              제목
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              작성일
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              답변 여부
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              답변하기
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {filteredQnaList.map((qna, index) => (
-            <tr key={qna.qnaId}>
-              <td className="px-6 py-4 whitespace-nowrap">{qna.qnaId}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{qna.memberId}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{qna.writerName}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{qna.title}</td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                {formatTime(qna.createdDate)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                {qna.status === "WAITING" ? "미처리" : "답변완료"}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                {qna.status === "WAITING" && (
-                  <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    onClick={() => handleReply(qna)}
-                  >
-                    답변하기
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <>
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  번호
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  회원 ID
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  회원명
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  제목
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  작성일
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  답변 여부
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  답변하기
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredQnaList.map((qna, index) => (
+                <tr key={qna.qnaId}>
+                  <td className="px-6 py-4 whitespace-nowrap">{qna.qnaId}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {qna.memberId}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {qna.writerName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">{qna.title}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {formatTime(qna.createdDate)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {qna.status === "WAITING" ? "미처리" : "답변완료"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {qna.status === "WAITING" && (
+                      <button
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        onClick={() => handleReply(qna)}
+                      >
+                        답변하기
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="mt-4 flex justify-center">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => handlePageChange(i)}
+                className={`mx-1 px-3 py-1 border rounded ${
+                  currentPage === i ? "bg-blue-500 text-white" : ""
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

@@ -1,17 +1,13 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Navigate, Outlet } from 'react-router-dom';
 
 const ProtectedAdminRoute = () => {
-  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
-  const userRole = useSelector(state => state.auth.user?.role);
+  const user = useSelector(state => state.auth.user);
+  const isAdmin = user && (user.authorities === 'ADMIN' || (Array.isArray(user.authorities) && user.authorities.includes('ADMIN')));
 
-  if (!isLoggedIn) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (userRole !== 'ADMIN') {
-    return <Navigate to="/*" replace />;
+  if (!isAdmin) {
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;
