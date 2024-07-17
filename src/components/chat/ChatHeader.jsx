@@ -184,7 +184,7 @@ const ChatHeader = ({
   return (
       <HeaderContainer>
         <TitleContainer>
-          <MemberPhoto memberPhoto={memberPhoto} memberNickName={memberNickName} />
+          <MemberPhoto memberPhoto={memberPhoto} memberNickName={memberNickName} revieweeId={revieweeId} />
           <Icon icon={faPaw} />
           <TitleStatusContainer>
             <Title>{boardTitle || '채팅방'}</Title>
