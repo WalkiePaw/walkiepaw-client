@@ -26,7 +26,7 @@ const Root = styled.div`
 `;
 const HomeBoxWrapper = styled.div`
   width: 100%; /* Ensure HomeBoxWrapper spans full width */
-  background-color: ${(props) => props.bgColor};
+  background-color: ${(props) => props.bgcolor};
 
   @media (min-width: 768px) {
     padding: 20px; /* Adjust padding for larger screens */
@@ -135,7 +135,7 @@ const Home = () => {
   return (
     <Root>
       <GlobalStyle />
-      <HomeBoxWrapper bgColor="#e8c5a5">
+      <HomeBoxWrapper bgcolor="#e8c5a5">
         <HomeBoxContent>
           <TopBox>
             <TypingAnimation>
@@ -156,7 +156,7 @@ const Home = () => {
           <Image src="img/feeding.png" alt="homeImg" />
         </HomeBoxContent>
       </HomeBoxWrapper>
-      <HomeBoxWrapper bgColor="#f0e8e0">
+      <HomeBoxWrapper bgcolor="#f0e8e0">
         <HomeBoxContent>
           <Image src="img/walking2.png" alt="homeImg" />
           <TextBox>
@@ -174,7 +174,7 @@ const Home = () => {
           </TextBox>
         </HomeBoxContent>
       </HomeBoxWrapper>
-      <HomeBoxWrapper bgColor="#ebffed">
+      <HomeBoxWrapper bgcolor="#ebffed">
         <HomeBoxContent>
           <TextBox>
             <TypingAnimation>
