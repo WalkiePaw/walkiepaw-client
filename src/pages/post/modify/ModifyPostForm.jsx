@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./ModifyPostForm.css";
 import KakaoMap from "../../../modules/Kakao";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -153,18 +155,17 @@ const ModifyPostForm = () => {
 
     try {
       const response = await axios.patch(
-        `http://localhost:8080/api/v1/boards/${post.id}`,
-        modifiedPost,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          `http://localhost:8080/api/v1/boards/${post.id}`,
+          modifiedPost,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
         }
       );
 
       if (response?.status === 200 || response?.status === 204) {
-        alert("게시글이 수정되었습니다.");
-        // 카테고리 기반 경로 설정
+        toast.success("게시글이 수정되었습니다.");
         const categoryPath = category === "산책" ? "/recruit" : "/jobs";
         navigate(categoryPath);
       } else {
@@ -172,7 +173,7 @@ const ModifyPostForm = () => {
       }
     } catch (error) {
       console.error("Error", error);
-      alert("게시글 수정에 실패했습니다.");
+      toast.error("게시글 수정에 실패했습니다.");
     }
   };
 
@@ -194,6 +195,7 @@ const ModifyPostForm = () => {
 
   return (
     <div className="modify-post-container">
+      <ToastContainer position="top-center" autoClose={3000} />
       {/* 이미지 업로드 영역 */}
       <div className="image-upload">
         {/* 사진 올리기 버튼 */}
