@@ -59,7 +59,11 @@ const BoardList = () => {
 
       return posts.filter((post) => {
         const postDong = extractDong(post.location);
-        return userDong === postDong || selectedDongs.has(postDong);
+        return (
+          userDong === postDong ||
+          selectedDongs.has(postDong) ||
+          selectedDongs.size === 0
+        );
       });
     },
     [isLoggedIn, userAddresses]
@@ -83,17 +87,18 @@ const BoardList = () => {
 
   const fetchPosts = useCallback(
     async (isCategoryChange = false) => {
+      if (!category ) return;
+      if (!hasMore && !isCategoryChange) return;
+      setLoading(true);
       try {
-        if (!category || !hasMore) return;
-        setLoading(true);
-        const params = { page };
+        const params = new URLSearchParams();
+        params.append("page", isCategoryChange ? 0 : page);
+        if (loginUserId) params.append("memberId", loginUserId);
 
-        let getList = `http://localhost:8080/api/v1/boards/list/${category}`;
-        if (loginUserId) {
-          getList += `?memberId=${loginUserId}`;
-        }
-
-        const response = await axios.get(getList, { params });
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/boards/list/${category}`,
+          { params }
+        );
         const data = response?.data?.content ?? [];
 
         const filteredData = filterPostsByLocation(data);
@@ -104,7 +109,10 @@ const BoardList = () => {
           setPage(0);
         } else {
           setPosts((prevPosts) => [...prevPosts, ...filteredData.reverse()]);
-          setFilteredPosts((prevPosts) => [...prevPosts, ...filteredData.reverse()]);
+          setFilteredPosts((prevPosts) => [
+            ...prevPosts,
+            ...filteredData.reverse(),
+          ]);
           setPage((prevState) => prevState + 1);
         }
         setHasMore(!response.data.last);
@@ -131,12 +139,14 @@ const BoardList = () => {
     setSearchLoading(true);
     try {
       const params = new URLSearchParams();
-      if (loginUserId) params.append('memberId', loginUserId);
-      if (searchOption === 'title') params.append('title', searchKeyword);
-      if (searchOption === 'content') params.append('content', searchKeyword);
-      params.append('category', category);
+      if (loginUserId) params.append("memberId", loginUserId);
+      if (searchOption === "title") params.append("title", searchKeyword);
+      if (searchOption === "content") params.append("content", searchKeyword);
+      params.append("category", category);
 
-      const response = await axios.get(`http://localhost:8080/api/v1/boards/search?${params.toString()}`);
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/boards/search?${params.toString()}`
+      );
       const searchResults = response.data?.content;
 
       const filteredResults = filterPostsByLocation(searchResults).reverse();
@@ -149,18 +159,18 @@ const BoardList = () => {
       setHasMore(!response.data?.last);
 
       if (filteredResults.length === 0) {
-        Swal.fire ({
-          icon: 'info',
-          title: '검색 결과',
-          text: '검색 결과가 없습니다.',
+        Swal.fire({
+          icon: "info",
+          title: "검색 결과",
+          text: "검색 결과가 없습니다.",
         });
       }
     } catch (error) {
       console.error("검색 중 오류 발생:", error);
-      Swal.fire ({
-        icon: 'error',
-        title: '오류',
-        text: '검색 중 오류가 발생했습니다.',
+      Swal.fire({
+        icon: "error",
+        title: "오류",
+        text: "검색 중 오류가 발생했습니다.",
       });
     } finally {
       setSearchLoading(false);
@@ -168,9 +178,9 @@ const BoardList = () => {
   };
 
   const showError = (message) => {
-    Swal.fire ({
-      icon: 'error',
-      title: '오류',
+    Swal.fire({
+      icon: "error",
+      title: "오류",
       text: message,
     });
   };
@@ -235,19 +245,19 @@ const BoardList = () => {
       setSearchKeyword("");
       setSearchResultMessage("");
     }
-  }, [location.pathname, category]);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (category) {
-      setPage(0);
+      fetchPosts(true);
     }
   }, [category]);
 
   useEffect(() => {
     let observer;
-    if (ref.current) {
+    if (ref.current && hasMore && !loading) {
       const onIntersect = async ([entry], observer) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !loading) {
           await fetchPosts();
         }
       };
@@ -255,7 +265,7 @@ const BoardList = () => {
       observer.observe(ref.current);
     }
     return () => observer && observer.disconnect();
-  }, [category, page, fetchPosts]);
+  }, [hasMore, fetchPosts, loading]);
 
   // 렌더링 로직
   let pageTitle;
@@ -290,8 +300,7 @@ const BoardList = () => {
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
           />
-          <button onClick={handleSearch} disabled={searchLoading}>
-          </button>
+          <button onClick={handleSearch} disabled={searchLoading}></button>
         </div>
       </div>
       <div
