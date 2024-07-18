@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import "./PostReportModal.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 const ReportModal = ({ onClose, boardId, onSubmit }) => {
   const [showReasons, setShowReasons] = useState(false); // 신고 이유 선택 여부를 관리
@@ -54,11 +55,20 @@ const ReportModal = ({ onClose, boardId, onSubmit }) => {
       );
 
       if (response.status === 201) {
-        alert("신고가 정상적으로 접수되었습니다.");
+        await Swal.fire({
+          icon: "success",
+          title: "신고가 정상적으로 접수되었습니다.",
+          timer: 2000, // Automatically close after 2 seconds
+          showConfirmButton: false,
+        });
       }
     } catch (error) {
       console.error("신고 요청 실패", error);
-      alert("신고 요청에 실패했습니다.");
+      await Swal.fire({
+        icon: "error",
+        title: "신고 요청에 실패했습니다.",
+        text: "다시 시도해주세요.",
+      });
     }
 
     onSubmit(reasonMap[selectedReason]); // 부모 컴포넌트에 신고 이유를 전달
