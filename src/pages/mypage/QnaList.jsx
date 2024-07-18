@@ -14,7 +14,7 @@ const QnaList = () => {
       if (id) {
         try {
           const response = await axios.get(
-            `http://localhost:8080/api/v1/qna/${id}/list`
+            `http://57.180.244.228:8000/api/v1/qna/${id}/list`
           );
           setQnaList(response.data);
         } catch (error) {
@@ -39,7 +39,7 @@ const QnaList = () => {
   const handleViewReply = async (qnaId) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/qna/${qnaId}`
+        `http://57.180.244.228:8000/api/v1/qna/${qnaId}`
       );
       const qna = response.data;
       Swal.fire({

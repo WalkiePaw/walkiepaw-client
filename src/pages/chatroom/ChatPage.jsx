@@ -137,7 +137,7 @@ const ChatPage = () => {
   const fetchMessages = useCallback(async () => {
     if (!chatroomId || !user) return;
     try {
-      const response = await axios.get(`http://localhost:8080/api/v1/chats?chatroomId=${chatroomId}`);
+      const response = await axios.get(`http://57.180.244.228:8000/api/v1/chats?chatroomId=${chatroomId}`);
       const formattedMessages = response.data.map(msg => ({
         id: msg.id,
         content: msg.content,

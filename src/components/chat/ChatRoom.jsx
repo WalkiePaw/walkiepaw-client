@@ -107,7 +107,7 @@ const ChatRoom = ({ onChatroomSelect, selectedChatroomId }) => {
 
   useEffect(() => {
     if (user && user.id) {
-      axios.get('http://localhost:8080/api/v1/chatrooms', {
+      axios.get('http://57.180.244.228:8000/api/v1/chatrooms', {
         params: { id: user.id }
       })
       .then(response => {

@@ -221,7 +221,7 @@ const Login = () => {
   };
 
   const handleSocialLogin = (provider) => {
-    const authUrl = `http://localhost:8080/oauth2/authorization/${provider}`;
+    const authUrl = `http://57.180.244.228:8000/oauth2/authorization/${provider}`;
     window.location.href = authUrl;
   };
 

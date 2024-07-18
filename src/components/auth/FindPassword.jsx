@@ -109,7 +109,7 @@ const FindPassword = ({ onClose }) => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/members/find-passwd', {
+      const response = await axios.post('http://57.180.244.228:8000/api/v1/members/find-passwd', {
         email: values.email,
         name: values.name
       });
@@ -132,7 +132,7 @@ const FindPassword = ({ onClose }) => {
 
   const handleVerificationSubmit = async (verificationCode) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/mail/authCheck', {
+      const response = await axios.post('http://57.180.244.228:8000/api/v1/mail/authCheck', {
         email: email,
         authNum: verificationCode
       });

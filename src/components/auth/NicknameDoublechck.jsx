@@ -39,7 +39,7 @@ const NicknameDoublecheck = ({ nickname, onCheckComplete }) => {
     }
 
     try {
-      const response = await axios.get('http://localhost:8080/api/v1/members/check-nickname', {
+      const response = await axios.get('http://57.180.244.228:8000/api/v1/members/check-nickname', {
         params: { nickname }
       });
 

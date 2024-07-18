@@ -152,7 +152,7 @@ const MemberList = () => {
 
   const fetchMembers = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/v1/members/search', {
+      const response = await axios.get('http://57.180.244.228:8000/api/v1/members/search', {
         params: {
           ...searchParams,
           page: currentPage,

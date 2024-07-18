@@ -181,12 +181,12 @@ const CardList = ({
     async (isLiked) => {
       try {
         if (isLiked) {
-          await axios.post(`http://localhost:8080/api/v1/boards-like`, {
+          await axios.post(`http://57.180.244.228:8000/api/v1/boards-like`, {
             loginUserId,
             boardId,
           });
         } else {
-          await axios.delete(`http://localhost:8080/api/v1/boards-like`, {
+          await axios.delete(`http://57.180.244.228:8000/api/v1/boards-like`, {
             data: { loginUserId, boardId },
           });
         }

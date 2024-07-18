@@ -12,7 +12,7 @@ const DashboardSidebar = ({ nickname }) => {
   useEffect(() => {
     console.log('nickname:', nickname);
     if (nickname) {
-      axios.get(`http://localhost:8080/api/v1/members/${encodeURIComponent(nickname)}/dashboard`)
+      axios.get(`http://57.180.244.228:8000/api/v1/members/${encodeURIComponent(nickname)}/dashboard`)
         .then(response => {
           setMemberData(response.data);
           setMemberId(response.data.memberId); // memberId로 변경

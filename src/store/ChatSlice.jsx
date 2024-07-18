@@ -8,7 +8,7 @@ let stompClient = null;
 export const connectWebSocket = createAsyncThunk(
     'chat/connectWebSocket',
     async (_, { dispatch }) => {
-      const socket = new SockJS('http://localhost:8080/ws');
+      const socket = new SockJS('http://57.180.244.228:8000/ws');
       stompClient = Stomp.over(() => socket);
 
       const token = localStorage.getItem('token');
@@ -113,7 +113,7 @@ export const updateChatroomStatus = createAsyncThunk(
     async ({ chatroomId, status }, { rejectWithValue }) => {
       try {
         const token = localStorage.getItem('token');
-        await axios.patch('http://localhost:8080/api/v1/chatrooms/change-status', {
+        await axios.patch('http://57.180.244.228:8000/api/v1/chatrooms/change-status', {
           chatroomId,
           status
         }, {

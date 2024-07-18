@@ -94,7 +94,7 @@ const UpdatePassword = ({ visible, onCancel, memberId, onPasswordChanged }) => {
       const values = await form.validateFields();
       setLoading(true);
 
-      const response = await axios.patch(`http://localhost:8080/api/v1/members/${memberId}/passwordUpdate`, {
+      const response = await axios.patch(`http://57.180.244.228:8000/api/v1/members/${memberId}/passwordUpdate`, {
         password: values.password
       });
 

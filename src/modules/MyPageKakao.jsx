@@ -148,7 +148,7 @@ const MyPageKakaoMap = ({ setLocation, id}) => {
     const fetchSelectedAddresses = async () => {
       try {
         // console.log('주소 데이터 요청 시작');
-        const response = await axios.get(`http://localhost:8080/api/v1/members/${id}/addresses`);
+        const response = await axios.get(`http://57.180.244.228:8000/api/v1/members/${id}/addresses`);
         // console.log('받은 응답:', response);
         
         // console.log('response.data:', response.data);
@@ -438,7 +438,7 @@ const MyPageKakaoMap = ({ setLocation, id}) => {
   try {
     // 선택된 주소들을 문자열로 변환
     const addressesString = selectedPlaces.join(',');
-    await axios.patch(`http://localhost:8080/api/v1/members/${id}/selected-addresses`, {
+    await axios.patch(`http://57.180.244.228:8000/api/v1/members/${id}/selected-addresses`, {
       selectedAddresses: addressesString
     });
     Swal.fire('성공', '선택한 장소가 저장되었습니다.', 'success');

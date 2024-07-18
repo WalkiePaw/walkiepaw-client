@@ -45,7 +45,7 @@ const ReportModal = ({ onClose, boardId, onSubmit }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/v1/boardReports",
+        "http://57.180.244.228:8000/api/v1/boardReports",
         {
           boardId: boardId,
           reason: reasonMap[selectedReason], // 신고 이유

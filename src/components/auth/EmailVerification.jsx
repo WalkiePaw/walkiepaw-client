@@ -40,7 +40,7 @@ const EmailVerificationButton = ({ newEmail, children }) => {
     setIsLoading(true);
 
     try {
-      await axios.post(`http://localhost:8080/api/v1/mail/send`, {
+      await axios.post(`http://57.180.244.228:8000/api/v1/mail/send`, {
         email: newEmail,
       });
       setIsEmailVerificationSent(true);
@@ -60,7 +60,7 @@ const EmailVerificationButton = ({ newEmail, children }) => {
 
   const handleVerificationSubmit = async (verificationCode) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/mail/authCheck', {
+      const response = await axios.post('http://57.180.244.228:8000/api/v1/mail/authCheck', {
         email: newEmail,
         authNum: verificationCode
       });

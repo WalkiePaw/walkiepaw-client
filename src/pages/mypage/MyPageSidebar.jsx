@@ -20,7 +20,7 @@ import axios from "axios";
     useEffect(() => {
       if (id) {  // id가 존재할 때만 API 호출
         axios
-        .get(`http://localhost:8080/api/v1/members/${id}`)
+        .get(`http://57.180.244.228:8000/api/v1/members/${id}`)
         .then((response) => {
           setMemberData(response.data);
           if (response.data.photo) {
@@ -34,7 +34,7 @@ import axios from "axios";
         });
 
         axios
-        .get(`http://localhost:8080/api/v1/members/${id}/score`)
+        .get(`http://57.180.244.228:8000/api/v1/members/${id}/score`)
         .then((response) => {
           console.log('Score:', response.data);
           setScore(response.data.score);
@@ -44,7 +44,7 @@ import axios from "axios";
         });
 
         axios
-        .get(`http://localhost:8080/api/v1/members/${id}/RRCount`)
+        .get(`http://57.180.244.228:8000/api/v1/members/${id}/RRCount`)
         .then((response) => {
           console.log('Counts:', response.data);
           setCounts(response.data);
