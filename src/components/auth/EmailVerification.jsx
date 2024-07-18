@@ -61,7 +61,7 @@ const EmailVerificationButton = ({ newEmail, children }) => {
     try {
       const response = await verifyAuthCode(newEmail, verificationCode);
 
-      if (response.data.success) { // 서버 응답 구조에 따라 수정 필요
+      if (response.data.result === 'Success') { // 서버 응답 구조에 따라 수정 필요
         setIsModalVisible(false);
         setIsEmailVerified(true);
         toast.success("이메일 인증이 완료되었습니다");

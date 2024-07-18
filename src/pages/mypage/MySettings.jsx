@@ -20,7 +20,7 @@ const MySettings = () => {
     // 초기 데이터 로딩
     const fetchAddresses = async () => {
       try {
-        const response = await axios.get(`http://57.180.244.228:8000/api/v1/members/${id}/addresses`);
+        const response = await axios.get(`http://localhost:8080/api/v1/members/${id}/addresses`);
         if (response.data && response.data.selectedAddresses) {
           setSelectedPlaces(response.data.selectedAddresses);
           dispatch(setSelectedPlacesAction(response.data.selectedAddresses));

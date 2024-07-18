@@ -132,7 +132,7 @@ const FindPassword = ({ onClose }) => {
     try {
       const response = await verifyAuthCode(email, verificationCode);
 
-      if (response.status === 200) {
+      if (response.data.result === 'Success') {
         setIsModalVisible(false);
         setMemberId(response.data.memberId);
         setIsNewPasswordModalVisible(true);

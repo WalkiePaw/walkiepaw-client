@@ -37,7 +37,7 @@ export const handleChangePassword = async (id) => {
       // 입력 받은 값들을 yup 스키마로 유효성 검사
       await passwordSchema.validate(formValues, { abortEarly: false });
       // 비밀번호 변경 API 호출
-      const response = await axios.patch(`http://57.180.244.228:8000/api/v1/members/${id}/passwordUpdate`, {
+      const response = await axios.patch(`http://localhost:8080/api/v1/members/${id}/passwordUpdate`, {
         password: formValues.password
       });
       // 유효성 검사 통과 시 SweetAlert2로 성공 메시지 표시

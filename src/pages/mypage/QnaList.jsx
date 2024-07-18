@@ -14,7 +14,7 @@ const QnaList = () => {
       if (id) {
         try {
           const response = await axios.get(
-            `http://57.180.244.228:8000/api/v1/qna/${id}/list`
+            `http://localhost:8080/api/v1/qna/${id}/list`
           );
           console.log("API response:", response.data); // 응답 데이터 로그
 
@@ -41,7 +41,7 @@ const QnaList = () => {
   const handleViewReply = async (qnaId) => {
     try {
       const response = await axios.get(
-        `http://57.180.244.228:8000/api/v1/qna/${qnaId}`
+        `http://localhost:8080/api/v1/qna/${qnaId}`
       );
       const qna = response.data;
       Swal.fire({

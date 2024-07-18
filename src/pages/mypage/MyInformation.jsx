@@ -102,7 +102,7 @@ const MyInformation = () => {
         // 기타 필요한 정보들도 동일하게 추가
       };
 
-        axios.patch(`http://57.180.244.228:8000/api/v1/members/${id}`, updatedData)
+        axios.patch(`http://localhost:8080/api/v1/members/${id}`, updatedData)
         .then(response => {
           console.log('User information updated successfully:', response.data);
           // 저장 후 필요한 작업 추가
@@ -116,7 +116,7 @@ const MyInformation = () => {
   const onSubmit = async (data) => {
     if (id) {
       try {
-        await axios.patch(`http://57.180.244.228:8000/api/v1/members/${id}`, data);
+        await axios.patch(`http://localhost:8080/api/v1/members/${id}`, data);
         MySwal.fire({
           title: "회원 정보를 저장했습니다",
           icon: "success",

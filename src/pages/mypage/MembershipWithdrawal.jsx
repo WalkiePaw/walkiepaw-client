@@ -47,7 +47,7 @@ const MembershipWithdrawal = () => {
           }
 
           // 회원 상태를 WITHDRAWN으로 업데이트하는 API 호출
-          await axios.patch(`http://57.180.244.228:8000/api/v1/members/${id}`, {
+          await axios.patch(`http://localhost:8080/api/v1/members/${id}`, {
             status: "WITHDRAWN"
           });
 

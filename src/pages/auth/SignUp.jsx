@@ -9,8 +9,9 @@ import EmailVerificationButton from '../../components/auth/EmailVerification.jsx
 import React, { useState, useEffect } from "react";
 import BirthDatePicker from '../../components/BirthDatePicker.jsx';
 import NicknameDoublecheck from "../../components/auth/NicknameDoublechck.jsx";
-import { signUpApi, socialSignUpApi } from '../../Api.jsx';
+import {signUpApi, socialSignUpApi, verifyAuthCode} from '../../Api.jsx';
 import {Modal} from "antd";
+import {toast} from "react-toastify";
 
 const Label = styled.label`
   margin-bottom: 0.1rem;
@@ -103,22 +104,41 @@ const SignUp = () => {
     }
   }, [location.state, setValue]);
 
+  const handleVerificationSubmit = async (verificationCode) => {
+    try {
+      const response = await verifyAuthCode(watch('email'), verificationCode);
+
+      console.log('서버 응답:', response); // 응답 전체를 로깅
+
+      if (response.status === 200 && response.data) {
+        if (response.data.result === "Success") {
+          setIsEmailVerified(true);
+          toast.success("이메일 인증이 완료되었습니다");
+          handleEmailVerificationComplete(true);
+          trigger('email');
+        } else {
+          throw new Error("인증 실패");
+        }
+      } else {
+        throw new Error("서버 응답 오류");
+      }
+    } catch (error) {
+      console.error('이메일 인증 확인 중 오류 발생:', error);
+      toast.error(`이메일 인증에 실패했습니다. 인증 코드를 다시 확인해주세요.`);
+      handleEmailVerificationComplete(false);
+    }
+  };
+
+
   const handleEmailVerificationComplete = (verified) => {
     setIsEmailVerified(verified);
     if (verified) {
       clearErrors('email');
+      setValue('email', watch('email'), { shouldValidate: true });
     }
   };
 
   const submitSignUp = async (data) => {
-    if (!isEmailVerified && !isSocialSignUp) {
-      Modal.error({
-        title: '이메일 인증 필요',
-        content: '회원가입을 완료하려면 이메일 인증이 필요합니다.',
-      });
-      return;
-    }
-
     try {
       const formattedPhoneNumber = data.phoneNumber.replace(/-/g, '');
 
@@ -212,16 +232,18 @@ const SignUp = () => {
                 placeholder="이메일"
                 readOnly={isSocialSignUp}
                 {...register('email', {
-                  required: '이메일은 필수 입력 사항입니다.',
-                  validate: () => isEmailVerified || isSocialSignUp || '이메일 인증이 필요합니다.'
+                  required: '이메일은 필수 입력 사항입니다.'
+                  // 이메일 인증 관련 validate 함수 제거
                 })}
             />
             {!isSocialSignUp && (
                 <EmailVerificationButton
                     newEmail={watch('email')}
                     onVerificationComplete={handleEmailVerificationComplete}
+                    onSubmit={handleVerificationSubmit}
+                    isVerified={isEmailVerified}
                 >
-                  인증하기
+                  {isEmailVerified ? '인증 완료' : '인증하기'}
                 </EmailVerificationButton>
             )}
           </InputGroup>

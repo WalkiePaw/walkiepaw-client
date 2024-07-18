@@ -21,7 +21,7 @@ const Preferences = () => {
   const fetchLikes = async () => {
     try {
       const response = await axios.get(
-          `http://57.180.244.228:8000/api/v1/boards-like/${id}?page=0`
+          `http://localhost:8080/api/v1/boards-like/${id}?page=0`
       );
       setLikes(response.data.content);
       console.log('서버 응답: ', response.data);
@@ -72,12 +72,12 @@ const Preferences = () => {
         ([boardId, isLiked]) => {
           boardId = Number(boardId);
           if (isLiked) {
-            return axios.post(`http://57.180.244.228:8000/api/v1/boards-like`, {
+            return axios.post(`http://localhost:8080/api/v1/boards-like`, {
               loginUserId: id,
               boardId,
             });
           } else {
-            return axios.delete(`http://57.180.244.228:8000/api/v1/boards-like`, {
+            return axios.delete(`http://localhost:8080/api/v1/boards-like`, {
               data: { loginUserId: id, boardId },
             });
           }

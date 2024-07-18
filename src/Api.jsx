@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const Api = axios.create({
-  baseURL: '', // 실제 API 서버 주소로 변경하세요
+  baseURL: 'http://localhost:8080', // 실제 API 서버 주소로 변경하세요
 });
 
 Api.interceptors.request.use(
