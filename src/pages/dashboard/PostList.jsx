@@ -36,7 +36,7 @@ const PostList = ( ) => {
     if (!memberId) return; // memberId가 없으면 함수 종료
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}?page=0&size=100`
+        `http://57.180.244.228:8000/api/v1/boards/mypage/${memberId}/${category}?page=0&size=100`
       );
       const newPosts = response.data.content;
       setPosts(newPosts);

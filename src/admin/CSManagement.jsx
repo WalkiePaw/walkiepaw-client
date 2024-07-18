@@ -23,7 +23,7 @@ const CSManagement = () => {
   // 목록 불러오기
   const fetchQnaList = () => {
     axios
-      .get("http://localhost:8080/api/v1/qna/list", {
+      .get("http://57.180.244.228:8000/api/v1/qna/list", {
         params: {
           status: status,
           page: currentPage,
@@ -45,7 +45,7 @@ const CSManagement = () => {
     console.log(qna);
 
     axios
-      .get(`http://localhost:8080/api/v1/qna/${qna.qnaId}`)
+      .get(`http://57.180.244.228:8000/api/v1/qna/${qna.qnaId}`)
       .then((response) => {
         const qnaDetails = response.data;
         Swal.fire({
@@ -100,7 +100,7 @@ const CSManagement = () => {
     }
 
     axios
-      .patch(`http://localhost:8080/api/v1/qna/${selectedQna.qnaId}/reply`, {
+      .patch(`http://57.180.244.228:8000/api/v1/qna/${selectedQna.qnaId}/reply`, {
         reply,
       })
       .then((response) => {

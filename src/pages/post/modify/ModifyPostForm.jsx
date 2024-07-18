@@ -105,7 +105,7 @@ const ModifyPostForm = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/v1/uploads`,
+        `http://57.180.244.228:8000/api/v1/uploads`,
         formData,
         {
           headers: {
@@ -153,7 +153,7 @@ const ModifyPostForm = () => {
 
     try {
       const response = await axios.patch(
-        `http://localhost:8080/api/v1/boards/${post.id}`,
+        `http://57.180.244.228:8000/api/v1/boards/${post.id}`,
         modifiedPost,
         {
           headers: {

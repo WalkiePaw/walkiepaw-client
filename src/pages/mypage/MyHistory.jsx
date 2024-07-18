@@ -28,7 +28,7 @@ const MyHistory = () => {
 
   const fetchPosts = async (category) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${id}/${category}`);
+      const response = await axios.get(`http://57.180.244.228:8000/api/v1/boards/mypage/${id}/${category}`);
       setPosts(response.data.content);
     } catch (error) {
       console.error('Failed to fetch posts', error);
@@ -56,7 +56,7 @@ const MyHistory = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:8080/api/v1/boards/${id}`);
+          await axios.delete(`http://57.180.244.228:8000/api/v1/boards/${id}`);
           setPosts(posts.filter((post) => post.id !== id));
           MySwal.fire({
             title: '삭제 완료',

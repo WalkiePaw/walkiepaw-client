@@ -44,7 +44,7 @@ const Introduction = ( {nickname} ) => {
     console.log("Introduction nickname:", nickname); // 디버깅용 로그
 
     if (nickname) {
-      axios.get(`http://localhost:8080/api/v1/members/${encodeURIComponent(nickname)}/dashboard`)
+      axios.get(`http://57.180.244.228:8000/api/v1/members/${encodeURIComponent(nickname)}/dashboard`)
         .then(response => {
           setMemberData(response.data);
         })

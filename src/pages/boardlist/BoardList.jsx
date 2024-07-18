@@ -73,7 +73,7 @@ const BoardList = () => {
     if (!loginUserId) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/members/${loginUserId}/addresses`
+        `http://57.180.244.228:8000/api/v1/members/${loginUserId}/addresses`
       );
       setUserAddresses({
         memberAddress: response.data?.memberAddress || "",
@@ -96,7 +96,7 @@ const BoardList = () => {
         if (loginUserId) params.append("memberId", loginUserId);
 
         const response = await axios.get(
-          `http://localhost:8080/api/v1/boards/list/${category}`,
+          `http://57.180.244.228:8000/api/v1/boards/list/${category}`,
           { params }
         );
         const data = response?.data?.content ?? [];
@@ -145,7 +145,7 @@ const BoardList = () => {
       params.append("category", category);
 
       const response = await axios.get(
-        `http://localhost:8080/api/v1/boards/search?${params.toString()}`
+        `http://57.180.244.228:8000/api/v1/boards/search?${params.toString()}`
       );
       const searchResults = response.data?.content;
 

@@ -119,7 +119,7 @@ const FindEmail = ({ onClose }) => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/members/find-email', {
+      const response = await axios.post('http://57.180.244.228:8000/api/v1/members/find-email', {
         name: values.name,
         phoneNumber: values.phoneNumber.replace(/-/g, '')
       });

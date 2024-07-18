@@ -22,7 +22,7 @@ const Review = ({ reviewCount }) => {
   // 모든 리뷰 데이터 가져오기
   const fetchReviews = (category) => {
     axios
-      .get(`http://localhost:8080/api/v1/reviews/${id}/reviewee`, {
+      .get(`http://57.180.244.228:8000/api/v1/reviews/${id}/reviewee`, {
         params: {
           page: 0,
           category: activeTab,

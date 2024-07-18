@@ -34,7 +34,7 @@ const PostView = () => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/v1/boards/${postId}`
+          `http://57.180.244.228:8000/api/v1/boards/${postId}`
         );
         const postData = response?.data;
         setPost(postData);
@@ -66,7 +66,7 @@ const PostView = () => {
     try {
       console.log(`게시글 상태 변경 확인!?!: ${newStatus}`);
       await axios.patch(
-        `http://localhost:8080/api/v1/boards/status/${postId}`,
+        `http://57.180.244.228:8000/api/v1/boards/status/${postId}`,
         {
           boardId: postId,
           status: newStatus,
@@ -74,7 +74,7 @@ const PostView = () => {
       );
       if (user?.nickname !== post.memberNickName) {
         const response = await axios.get(
-          `http://localhost:8080/api/v1/boards/${postId}`
+          `http://57.180.244.228:8000/api/v1/boards/${postId}`
         );
         const updatePostData = response?.data || [];
         console.log("상태 변경 됐니?!", response);
@@ -112,7 +112,7 @@ const PostView = () => {
     if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
       try {
         const response = await axios.delete(
-          `http://localhost:8080/api/v1/boards/${postId}`
+          `http://57.180.244.228:8000/api/v1/boards/${postId}`
         );
         console.log("삭제 응답", response);
         alert("게시글이 삭제되었습니다.");

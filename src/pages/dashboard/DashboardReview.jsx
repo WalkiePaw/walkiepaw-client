@@ -30,7 +30,7 @@ const DashboardReview = () => {
     console.log("Fetching reviews with id:", id);
 
     axios
-      .get(`http://localhost:8080/api/v1/reviews/${id}/reviewee`, {
+      .get(`http://57.180.244.228:8000/api/v1/reviews/${id}/reviewee`, {
         params: {
           page: 0,
           category: activeTab,

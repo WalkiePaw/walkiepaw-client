@@ -33,8 +33,8 @@ const ReportManagement = () => {
     try {
       const endpoint =
         reportType === "board"
-          ? "http://localhost:8080/api/v1/boardReports/list"
-          : "http://localhost:8080/api/v1/memberReports/list";
+          ? "http://57.180.244.228:8000/api/v1/boardReports/list"
+          : "http://57.180.244.228:8000/api/v1/memberReports/list";
       const params = {
         page: currentPage,
         size: pageSize,
@@ -74,7 +74,7 @@ const ReportManagement = () => {
             : action === "ignore"
             ? "ignore"
             : "UNRESOLVED";
-        endpoint = `http://localhost:8080/api/v1/boardReports/${reportId}/${status}`;
+        endpoint = `http://57.180.244.228:8000/api/v1/boardReports/${reportId}/${status}`;
       } else if (reportType === "member") {
         status =
           action === "ban"
@@ -82,7 +82,7 @@ const ReportManagement = () => {
             : action === "ignore"
             ? "ignore"
             : "UNRESOLVED";
-        endpoint = `http://localhost:8080/api/v1/memberReports/${reportId}/${status}`;
+        endpoint = `http://57.180.244.228:8000/api/v1/memberReports/${reportId}/${status}`;
       }
 
       // 현재 상태와 새로운 상태가 다를 때만 API 호출
@@ -129,8 +129,8 @@ const ReportManagement = () => {
     try {
       const endpoint =
         reportType === "board"
-          ? `http://localhost:8080/api/v1/boardReports/${id}`
-          : `http://localhost:8080/api/v1/memberReports/${id}`;
+          ? `http://57.180.244.228:8000/api/v1/boardReports/${id}`
+          : `http://57.180.244.228:8000/api/v1/memberReports/${id}`;
       const response = await axios.get(endpoint);
       return response.data.content;
     } catch (error) {

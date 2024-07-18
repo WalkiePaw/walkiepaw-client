@@ -18,7 +18,7 @@ const MyTransaction = () => {
     if (!id) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/chatrooms/${id}/transaction`,
+        `http://57.180.244.228:8000/api/v1/chatrooms/${id}/transaction`,
         {
           params: {
             page: page,
@@ -81,7 +81,7 @@ const MyTransaction = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/v1/reviews",
+        "http://57.180.244.228:8000/api/v1/reviews",
         reviewSaveRequest
       );
 

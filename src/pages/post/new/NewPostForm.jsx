@@ -58,7 +58,7 @@ const NewPostForm = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/v1/uploads`,
+        `http://57.180.244.228:8000/api/v1/uploads`,
         formData,
         {
           headers: {
@@ -124,7 +124,7 @@ const NewPostForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/v1/boards",
+        "http://localhost:/api/v1/boards",
         newPost,
         {
           headers: {
