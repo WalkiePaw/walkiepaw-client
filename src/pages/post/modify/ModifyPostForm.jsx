@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./ModifyPostForm.css";
 import KakaoMap from "../../../modules/Kakao";
@@ -195,7 +195,6 @@ const ModifyPostForm = () => {
 
   return (
     <div className="modify-post-container">
-      <ToastContainer position="top-center" autoClose={3000} />
       {/* 이미지 업로드 영역 */}
       <div className="image-upload">
         {/* 사진 올리기 버튼 */}
