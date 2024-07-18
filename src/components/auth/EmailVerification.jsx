@@ -61,19 +61,21 @@ const EmailVerificationButton = ({ newEmail, children }) => {
     try {
       const response = await verifyAuthCode(newEmail, verificationCode);
 
-      if (response.status === 200) {
+      if (response.data.success) { // 서버 응답 구조에 따라 수정 필요
         setIsModalVisible(false);
         setIsEmailVerified(true);
         toast.success("이메일 인증이 완료되었습니다");
+      } else {
+        throw new Error(response.data.message || "인증 실패");
       }
     } catch (error) {
       console.error('이메일 인증 확인 중 오류 발생:', error);
       toast.error(
-          `이메일 인증에 실패했습니다.
-      인증 코드를 다시 확인해주세요.`
+          `이메일 인증에 실패했습니다. 인증 코드를 다시 확인해주세요.`
       );
     }
   };
+
 
   return (
       <>

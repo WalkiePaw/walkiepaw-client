@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const Api = axios.create({
-  baseURL: 'http://57.180.244.228:8000', // 실제 API 서버 주소로 변경하세요
+  baseURL: '', // 실제 API 서버 주소로 변경하세요
 });
 
 Api.interceptors.request.use(

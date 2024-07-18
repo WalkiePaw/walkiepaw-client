@@ -93,6 +93,7 @@ const SignUp = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isSocialSignUp = location.state?.isSocialSignUp || false;
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   useEffect(() => {
     if (location.state) {
@@ -102,8 +103,22 @@ const SignUp = () => {
     }
   }, [location.state, setValue]);
 
+  const handleEmailVerificationComplete = (verified) => {
+    setIsEmailVerified(verified);
+    if (verified) {
+      clearErrors('email');
+    }
+  };
 
   const submitSignUp = async (data) => {
+    if (!isEmailVerified && !isSocialSignUp) {
+      Modal.error({
+        title: '이메일 인증 필요',
+        content: '회원가입을 완료하려면 이메일 인증이 필요합니다.',
+      });
+      return;
+    }
+
     try {
       const formattedPhoneNumber = data.phoneNumber.replace(/-/g, '');
 
@@ -120,10 +135,8 @@ const SignUp = () => {
         response = await signUpApi(signUpData);
       }
 
-      console.log('회원가입 성공:', response.data);
       setIsSuccessModalVisible(true);
     } catch (error) {
-      console.error('회원가입 실패:', error.response?.data || error.message);
       Modal.error({
         title: '회원가입 실패',
         content: error.response?.data?.message || '회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.',
@@ -198,11 +211,15 @@ const SignUp = () => {
                 type="email"
                 placeholder="이메일"
                 readOnly={isSocialSignUp}
-                {...register('email', { required: '이메일은 필수 입력 사항입니다.' })}
+                {...register('email', {
+                  required: '이메일은 필수 입력 사항입니다.',
+                  validate: () => isEmailVerified || isSocialSignUp || '이메일 인증이 필요합니다.'
+                })}
             />
             {!isSocialSignUp && (
                 <EmailVerificationButton
                     newEmail={watch('email')}
+                    onVerificationComplete={handleEmailVerificationComplete}
                 >
                   인증하기
                 </EmailVerificationButton>
