@@ -99,12 +99,12 @@ const BoardList = () => {
         const filteredData = filterPostsByLocation(data);
 
         if (isCategoryChange) {
-          setPosts(filteredData);
-          setFilteredPosts(filteredData);
+          setPosts(filteredData.reverse());
+          setFilteredPosts(filteredData.reverse());
           setPage(0);
         } else {
-          setPosts((prevPosts) => [...prevPosts, ...filteredData]);
-          setFilteredPosts((prevPosts) => [...prevPosts, ...filteredData]);
+          setPosts((prevPosts) => [...prevPosts, ...filteredData.reverse()]);
+          setFilteredPosts((prevPosts) => [...prevPosts, ...filteredData.reverse()]);
           setPage((prevState) => prevState + 1);
         }
         setHasMore(!response.data.last);
@@ -139,7 +139,7 @@ const BoardList = () => {
       const response = await axios.get(`http://localhost:8080/api/v1/boards/search?${params.toString()}`);
       const searchResults = response.data?.content;
 
-      const filteredResults = filterPostsByLocation(searchResults);
+      const filteredResults = filterPostsByLocation(searchResults).reverse();
 
       console.log(filteredResults);
 
