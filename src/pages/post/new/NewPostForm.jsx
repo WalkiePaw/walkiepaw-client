@@ -124,7 +124,7 @@ const NewPostForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:/api/v1/boards",
+        "http://57.180.244.228:8000/api/v1/boards",
         newPost,
         {
           headers: {

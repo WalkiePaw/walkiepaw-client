@@ -21,7 +21,7 @@ const CustomerService = () => {
     event.preventDefault();
     if (id) {
       try {
-        const response = await axios.post("http://localhost:/api/v1/qna", {
+        const response = await axios.post("http://57.180.244.228:8000/api/v1/qna", {
           title,
           content,
           memberId: id, // context에서 가져온 id 사용
