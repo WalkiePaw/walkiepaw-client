@@ -14,6 +14,7 @@ import pawpaw from '../assets/pawpaw.png';
 import { loginSuccess, loginFailure, setLoading } from "../store/AuthSlice.jsx";
 import {loginApi} from "../Api.jsx";
 import styled from "styled-components";
+import UseSocialLogin from "../store/actions/UseSocailLogin.jsx";
 
 const StyledModal = styled(Modal)`
   .ant-modal-content {
@@ -94,10 +95,15 @@ const Login = () => {
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
 
   useEffect(() => {
-    const handleSocialLoginMessage = (event) => {
-      if (event.data.type === 'SOCIAL_LOGIN_SUCCESS') {
-        const data = event.data.data;
+    const params = new URLSearchParams(location.search);
+    const socialLoginData = params.get('socialLoginData');
+
+    if (socialLoginData) {
+      try {
+        const data = JSON.parse(decodeURIComponent(socialLoginData));
+        console.log("Parsed social login data:", data);
         if (data['account status'] === 'New Account') {
+          console.log("Navigating to signup");
           navigate('/signup', {
             state: {
               name: data.name,
@@ -105,19 +111,17 @@ const Login = () => {
               isSocialSignUp: true
             }
           });
-        } else {
+        } else if (data['account status'] === 'Existing Account') {
+          console.log("Logging in existing account");
           dispatch(loginSuccess({ token: data.token }));
           navigate('/');
         }
+      } catch (error) {
+        console.error('Error processing social login data:', error);
       }
-    };
+    }
+  }, [location, navigate, dispatch]);
 
-    window.addEventListener('message', handleSocialLoginMessage);
-
-    return () => {
-      window.removeEventListener('message', handleSocialLoginMessage);
-    };
-  }, [navigate, dispatch]);
 
   const handleInputChange = event => {
     const { name, value } = event.target;
@@ -216,12 +220,16 @@ const Login = () => {
     },
   };
 
+  const handleSocialLogin = (provider) => {
+    const authUrl = `http://localhost:8080/oauth2/authorization/${provider}`;
+    window.location.href = authUrl;
+  };
 
 
   return (
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div className="flex flex-col items-center py-8">
-          <img className="h-72" src={pawpaw} alt="발바닥로고" />
+          <img className="h-72" src={pawpaw} alt="발바닥로고"/>
           <UserInput
               type="text"
               placeholder="아이디/이메일"
@@ -265,29 +273,29 @@ const Login = () => {
             <Button
                 onClick={showEmailModal}
                 type="link"
-                style={{ color: '#43312A' }}
+                style={{color: '#43312A'}}
             >
               이메일 찾기
             </Button>
             <Button
                 onClick={showPasswordModal}
                 type="link"
-                style={{ color: '#43312A' }}
+                style={{color: '#43312A'}}
             >
               비밀번호 찾기
             </Button>
             <Button
                 onClick={() => navigate('/signup')}
                 type="link"
-                style={{ color: '#43312A' }}
+                style={{color: '#43312A'}}
             >
               회원가입
             </Button>
           </div>
           <div className="flex justify-between w-3/4 mb-4">
-            <KakaoLogin />
-            <NaverLogin />
-            <GoogleLogin />
+            <KakaoLogin onLogin={() => handleSocialLogin('kakao')} />
+            <NaverLogin onLogin={() => handleSocialLogin('naver')} />
+            <GoogleLogin onLogin={() => handleSocialLogin('google')} />
           </div>
         </div>
 
@@ -297,7 +305,7 @@ const Login = () => {
             onCancel={handleEmailModalCancel}
             footer={null}
             width={400}
-            closeIcon={<CloseOutlined style={{ color: '#E8C5A5', fontSize: '14px' }} />}
+            closeIcon={<CloseOutlined style={{color: '#E8C5A5', fontSize: '14px' }} />}
         >
           <FindEmail onClose={handleEmailModalCancel} />
         </StyledModal>
