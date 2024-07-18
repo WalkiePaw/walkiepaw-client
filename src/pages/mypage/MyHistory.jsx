@@ -1,7 +1,7 @@
 // 내 작성글 보기
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 // sweetalert2 임포트
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -15,20 +15,20 @@ import formatTime from '../../util/formatTime';
 
 const MyHistory = () => {
   const [activeTab, setActiveTab] = useState('JOB_OPENING');
-  // 게시글 데이터 가져오기
   const [posts, setPosts] = useState([]);
   const MySwal = withReactContent(Swal);
-  const memberId = 1;
   const navigate = useNavigate();
+  const { id } = useOutletContext();
 
   useEffect(() => {
-    fetchPosts(activeTab); // 기본 탭 설정을 "구직"으로 변경
-  }, []);
+    if (id) { // id가 존재할 때만 fetchPosts 호출
+      fetchPosts(activeTab);
+    }
+  }, [id, activeTab]); // id와 activeTab이 변경될 때마다 useEffect 실행
 
   const fetchPosts = async (category) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${memberId}/${category}`);
-
+      const response = await axios.get(`http://localhost:8080/api/v1/boards/mypage/${id}/${category}`);
       setPosts(response.data.content);
     } catch (error) {
       console.error('Failed to fetch posts', error);
@@ -102,6 +102,7 @@ const MyHistory = () => {
         </button>
       </div>
       <div className="w-full overflow-hidden rounded-lg border border-gray-300">
+      {posts.length > 0 ? (
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -156,6 +157,11 @@ const MyHistory = () => {
             ))}
           </tbody>
         </table>
+        ) : (
+          <div className="px-6 py-4 text-center text-gray-500">
+            내 작성글이 없습니다
+          </div>
+        )}
       </div>
     </div>
   );

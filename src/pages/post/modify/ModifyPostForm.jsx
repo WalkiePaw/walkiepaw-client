@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import './ModifyPostForm.css';
-import KakaoMap from '../../../modules/Kakao';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCamera, faChevronLeft, faChevronRight, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import "./ModifyPostForm.css";
+import KakaoMap from "../../../modules/Kakao";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCamera,
+  faChevronLeft,
+  faChevronRight,
+  faTimesCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 const ModifyPostForm = () => {
   const location = useLocation(); // 현재 위치 정보를 가져옵니다.
@@ -13,16 +18,20 @@ const ModifyPostForm = () => {
   const [photos, setPhotos] = useState(initialPost?.photos || []); // 게시글의 이미지를 상태로 관리합니다.
   const [photoUrls, setPhotoUrls] = useState(initialPost?.photoUrls || []);
   const [currentSlide, setCurrentSlide] = useState(0); // 현재 슬라이드 인덱스를 상태로 관리합니다.
-  const [category, setCategory] = useState(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바'); // 게시글의 카테고리 값을 가져온다.
-  const [priceProposal, setPriceProposal] = useState(initialPost?.priceProposal || false);
+  const [category, setCategory] = useState(
+    initialPost?.category === "JOB_OPENING" ? "산책" : "알바"
+  ); // 게시글의 카테고리 값을 가져온다.
+  const [priceProposal, setPriceProposal] = useState(
+    initialPost?.priceProposal || false
+  );
 
   const formatDateTimeLocal = (dateTimeString) => {
     const date = new Date(dateTimeString);
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
@@ -30,7 +39,7 @@ const ModifyPostForm = () => {
     ...initialPost,
     startDate: formatDateTimeLocal(initialPost?.startTime),
     endDate: formatDateTimeLocal(initialPost?.endTime),
-    priceType: initialPost?.priceType === 'HOURLY' ? '시급' : '일급',
+    priceType: initialPost?.priceType === "HOURLY" ? "시급" : "일급",
     priceProposal: initialPost?.priceProposal || false,
   }); // 게시글 정보 상태를 관리
 
@@ -40,11 +49,11 @@ const ModifyPostForm = () => {
       ...initialPost,
       startDate: formatDateTimeLocal(initialPost?.startTime),
       endDate: formatDateTimeLocal(initialPost?.endTime),
-      priceType: initialPost?.priceType === 'HOURLY' ? '시급' : '일급',
+      priceType: initialPost?.priceType === "HOURLY" ? "시급" : "일급",
       priceProposal: initialPost?.priceProposal || false,
     });
     setPhotoUrls(initialPost?.photoUrls || []);
-    setCategory(initialPost?.category === 'JOB_OPENING' ? '산책' : '알바');
+    setCategory(initialPost?.category === "JOB_OPENING" ? "산책" : "알바");
     setPriceProposal(initialPost?.priceProposal || false);
   }, [initialPost]);
 
@@ -62,83 +71,108 @@ const ModifyPostForm = () => {
 
     // 모든 사진 파일을 읽은 후 이미지를 추가
     Promise.all(newImages).then((results) => {
-      uploadImages(files); // 첨부한 이미지를 서버에 업로드
-      setPhotos([...photos, ...results]);
+      uploadImages(files).then((urls) => {
+        setPhotos([...photos, ...results]); // 이미지 미리보기를 위한 상태 업데이트
+        setPhotoUrls((prevUrls) => [
+          ...prevUrls,
+          ...urls.map((url) => url.url),
+        ]); // 실제 이미지 URL을 상태 업데이트
+      }); // 첨부한 이미지를 서버에 업로드
     });
   };
 
-  const handleRemovePhoto = (index) => {
-    const updatedPhotos = [...photos];
-    updatedPhotos.splice(index, 1);
-    setPhotos(updatedPhotos);
+  const handleRemovePhoto = (slideIndex) => {
+    console.log(slideIndex);
+    const actualIndex = currentSlide * 4 + slideIndex;
+
+    setPhotos((prevPhotos) => prevPhotos.filter((_, i) => i !== actualIndex));
+    setPhotoUrls((prevUrls) => prevUrls.filter((_, i) => i !== actualIndex));
+
+    // 마지막 사진을 지웠을 때 현재 슬라이드 조정
+    if (actualIndex % 4 === 0 && actualIndex === photoUrls.length - 1) {
+      setCurrentSlide((prev) => Math.max(0, prev - 1));
+    }
   };
 
   const uploadImages = async (files) => {
     const urls = await Promise.all(files.map((file) => uploadImage(file)));
-    setPhotoUrls([...photoUrls, ...urls]);
+    return urls; // 이미지 업로드 후 받은 URL 배열 반환
   };
 
   const uploadImage = async (file) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
-      const response = await axios.post(`http://localhost:8080/api/v1/uploads`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log(response.data);
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/uploads`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       return response?.data;
     } catch (error) {
-      console.error('이미지 업로드 에러!', error);
+      console.error("이미지 업로드 에러!", error);
     }
   };
 
   const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === photoUrls.length - 1 ? 0 : prevSlide + 1));
+    setCurrentSlide((prevSlide) =>
+      prevSlide === photoUrls.length - 1 ? 0 : prevSlide + 1
+    );
   };
 
   const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === 0 ? photoUrls.length - 1 : prevSlide - 1));
+    setCurrentSlide((prevSlide) =>
+      prevSlide === 0 ? photoUrls.length - 1 : prevSlide - 1
+    );
   }; // 이미지 무한 루프
 
   // 폼 제출 처리 함수
   const handleSubmit = async (event) => {
     event.preventDefault(); // 페이지가 새로고침되는 걸 막아요.
 
+    console.log("수정 전 photoUrls:", photoUrls);
+
     // 수정된 게시글 정보를 생성
     const modifiedPost = {
       ...post, // 기존 게시글의 모든 속성을 복사합니다.
       photoUrls: photoUrls,
-      priceType: post.priceType === '시급' ? 'HOURLY' : 'DAILY',
+      priceType: post.priceType === "시급" ? "HOURLY" : "DAILY",
       price: parseInt(post.price),
       priceProposal: priceProposal,
       startTime: formatDateTimeLocal(post.startDate),
       endTime: formatDateTimeLocal(post.endDate),
-      category: category === '산책' ? 'JOB_OPENING' : 'JOB_SEARCH',
+      category: category === "산책" ? "JOB_OPENING" : "JOB_SEARCH",
       location: post.location,
       detailedLocation: post.detailedLocation,
     };
 
     try {
-      const response = await axios.patch(`http://localhost:8080/api/v1/boards/${post.id}`, modifiedPost, {
-        headers: {
-          ContentType: 'application/json',
-        },
-      });
+      const response = await axios.patch(
+        `http://localhost:8080/api/v1/boards/${post.id}`,
+        modifiedPost,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response?.status === 200 || response?.status === 204) {
-        alert('게시글이 수정되었습니다.');
+        alert("게시글이 수정되었습니다.");
         // 카테고리 기반 경로 설정
-        const categoryPath = category === '산책' ? '/recruit' : '/jobs';
+        const categoryPath = category === "산책" ? "/recruit" : "/jobs";
         navigate(categoryPath);
       } else {
-        throw new Error('게시글 수정 실패!');
+        throw new Error("게시글 수정 실패!");
       }
     } catch (error) {
-      console.error('Error', error);
-      alert('게시글 수정에 실패했습니다.');
+      console.error("Error", error);
+      alert("게시글 수정에 실패했습니다.");
     }
   };
 
@@ -164,7 +198,7 @@ const ModifyPostForm = () => {
       <div className="image-upload">
         {/* 사진 올리기 버튼 */}
         <label htmlFor="image-upload" className="image-upload-button">
-          <FontAwesomeIcon icon={faCamera} style={{ height: '100%' }} />
+          <FontAwesomeIcon icon={faCamera} style={{ height: "100%" }} />
         </label>
         <input
           type="file"
@@ -172,29 +206,38 @@ const ModifyPostForm = () => {
           accept="image/*"
           multiple
           onChange={handleImageUpload}
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
         />
-        {photoUrls.length === 0 && <p className="image-required-text">첨부한 이미지의 첫 번째가 메인 사진입니다.</p>}
+        {photoUrls.length === 0 && (
+          <p className="image-required-text">
+            첨부한 이미지의 첫 번째가 메인 사진입니다.
+          </p>
+        )}
         {photoUrls.length > 0 && (
           <div className="image-slider">
             <button className="prev-button" onClick={handlePrevSlide}>
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
             <div className="image-preview-container">
-              {photoUrls.slice(currentSlide * 4, currentSlide * 4 + 4).map((image, index) => (
-                <div key={index} className="image-preview-wrapper">
-                  <img
-                    key={index}
-                    src={image}
-                    alt={`Uploaded Preview ${index}`}
-                    className="image-preview"
-                    style={{ aspectRatio: '1 / 1' }} // 이미지 비율을 1:1로 설정
-                  />
-                  <button onClick={() => handleRemovePhoto(currentSlide * 4 + index)}>
-                    <FontAwesomeIcon className="remove-image-button" icon={faTimesCircle} />
-                  </button>
-                </div>
-              ))}
+              {photoUrls
+                .slice(currentSlide * 4, currentSlide * 4 + 4)
+                .map((photoUrls, index) => (
+                  <div key={index} className="image-preview-wrapper">
+                    <img
+                      key={index}
+                      src={[photoUrls]}
+                      alt={`Uploaded Preview ${index}`}
+                      className="image-preview"
+                      style={{ aspectRatio: "1 / 1" }} // 이미지 비율을 1:1로 설정
+                    />
+                    <button onClick={() => handleRemovePhoto(index)}>
+                      <FontAwesomeIcon
+                        className="remove-image-button"
+                        icon={faTimesCircle}
+                      />
+                    </button>
+                  </div>
+                ))}
             </div>
             <button className="next-button" onClick={handleNextSlide}>
               <FontAwesomeIcon icon={faChevronRight} />
@@ -205,15 +248,15 @@ const ModifyPostForm = () => {
       <div className="category-buttons">
         <button
           type="button"
-          className={`btn-category ${category === '산책' ? 'selected' : ''}`}
-          onClick={() => handleCategoryClick('산책')}
+          className={`btn-category ${category === "산책" ? "selected" : ""}`}
+          onClick={() => handleCategoryClick("산책")}
         >
           산책
         </button>
         <button
           type="button"
-          className={`btn-category ${category === '알바' ? 'selected' : ''}`}
-          onClick={() => handleCategoryClick('알바')}
+          className={`btn-category ${category === "알바" ? "selected" : ""}`}
+          onClick={() => handleCategoryClick("알바")}
         >
           알바
         </button>
@@ -232,15 +275,19 @@ const ModifyPostForm = () => {
         <div className="price-buttons">
           <button
             type="button"
-            className={`btn-price-hour ${post.priceType === '시급' ? 'selected' : ''}`}
-            onClick={() => setPost({ ...post, priceType: '시급' })}
+            className={`btn-price-hour ${
+              post.priceType === "시급" ? "selected" : ""
+            }`}
+            onClick={() => setPost({ ...post, priceType: "시급" })}
           >
             시급
           </button>
           <button
             type="button"
-            className={`btn-price-day ${post.priceType === '일급' ? 'selected' : ''}`}
-            onClick={() => setPost({ ...post, priceType: '일급' })}
+            className={`btn-price-day ${
+              post.priceType === "일급" ? "selected" : ""
+            }`}
+            onClick={() => setPost({ ...post, priceType: "일급" })}
           >
             일급
           </button>
@@ -277,7 +324,7 @@ const ModifyPostForm = () => {
               onChange={(e) => setPost({ ...post, startDate: e.target.value })}
               required
             />
-            <span style={{ margin: '0 40px' }}> ~ </span>
+            <span style={{ margin: "0 40px" }}> ~ </span>
             <input
               type="datetime-local"
               id="endDate"
@@ -304,7 +351,9 @@ const ModifyPostForm = () => {
             type="text"
             placeholder="상세주소를 입력하세요."
             value={post.detailedLocation}
-            onChange={(e) => setPost({ ...post, detailedLocation: e.target.value })}
+            onChange={(e) =>
+              setPost({ ...post, detailedLocation: e.target.value })
+            }
           />
         </div>
         <div className="button-container">

@@ -19,7 +19,11 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['emoji-picker-react']
+    include: ['emoji-picker-react'],
+    exclude: ["fsevents"],
+    esbuildOptions: {
+      target: 'es2020'
+    }
   },
   server: {
     proxy: {
@@ -37,12 +41,25 @@ export default defineConfig({
     },
   },
   build: {
+    sourcemap: false,
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
     rollupOptions: {
       output: {
         globals: {
           global: 'window',
         },
       },
+    },
+    experimental: {
+      renderBuiltUrl(filename, { hostType }) {
+        if (hostType === 'js') {
+          return { runtime: `globalThis.__publicPath(${JSON.stringify(filename)})` }
+        } else {
+          return { relative: true }
+        }
+      }
     },
   },
 });

@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { verifyToken } from './store/AuthSlice';
+import { setInitialState, verifyToken } from './store/AuthSlice';
 import ProtectedRoute from './store/ProtectedRoute.jsx';
-import BoardList from './pages/boardList/BoardList.jsx'
+import BoardList from './pages/boardlist/BoardList.jsx';
 import Home from './pages/home/Home';
 import Layout from './Layout';
 import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Routes, Route, useNavigate } from 'react-router-dom';
 
 import Notfound from './components/Notfound';
 import MyPage from './pages/mypage/MyPage';
@@ -25,13 +25,10 @@ import Dashboard from '/src/pages/dashboard/Dashboard';
 import PostList from '/src/pages/dashboard/PostList';
 import Introduction from '/src/pages/dashboard/Introduction';
 import Preferences from './pages/mypage/Preferences';
-import ModifyPostForm from './pages/post/modify/ModifyPostForm';
+import ModifyPostForm from './pages/post/modify/ModifyPostForm.jsx';
 import CustomerService from './pages/mypage/CustomerService';
 
 import MyTransaction from './pages/mypage/MyTransaction.jsx';
-import KakaoLoginCallback from './components/auth/KakaoLoginCallback.jsx';
-import NaverLoginCallback from './components/auth/NaverLoginCallback.jsx';
-import GoogleLoginCallback from './components/auth/GoogleLoginCallback.jsx';
 import Review from './components/Review.jsx';
 import SignUp from './pages/auth/SignUp.jsx';
 import ChatPage from './pages/chatroom/ChatPage.jsx';
@@ -44,6 +41,10 @@ import ReportManagement from './admin/ReportManagement.jsx';
 import ParticleCursor from './components/ParticleCursor.jsx';
 import PostView from './pages/postView/PostView.jsx';
 import ProtectedChatRoute from './store/ProtectedChatRoute.jsx';
+import ChatLayout from "./components/chat/ChatLayout.jsx";
+import UseSocialLogin from "./store/actions/UseSocailLogin.jsx";
+import DashboardReview from './pages/dashboard/DashboardReview.jsx';
+import ProtectedAdminRoute from './store/ProtectedAdminRoute.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -54,72 +55,80 @@ function App() {
   };
 
   useEffect(() => {
-    dispatch(verifyToken());
+    // 초기 상태 설정 (로컬 스토리지 기반)
+    dispatch(setInitialState());
+
+    // 백그라운드에서 토큰 검증
+    if (localStorage.getItem('token')) {
+      dispatch(verifyToken());
+    }
   }, [dispatch]);
 
   return (
     <>
       {/* <ParticleCursor /> */}
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+      />
       <Routes>
         <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
           <Route path="*" element={<Notfound />} />
 
-          <Route
-            path="/mypage"
-            element={
-              // <ProtectedRoute>
-                <MyPageLayout />
-              // </ProtectedRoute>
-            }
-          >
-            <Route index element={<MyPage />} />
-            <Route path="history" element={<MyHistory />} />
-            <Route path="transaction" element={<MyTransaction />} />
-            <Route path="preferences" element={<Preferences />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="mypage" element={<MyPageLayout />}>
+              <Route index element={<MyPage />} />
+              <Route path="history" element={<MyHistory />} />
+              <Route path="transaction" element={<MyTransaction />} />
+              <Route path="preferences" element={<Preferences />} />
 
-            <Route path="information" element={<MyInformation />} />
-            <Route path="customer-service" element={<CustomerService />} />
-            <Route path="settings" element={<MySettings />} />
-            <Route path="review" element={<Review />} />
-            <Route path="withdrawal" element={<MembershipWithdrawal />} />
-            <Route path="qna-list" element={<QnaList />} />
+              <Route path="information" element={<MyInformation />} />
+              <Route path="customer-service" element={<CustomerService />} />
+              <Route path="settings" element={<MySettings />} />
+              <Route path="review" element={<Review />} />
+              <Route path="withdrawal" element={<MembershipWithdrawal />} />
+              <Route path="qna-list" element={<QnaList />} />
+            </Route>
           </Route>
 
-          <Route index element={<Home />} />
           <Route path="recruit" element={<BoardList category="JOB_OPENING" />} />
           <Route path="jobs" element={<BoardList category="JOB_SEARCH" />} />
-          <Route
-            path="new-post"
-            element={
-              // <ProtectedRoute>
-              <NewPostForm />
-              // </ProtectedRoute>
-            }
-          ></Route>
+          <Route path="new-post" element={<NewPostForm />}></Route>
           <Route path="modify-post/:postId" element={<ModifyPostForm />} />
           <Route path="post/:postId" element={<PostView />} />
           <Route path="login" element={<Login />} />
-          <Route path="/login/kakao" element={<KakaoLoginCallback />} />
-          <Route path="/login/naver" element={<NaverLoginCallback />} />
-          <Route path="/login/google" element={<GoogleLoginCallback />} />
           <Route path="signup" element={<SignUp />} />
+          <Route path="/oauth2/redirect" element={<UseSocialLogin />} />
 
           <Route element={<ProtectedChatRoute />}>
-            <Route path="chatpage" element={<ChatPage />} />
+            <Route path="chat" element={<ChatLayout />}>
+              <Route index element={<ChatPage />} />
+              <Route path=":chatroomId" element={<ChatPage />} />
+            </Route>
           </Route>
 
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<Introduction />} />
             <Route path="postlist" element={<PostList />} />
-            <Route path="review" element={<Review />} />
+            <Route path="review" element={<DashboardReview />} />
           </Route>
 
-          <Route path="/admin" element={<Admin />}>
-            <Route path="member-list" element={<MemberList />} />
-            <Route path="report-mngmt" element={<ReportManagement />} />
-            <Route path="cs-mngmt" element={<CSManagement />} />
+          <Route element={<ProtectedAdminRoute />}>
+            <Route path="/admin" element={<Admin />}>
+              <Route path="member-list" element={<MemberList />} />
+              <Route path="report-mngmt" element={<ReportManagement />} />
+              <Route path="cs-mngmt" element={<CSManagement />} />
+            </Route>
           </Route>
+
         </Route>
       </Routes>
     </>

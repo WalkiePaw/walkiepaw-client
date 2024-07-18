@@ -102,41 +102,81 @@ const Tr = styled.tr`
   }
 `;
 
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+// 페이지 버튼 스타일
+const PageButton = styled.button`
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: ${props => props.active ? '#48bb78' : 'white'};
+  color: ${props => props.active ? 'white' : 'black'};
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #48bb78;
+    color: white;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`;
+
+// ... (기존의 스타일드 컴포넌트 코드는 그대로 유지)
+
 const MemberList = () => {
   const [members, setMembers] = useState([]);
-  const [searchField, setSearchField] = useState('name');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchParams, setSearchParams] = useState({
+    name: '',
+    nickname: '',
+    email: '',
+    reportedCnt: ''
+  });
   const [isInputHovered, setInputHovered] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const pageSize = 10;
 
-  const handleInputHover = () => {
-    setInputHovered(true);
-  };
-
-  const handleInputLeave = () => {
-    setInputHovered(false);
-  };
+  const handleInputHover = () => setInputHovered(true);
+  const handleInputLeave = () => setInputHovered(false);
 
   useEffect(() => {
-    // API 호출 함수 정의
-    const fetchMembers = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/api/v1/members'); 
-        setMembers(response.data); // 데이터 설정
-      } catch (error) {
-        console.error('Error fetching members:', error);
-        Swal.fire({
-          icon: 'error',
-          title: '회원 목록 가져오기 실패',
-          text: '회원 목록을 가져오는 중 오류가 발생했습니다.',
-        });
-      }
-    };
+    fetchMembers();
+  }, [currentPage, searchParams]);
 
-    fetchMembers(); // 함수 호출
+  const fetchMembers = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/v1/members/search', {
+        params: {
+          ...searchParams,
+          page: currentPage,
+          size: pageSize,
+          sort: 'id,desc' // 예시로 id 기준 내림차순 정렬
+        }
+      });
+      setMembers(response.data.content);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+      Swal.fire({
+        icon: 'error',
+        title: '회원 목록 가져오기 실패',
+        text: '회원 목록을 가져오는 중 오류가 발생했습니다.',
+      });
+    }
+  };
 
-  }, []); // useEffect는 한 번만 실행되어야 하므로 빈 배열을 두 번째 인자로 전달
+  const handleSearchChange = (field, value) => {
+    setSearchParams(prev => ({ ...prev, [field]: value }));
+    setCurrentPage(0);
+  };
 
-  // 상태에 대한 매핑 객체 정의
   const statusMap = {
     GENERAL: "일반",
     WITHDRAWN: "탈퇴",
@@ -144,51 +184,59 @@ const MemberList = () => {
     INACTIVE: "휴면 상태"
   };
 
-    // 필터링된 회원 목록을 반환하는 함수: 이름, 닉네임, 누적 신고 횟수, 이메일로 검색 가능
-    const filteredMembers = members.filter((member) => {
-      if (searchField === 'name') {
-        return member.name.toLowerCase().includes(searchTerm.toLowerCase());
-      } else if (searchField === 'nickname') {
-        return member.nickname.toLowerCase().includes(searchTerm.toLowerCase());
-      } else if (searchField === 'reportedCnt') {
-        // 검색어가 숫자인지 확인
-        const searchTermLower = searchTerm.toLowerCase();
-        if (!isNaN(searchTermLower)) {
-          // 신고 횟수가 검색어보다 크거나 같은 경우 필터링
-          return member.reportedCnt >= parseInt(searchTermLower, 10);
-        }
-        return false;
-      } else if (searchField === 'email') {
-        return member.email.toLowerCase().includes(searchTerm.toLowerCase());
-      }
-      return true;
-    });
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-5">회원 목록 관리</h2>
-      <div className="mb-4 flex">
-        <StyledSelect
-              value={searchField}
-              onChange={(e) => setSearchField(e.target.value)}
-            >
-              <option value="name">이름</option>
-              <option value="nickname">닉네임</option>
-              <option value="reportedCnt">신고 횟수</option>
-              <option value="email">이메일</option>
-            </StyledSelect>
-            <StyledInputContainer>
-              <StyledInput
-                type="text"
-                placeholder=" "
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onMouseEnter={handleInputHover}
-                onMouseLeave={handleInputLeave}
-              />
-              <StyledInputLabel hovered={isInputHovered}>검색어 입력</StyledInputLabel>
-            </StyledInputContainer>
-          </div>
+      <div className="mb-4 flex flex-wrap">
+        <StyledInputContainer>
+          <StyledInput
+            type="text"
+            placeholder=" "
+            value={searchParams.name}
+            onChange={(e) => handleSearchChange('name', e.target.value)}
+            onMouseEnter={handleInputHover}
+            onMouseLeave={handleInputLeave}
+          />
+          <StyledInputLabel hovered={isInputHovered}>이름</StyledInputLabel>
+        </StyledInputContainer>
+        <StyledInputContainer>
+          <StyledInput
+            type="text"
+            placeholder=" "
+            value={searchParams.nickname}
+            onChange={(e) => handleSearchChange('nickname', e.target.value)}
+            onMouseEnter={handleInputHover}
+            onMouseLeave={handleInputLeave}
+          />
+          <StyledInputLabel hovered={isInputHovered}>닉네임</StyledInputLabel>
+        </StyledInputContainer>
+        <StyledInputContainer>
+          <StyledInput
+            type="text"
+            placeholder=" "
+            value={searchParams.email}
+            onChange={(e) => handleSearchChange('email', e.target.value)}
+            onMouseEnter={handleInputHover}
+            onMouseLeave={handleInputLeave}
+          />
+          <StyledInputLabel hovered={isInputHovered}>이메일</StyledInputLabel>
+        </StyledInputContainer>
+        <StyledInputContainer>
+          <StyledInput
+            type="number"
+            placeholder=" "
+            value={searchParams.reportedCnt}
+            onChange={(e) => handleSearchChange('reportedCnt', e.target.value)}
+            onMouseEnter={handleInputHover}
+            onMouseLeave={handleInputLeave}
+          />
+          <StyledInputLabel hovered={isInputHovered}>신고 횟수</StyledInputLabel>
+        </StyledInputContainer>
+      </div>
       <div className="overflow-x-auto">
         <Table className="min-w-full bg-white border border-gray-200">
           <thead>
@@ -203,9 +251,9 @@ const MemberList = () => {
             </Tr>
           </thead>
           <tbody>
-          {filteredMembers.map((member, index) => (
+          {members.map((member, index) => (
             <Tr key={member.id}>
-              <Td>{index + 1}</Td>
+              <Td>{currentPage * pageSize + index + 1}</Td>
               <Td>{member.email}</Td>
               <Td>{member.name}</Td>
               <Td>{member.nickname}</Td>
@@ -213,10 +261,21 @@ const MemberList = () => {
               <Td style={{ textAlign: 'center' }}>{member.reportedCnt}</Td>
               <Td>{statusMap[member.status]}</Td>
             </Tr>
-            ))}
+          ))}
           </tbody>
         </Table>
       </div>
+      <PaginationContainer>
+        {[...Array(totalPages).keys()].map((page) => (
+          <PageButton
+            key={page}
+            onClick={() => handlePageChange(page)}
+            active={currentPage === page}
+          >
+            {page + 1}
+          </PageButton>
+        ))}
+      </PaginationContainer>
     </div>
   );
 };

@@ -117,18 +117,12 @@ const FindPassword = ({ onClose }) => {
       if (response.data.result === 'SUCCESS') {
         setEmail(values.email);
         setIsModalVisible(true);
-        toast.success("인증번호가 이메일로 전송되었습니다.", {
-          style: { background: '#E8C5A5', color: '#43312A' }
-        });
+        toast.success("인증번호가 이메일로 전송되었습니다.");
       } else {
-        toast.error("입력한 정보와 일치하는 계정을 찾을 수 없습니다.", {
-          style: { background: '#43312A', color: 'white' }
-        });
+        toast.error("입력한 정보와 일치하는 계정을 찾을 수 없습니다.");
       }
     } catch (error) {
-      toast.error("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", {
-        style: { background: '#43312A', color: 'white' }
-      });
+      toast.error("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setLoading(false);
     }

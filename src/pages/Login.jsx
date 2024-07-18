@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {useDispatch} from "react-redux";
-import axios from 'axios';
 import {Button, Modal} from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import UserInput from '../components/UserInput';
 import UserButton from '../components/UserButton';
 import KakaoLogin from '../components/auth/KakaoLogin';
@@ -12,7 +12,73 @@ import FindEmail from "../components/auth/FindEmail.jsx";
 import FindPassword from "../components/auth/FindPassword.jsx";
 import pawpaw from '../assets/pawpaw.png';
 import { loginSuccess, loginFailure, setLoading } from "../store/AuthSlice.jsx";
+import {loginApi} from "../Api.jsx";
+import styled from "styled-components";
+import UseSocialLogin from "../store/actions/UseSocailLogin.jsx";
 
+const StyledModal = styled(Modal)`
+  .ant-modal-content {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  .ant-modal-header {
+    background-color: #43312A;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .ant-modal-title {
+    color: #E8C5A5;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1;
+    flex-grow: 1;
+  }
+  .ant-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+  }
+  .ant-modal-close-x {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: rgba(232, 197, 165, 0.2);
+    }
+  }
+  .anticon-close {
+    color: #E8C5A5;
+    font-size: 14px;
+  }
+  .ant-modal-body {
+    padding: 24px;
+    font-size: 16px;
+    text-align: center;
+  }
+  .ant-modal-footer {
+    border-top: 1px solid #f0f0f0;
+    padding: 10px 16px;
+  }
+  .ant-btn-primary {
+    background-color: #43312A;
+    border-color: #43312A;
+    &:hover, &:focus {
+      background-color: #5A443C;
+      border-color: #5A443C;
+    }
+  }
+`;
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -28,6 +94,33 @@ const Login = () => {
   const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const socialLoginData = params.get('socialLoginData');
+
+    if (socialLoginData) {
+      try {
+        const data = JSON.parse(decodeURIComponent(socialLoginData));
+        console.log("Parsed social login data:", data);
+        if (data['account status'] === 'New Account') {
+          console.log("Navigating to signup");
+          navigate('/signup', {
+            state: {
+              name: data.name,
+              email: data.email,
+              isSocialSignUp: true
+            }
+          });
+        } else if (data['account status'] === 'Existing Account') {
+          console.log("Logging in existing account");
+          dispatch(loginSuccess({ token: data.token }));
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error processing social login data:', error);
+      }
+    }
+  }, [location, navigate, dispatch]);
 
 
   const handleInputChange = event => {
@@ -74,15 +167,14 @@ const Login = () => {
   const onSubmit = async () => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
+      const response = await loginApi({
         email: userInfo.email,
         password: userInfo.password
       });
 
       console.log('Login successful:', response.data);
       dispatch(loginSuccess({
-        token: response.data.token,
-        user: response.data.user
+        token: response.data.token
       }));
       // 로그인 성공 후 리다이렉트
       const from = location.state?.from?.pathname || '/';
@@ -128,10 +220,16 @@ const Login = () => {
     },
   };
 
+  const handleSocialLogin = (provider) => {
+    const authUrl = `http://localhost:8080/oauth2/authorization/${provider}`;
+    window.location.href = authUrl;
+  };
+
+
   return (
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div className="flex flex-col items-center py-8">
-          <img className="h-72" src={pawpaw} alt="발바닥로고" />
+          <img className="h-72" src={pawpaw} alt="발바닥로고"/>
           <UserInput
               type="text"
               placeholder="아이디/이메일"
@@ -175,70 +273,68 @@ const Login = () => {
             <Button
                 onClick={showEmailModal}
                 type="link"
-                style={{ color: '#43312A' }}
+                style={{color: '#43312A'}}
             >
               이메일 찾기
             </Button>
             <Button
                 onClick={showPasswordModal}
                 type="link"
-                style={{ color: '#43312A' }}
+                style={{color: '#43312A'}}
             >
               비밀번호 찾기
             </Button>
             <Button
                 onClick={() => navigate('/signup')}
                 type="link"
-                style={{ color: '#43312A' }}
+                style={{color: '#43312A'}}
             >
               회원가입
             </Button>
           </div>
           <div className="flex justify-between w-3/4 mb-4">
-            <KakaoLogin />
-            <NaverLogin />
-            <GoogleLogin />
+            <KakaoLogin onLogin={() => handleSocialLogin('kakao')} />
+            <NaverLogin onLogin={() => handleSocialLogin('naver')} />
+            <GoogleLogin onLogin={() => handleSocialLogin('google')} />
           </div>
         </div>
 
-        <Modal
+        <StyledModal
             title="이메일 찾기"
             open={isEmailModalVisible}
             onCancel={handleEmailModalCancel}
             footer={null}
-            style={modalStyle.content}
-            bodyStyle={modalStyle.body}
-            maskStyle={{ backgroundColor: 'rgba(67, 49, 42, 0.5)' }}
-            titleStyle={modalStyle.header}
+            width={400}
+            closeIcon={<CloseOutlined style={{color: '#E8C5A5', fontSize: '14px' }} />}
         >
           <FindEmail onClose={handleEmailModalCancel} />
-        </Modal>
+        </StyledModal>
 
-        <Modal
+        <StyledModal
             title="비밀번호 찾기"
             open={isPasswordModalVisible}
             onCancel={handlePasswordModalCancel}
             footer={null}
-            style={modalStyle.content}
-            bodyStyle={modalStyle.body}
-            maskStyle={{ backgroundColor: 'rgba(67, 49, 42, 0.5)' }}
-            titleStyle={modalStyle.header}
+            width={400}
+            closeIcon={<CloseOutlined style={{ color: '#E8C5A5', fontSize: '14px' }} />}
         >
           <FindPassword onClose={handlePasswordModalCancel} />
-        </Modal>
+        </StyledModal>
 
-        <Modal
-            title={<span style={{ color: 'red' }}>로그인 오류</span>}
+        <StyledModal
+            title={<span style={{ color: '#E8C5A5' }}>로그인 오류</span>}
             open={isModalVisible}
             onOk={handleModalOk}
             onCancel={handleModalOk}
             okText="확인"
             cancelText="취소"
-            okButtonProps={{ style: { backgroundColor: 'red', borderColor: 'red' } }}
-            cancelButtonProps={{ style: { color: 'red', borderColor: 'red' } }}
+            okButtonProps={{ style: { backgroundColor: '#43312A', borderColor: '#43312A' } }}
+            cancelButtonProps={{ style: { color: '#43312A', borderColor: '#43312A' } }}
+            width={400}
+            closeIcon={<CloseOutlined style={{ color: '#E8C5A5', fontSize: '14px' }} />}
         >
           <p>{modalMessage}</p>
-        </Modal>
+        </StyledModal>
       </div>
   );
 };

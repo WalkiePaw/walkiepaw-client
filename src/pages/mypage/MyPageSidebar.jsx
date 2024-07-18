@@ -11,32 +11,30 @@ import { faGripLines } from "@fortawesome/free-solid-svg-icons";
 // axios 임포트
 import axios from "axios";
 
-const MyPageSidebar = () => {
-  const [memberData, setMemberData] = useState(null);
-  const [score, setScore] = useState(0);
-  const [counts, setCounts] = useState({ recruitCount: 0, researchCount: 0 });
-  const [profileImage, setProfileImage] = useState(null);
+  const MyPageSidebar = ({ id }) => {
+    const [memberData, setMemberData] = useState(null);
+    const [score, setScore] = useState(0);
+    const [counts, setCounts] = useState({ recruitCount: 0, researchCount: 0 });
+    const [profileImage, setProfileImage] = useState(null);
 
-  useEffect(() => {
-    const memberId = 1; // 로그인한 사용자의 ID를 가져옴
-
-    if (memberId) {
-      axios
-        .get(`http://localhost:8080/api/v1/members/${memberId}`)
+    useEffect(() => {
+      if (id) {  // id가 존재할 때만 API 호출
+        axios
+        .get(`http://localhost:8080/api/v1/members/${id}`)
         .then((response) => {
           setMemberData(response.data);
           if (response.data.photo) {
-            setProfileImage(response.data.photo); 
+            setProfileImage(response.data.photo);
           } else {
-            setProfileImage(getProfileImage(1)); 
+            setProfileImage(getProfileImage(1));
           }
         })
         .catch((error) => {
           console.error("회원 정보를 가져오던 도중 오류 발생:", error);
         });
 
-      axios
-        .get(`http://localhost:8080/api/v1/members/${memberId}/score`)
+        axios
+        .get(`http://localhost:8080/api/v1/members/${id}/score`)
         .then((response) => {
           console.log('Score:', response.data);
           setScore(response.data.score);
@@ -45,22 +43,18 @@ const MyPageSidebar = () => {
           console.error("평점 정보를 가져오던 도중 오류 발생:", error);
         });
 
-      axios
-        .get(`http://localhost:8080/api/v1/members/${memberId}/RRCount`)
+        axios
+        .get(`http://localhost:8080/api/v1/members/${id}/RRCount`)
         .then((response) => {
           console.log('Counts:', response.data);
           setCounts(response.data);
         })
         .catch((error) => {
-          console.error(
-            "산책/알바 횟수 정보를 가져오던 도중 오류 발생:",
-            error
-          );
+          console.error("산책/알바 횟수 정보를 가져오던 도중 오류 발생:", error);
         });
-    } else {
-      console.error("No user ID found in local storage.");
-    }
-  }, []);
+      }
+    }, [id]);  // id가 변경될 때마다 useEffect 실행
+
 
   return (
     <div className={"w-80 h-screen bg-gray-100 p-4"}>
@@ -70,7 +64,7 @@ const MyPageSidebar = () => {
           readOnly={!!profileImage} 
         />
         <div className="mt-3 mb-5 text-xl font-bold">
-          {memberData ? memberData.name : ""}
+          {memberData ? memberData.nickname : ""}
         </div>
         <div className="p-4 bg-white rounded-lg shadow mb-6">
           <div className="grid grid-cols-3 gap-4 text-center">

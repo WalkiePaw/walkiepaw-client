@@ -1,23 +1,24 @@
 // 거래 내역 + 리뷰 달기
 import { useState, useEffect } from "react";
+import { useOutletContext } from 'react-router-dom';
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import axios from "axios";
 import ReviewForm from "../../components/ReviewForm";
-// 거래일
 import formatTime from "../../util/formatTime";
 
 const MyTransaction = () => {
+  const { id } = useOutletContext(); // id를 context에서 가져옵니다.
   const [transactions, setTransactions] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const MySwal = withReactContent(Swal);
-  const memberId = 1;
 
   const fetchTransactions = async (page = 0) => {
+    if (!id) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/chatrooms/${memberId}/transaction`,
+        `http://localhost:8080/api/v1/chatrooms/${id}/transaction`,
         {
           params: {
             page: page,
@@ -45,8 +46,10 @@ const MyTransaction = () => {
   };
 
   useEffect(() => {
-    fetchTransactions();
-  }, []);
+    if (id) {
+      fetchTransactions();
+    }
+  }, [id]);
 
   const handleReviewClick = (transaction) => {
     MySwal.fire({
@@ -70,7 +73,7 @@ const MyTransaction = () => {
       point: reviewData.points,
       content: reviewData.content,
       chatroomId: transaction.chatroomId,
-      reviewerId: memberId, // 현재 로그인한 사용자의 ID
+      reviewerId: id, // 현재 로그인한 사용자의 ID
       category: transaction.category,
     };
 
@@ -109,55 +112,61 @@ const MyTransaction = () => {
     <div className="flex flex-col">
       <h1 className="text-3xl font-bold mb-5 mr-4">내 거래 내역</h1>
       <div className="w-full overflow-hidden rounded-lg border border-gray-300">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                게시글 제목
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                거래한 회원
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                리뷰 작성
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                거래일/시간
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {transactions.map((transaction) => (
-              <tr key={transaction.chatroomId}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {transaction.title}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {transaction.memberNickName}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {!transaction.hasReview ? (
-                    <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                      onClick={() => handleReviewClick(transaction)}
-                    >
-                      리뷰 남기기
-                    </button>
-                  ) : (
-                    "작성 완료"
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {formatTime(transaction.createdDate)}
-                </td>
+        {transactions.length > 0 ? (
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  게시글 제목
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  거래한 회원
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  리뷰 작성
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  거래일/시간
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {transactions.map((transaction) => (
+                <tr key={transaction.chatroomId}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {transaction.title}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {transaction.memberNickName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {!transaction.hasReview ? (
+                      <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                        onClick={() => handleReviewClick(transaction)}
+                      >
+                        리뷰 남기기
+                      </button>
+                    ) : (
+                      "작성 완료"
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {formatTime(transaction.createdDate)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div className="px-6 py-4 text-center text-gray-500">
+            내 거래 내역이 없습니다
+          </div>
+        )}
       </div>
       {hasMore && (
         <button
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
+          className="mt-4 bg-brown-500 text-white px-4 py-2 rounded-md"
           onClick={loadMore}
         >
           더 보기
