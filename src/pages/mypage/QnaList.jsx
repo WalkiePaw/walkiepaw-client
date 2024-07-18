@@ -16,7 +16,9 @@ const QnaList = () => {
           const response = await axios.get(
             `http://57.180.244.228:8000/api/v1/qna/${id}/list`
           );
-          setQnaList(response.data);
+          console.log("API response:", response.data); // 응답 데이터 로그
+
+          setQnaList(response.data.content);
         } catch (error) {
           if (error.response && error.response.status === 404) {
             setQnaList([]); // 문의 내역이 없을 경우 빈 배열로 설정
