@@ -3,7 +3,7 @@ import { Modal, Form, Input, Button } from 'antd';
 import styled from 'styled-components';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
+import {updatePassword} from "../../Api.jsx";
 
 const StyledModal = styled(Modal)`
   .ant-modal-content {
@@ -94,9 +94,7 @@ const UpdatePassword = ({ visible, onCancel, memberId, onPasswordChanged }) => {
       const values = await form.validateFields();
       setLoading(true);
 
-      const response = await axios.patch(`http://localhost:8080/api/v1/members/${memberId}/passwordUpdate`, {
-        password: values.password
-      });
+      const response = await updatePassword(memberId, values.password);
 
       if (response.status === 204) {
         toast.success('비밀번호가 성공적으로 변경되었습니다.');

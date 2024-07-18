@@ -4,7 +4,7 @@ import { Modal } from 'antd';
 import styled from 'styled-components';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FaCheck } from 'react-icons/fa';
+import {checkNickname} from "../../Api.jsx";
 
 const Button = styled.button`
   padding: 1rem;
@@ -39,9 +39,7 @@ const NicknameDoublecheck = ({ nickname, onCheckComplete }) => {
     }
 
     try {
-      const response = await axios.get('http://localhost:8080/api/v1/members/check-nickname', {
-        params: { nickname }
-      });
+      const response = await checkNickname(nickname);
 
       let isAvailable = false;
       if (typeof response.data === 'object' && response.data.result === 'AVAILABLE') {

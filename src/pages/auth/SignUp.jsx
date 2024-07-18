@@ -1,5 +1,4 @@
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import {useLocation, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import UserButton from "../../components/UserButton.jsx";

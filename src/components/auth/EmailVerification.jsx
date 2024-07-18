@@ -5,6 +5,7 @@ import axios from 'axios';
 import { FaCheck } from 'react-icons/fa';
 import styled from 'styled-components';
 import VerificationCodeModal from "./VerificationCodeModal.jsx";
+import {verifyAuthCode} from "../../Api.jsx";
 
 const StyledButton = styled.button`
   padding: 1rem;

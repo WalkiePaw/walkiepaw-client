@@ -49,6 +49,22 @@ export const submitReview = async (reviewData) => {
   }
 };
 
+export const checkNickname = (nickname) =>
+    Api.get('/api/v1/members/check-nickname', { params: { nickname } });
+
+export const findPassword = (email, name) =>
+    Api.post('/api/v1/members/find-passwd', { email, name });
+
+export const verifyAuthCode = (email, authNum) =>
+    Api.post('/api/v1/mail/authCheck', { email, authNum });
+
+export const updatePassword = (memberId, password) =>
+    Api.patch(`/api/v1/members/${memberId}/passwordUpdate`, { password });
+
+export const handleSocialLogin = (provider) => {
+  window.location.href = `${Api.defaults.baseURL}/oauth2/authorization/${provider}`;
+};
+
 // export const getUserProfile = async () => {
 //   const token = localStorage.getItem('token');
 //   try {

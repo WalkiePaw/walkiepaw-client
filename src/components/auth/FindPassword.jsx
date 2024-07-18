@@ -7,6 +7,8 @@ import VerificationCodeModal from './VerificationCodeModal';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UpdatePassword from "./UpdatePassword.jsx";
+import { findPassword, verifyAuthCode } from '../../Api.jsx';
+
 
 const StyledModal = styled(Modal)`
   .ant-modal-content {
@@ -109,10 +111,7 @@ const FindPassword = ({ onClose }) => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/members/find-passwd', {
-        email: values.email,
-        name: values.name
-      });
+      const response = await findPassword(values.email, values.name);
 
       if (response.data.result === 'SUCCESS') {
         setEmail(values.email);
@@ -132,20 +131,16 @@ const FindPassword = ({ onClose }) => {
 
   const handleVerificationSubmit = async (verificationCode) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/mail/authCheck', {
-        email: email,
-        authNum: verificationCode
-      });
+      const response = await verifyAuthCode(email, verificationCode);
 
       if (response.status === 200) {
         setIsModalVisible(false);
-        setMemberId(response.data.memberId);  // memberId 저장
-        setIsNewPasswordModalVisible(true);  // 새 비밀번호 모달 열기
+        setMemberId(response.data.memberId);
+        setIsNewPasswordModalVisible(true);
         toast.success(
             `인증이 완료되었습니다.
-                      새 비밀번호를 설정해주세요.`
+            새 비밀번호를 설정해주세요.`
         );
-        // 여기에 새 비밀번호 설정 로직 추가
       } else {
         toast.error("인증번호가 일치하지 않습니다.");
       }

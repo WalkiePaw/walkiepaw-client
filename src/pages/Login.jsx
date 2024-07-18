@@ -12,9 +12,9 @@ import FindEmail from "../components/auth/FindEmail.jsx";
 import FindPassword from "../components/auth/FindPassword.jsx";
 import pawpaw from '../assets/pawpaw.png';
 import { loginSuccess, loginFailure, setLoading } from "../store/AuthSlice.jsx";
-import {loginApi} from "../Api.jsx";
+import {loginApi, handleSocialLogin} from "../Api.jsx";
 import styled from "styled-components";
-import UseSocialLogin from "../store/actions/UseSocailLogin.jsx";
+
 
 const StyledModal = styled(Modal)`
   .ant-modal-content {
@@ -218,11 +218,6 @@ const Login = () => {
       borderBottomRightRadius: '10px',
       padding: '10px 20px',
     },
-  };
-
-  const handleSocialLogin = (provider) => {
-    const authUrl = `http://localhost:8080/oauth2/authorization/${provider}`;
-    window.location.href = authUrl;
   };
 
 
