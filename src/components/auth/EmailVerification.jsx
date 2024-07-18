@@ -5,7 +5,7 @@ import axios from 'axios';
 import { FaCheck } from 'react-icons/fa';
 import styled from 'styled-components';
 import VerificationCodeModal from "./VerificationCodeModal.jsx";
-import {verifyAuthCode} from "../../Api.jsx";
+import {sendVerificationEmail, verifyAuthCode} from "../../Api.jsx";
 
 const StyledButton = styled.button`
   padding: 1rem;
@@ -41,9 +41,7 @@ const EmailVerificationButton = ({ newEmail, children }) => {
     setIsLoading(true);
 
     try {
-      await axios.post(`http://57.180.244.228:8000/api/v1/mail/send`, {
-        email: newEmail,
-      });
+      await sendVerificationEmail(newEmail);
       setIsEmailVerificationSent(true);
 
       toast.success("이메일 인증 메일을 전송했습니다", {
@@ -61,10 +59,7 @@ const EmailVerificationButton = ({ newEmail, children }) => {
 
   const handleVerificationSubmit = async (verificationCode) => {
     try {
-      const response = await axios.post('http://57.180.244.228:8000/api/v1/mail/authCheck', {
-        email: newEmail,
-        authNum: verificationCode
-      });
+      const response = await verifyAuthCode(newEmail, verificationCode);
 
       if (response.status === 200) {
         setIsModalVisible(false);
@@ -75,7 +70,7 @@ const EmailVerificationButton = ({ newEmail, children }) => {
       console.error('이메일 인증 확인 중 오류 발생:', error);
       toast.error(
           `이메일 인증에 실패했습니다.
-                    인증 코드를 다시 확인해주세요.`
+      인증 코드를 다시 확인해주세요.`
       );
     }
   };

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Form, Input, Button, Modal } from 'antd';
 import styled from 'styled-components';
 import { CloseOutlined } from '@ant-design/icons';
+import {findEmail} from "../../Api.jsx";
 
 const StyledModal = styled(Modal)`
   .ant-modal-content {
@@ -119,10 +120,7 @@ const FindEmail = ({ onClose }) => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://57.180.244.228:8000/api/v1/members/find-email', {
-        name: values.name,
-        phoneNumber: values.phoneNumber.replace(/-/g, '')
-      });
+      const response = await findEmail(values.name, values.phoneNumber.replace(/-/g, ''));
       setFoundEmail(response.data.email);
       setIsModalVisible(true);
     } catch (error) {

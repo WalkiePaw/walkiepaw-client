@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Form, Input, Button, Modal } from 'antd';
 import styled from 'styled-components';
 import { CloseOutlined } from '@ant-design/icons';

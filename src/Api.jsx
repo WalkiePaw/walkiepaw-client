@@ -52,6 +52,12 @@ export const submitReview = async (reviewData) => {
 export const checkNickname = (nickname) =>
     Api.get('/api/v1/members/check-nickname', { params: { nickname } });
 
+export const findEmail = (name, phoneNumber) =>
+    Api.post('/api/v1/members/find-email', { name, phoneNumber });
+
+export const sendVerificationEmail = (email) =>
+    Api.post('/api/v1/mail/send', { email });
+
 export const findPassword = (email, name) =>
     Api.post('/api/v1/members/find-passwd', { email, name });
 
