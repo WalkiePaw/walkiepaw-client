@@ -87,13 +87,14 @@ const BoardList = () => {
 
   const fetchPosts = useCallback(
     async (isCategoryChange = false) => {
-      if (!category ) return;
-      if (!hasMore && !isCategoryChange) return;
-      setLoading(true);
       try {
+        if (!category || !hasMore) return;
+        setLoading(true);
         const params = new URLSearchParams();
-        params.append("page", isCategoryChange ? 0 : page);
+        params.append("page", isCategoryChange ? "0" : page.toString());
         if (loginUserId) params.append("memberId", loginUserId);
+
+        console.log("Params:", params.toString());
 
         const response = await axios.get(
           `http://57.180.244.228:8000/api/v1/boards/list/${category}`,
@@ -101,7 +102,7 @@ const BoardList = () => {
         );
         const data = response?.data?.content ?? [];
 
-        const filteredData = filterPostsByLocation(data);
+        const filteredData = isLoggedIn ? filterPostsByLocation(data) : data;
 
         if (isCategoryChange) {
           setPosts(filteredData.reverse());
@@ -123,7 +124,7 @@ const BoardList = () => {
         setLoading(false);
       }
     },
-    [category, page, hasMore, loginUserId, filterPostsByLocation]
+    [category, page, loginUserId, filterPostsByLocation, isLoggedIn, hasMore]
   );
 
   // 이벤트 핸들러
@@ -249,7 +250,7 @@ const BoardList = () => {
 
   useEffect(() => {
     if (category) {
-      fetchPosts(true);
+      fetchPosts();
     }
   }, [category]);
 
